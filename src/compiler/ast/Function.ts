@@ -16,6 +16,7 @@ import { IntersectionType } from "./IntersectionType";
 import { getMetaCall, toMetaString } from "./MetaContainer";
 import { isType, Type } from "./Type";
 import { UnionType } from "./UnionType";
+import { Variable } from "./Variable";
 
 export interface FunctionProps extends FunctionBaseProps {
     id?: Identifier
@@ -53,6 +54,10 @@ export class Function extends FunctionBase implements Callable {
         else {
             return nativeTypeFunction(this, argTypes, c);
         }
+    }
+
+    getParameters(c: EvaluationContext): Variable[] {
+        return this.parameters;
     }
 
     getReturnType(source: Call, argTypes: Type[], c: EvaluationContext): Type | null {

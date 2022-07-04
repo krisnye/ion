@@ -1,8 +1,12 @@
 
-class Foo
-    x: 0 .. 10
+// class Foo
+//     x: 0 .. 10
 
-class Bar extends Foo
-    y: 10 .. 20
+// class Bar extends Foo
+//     y: 10 .. 20
 
-bar: Bar = Bar(x = 10, y = 20)
+// bar: Bar = Bar(x = 10, y = 20)
+
+foo = (x: Number, y: Number, a: Number = 10, b: Number = 20) => 10
+
+value = foo(y = 1, x = 2, b = x * 2)

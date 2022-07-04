@@ -121,7 +121,7 @@ export class Compiler {
                         }
                     }
                     if (!runPhaseAgain) {
-                        return;
+                        break;
                     }
                 }
             }

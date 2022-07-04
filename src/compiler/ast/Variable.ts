@@ -8,6 +8,7 @@ import { EvaluationContext } from "../EvaluationContext";
 import { isSubtype } from "../analysis/isSubtype";
 import { SemanticError } from "../SemanticError";
 import { Type } from "./Type";
+import { getSSAOriginalName } from "../phases/ssaForm";
 
 export interface VariableProps extends ExpressionProps {
     id: Identifier;
@@ -42,17 +43,7 @@ export class Variable extends Expression implements Declaration {
     }
 
     resolveType(c: EvaluationContext) {
-        let debug = this.id.name === "test.sample.value";
         const { value, declaredType } = this;
-        if (debug) {
-            console.log("------ ", {
-                this: this.toString(),
-                value: value?.toString(),
-                declaredType: declaredType?.toString(),
-                value_type: value?.type?.toString(),
-                conditional: this.conditional,
-            });
-        }
         if (declaredType && value?.type && !this.conditional) {
             // check if value type is assignable to this.
             let isValueASubtype = isSubtype(value.type, declaredType, c);

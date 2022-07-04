@@ -235,76 +235,38 @@ ul.jsondiffpatch-textdiff {
                 <td>
                     <header><span>Source</span></header>
                     <p>
-class Foo
-    x: 0 .. 10
+// class Foo
+//     x: 0 .. 10
 
-class Bar extends Foo
-    y: 10 .. 20
+// class Bar extends Foo
+//     y: 10 .. 20
 
-bar: Bar = Bar(x = 10, y = 20)</p>
+// bar: Bar = Bar(x = 10, y = 20)
+
+foo = (x: Number, y: Number, a: Number = 10, b: Number = 20) => 10
+
+value = foo(y = 1, x = 2, b = x * 2)
+</p>
                 </td>
             
                 <td>
                     <header><span>tokenization</span></header>
-                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>class Foo<br>    x: 0 .. 10<br><br>class Bar extends Foo<br>    y: 10 .. 20<br><br>bar: Bar = Bar(x = 10, y = 20)&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
+                    <p><div class="jsondiffpatch-delta jsondiffpatch-modified"><div class="jsondiffpatch-value jsondiffpatch-left-value"><pre>&quot;<br>// class Foo<br>//     x: 0 .. 10<br><br>// class Bar extends Foo<br>//     y: 10 .. 20<br><br>// bar: Bar = Bar(x = 10, y = 20)<br><br>foo = (x: Number, y: Number, a: Number = 10, b: Number = 20) =&gt; 10<br><br>value = foo(y = 1, x = 2, b = x * 2)<br>&quot;</pre></div><div class="jsondiffpatch-value jsondiffpatch-right-value"><pre>[
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Class&quot;,
-    &quot;source&quot;: &quot;class&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Foo&quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;// class Foo&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Indent&quot;,
-    &quot;source&quot;: &quot;    &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;x&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;:&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Integer&quot;,
-    &quot;source&quot;: &quot;0&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;..&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Integer&quot;,
-    &quot;source&quot;: &quot;10&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Outdent&quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;//     x: 0 .. 10&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
@@ -315,75 +277,28 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Class&quot;,
-    &quot;source&quot;: &quot;class&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Bar&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Extends&quot;,
-    &quot;source&quot;: &quot;extends&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Foo&quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;// class Bar extends Foo&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
     &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Indent&quot;,
-    &quot;source&quot;: &quot;    &quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;//     y: 10 .. 20&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;y&quot;
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;:&quot;
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
   },
   Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Integer&quot;,
-    &quot;source&quot;: &quot;10&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;..&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Integer&quot;,
-    &quot;source&quot;: &quot;20&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Outdent&quot;
+    &quot;type&quot;: &quot;Comment&quot;,
+    &quot;source&quot;: &quot;// bar: Bar = Bar(x = 10, y = 20)&quot;
   },
   Token {
     &quot;type&quot;: &quot;Eol&quot;,
@@ -395,19 +310,7 @@ bar: Bar = Bar(x = 10, y = 20)</p>
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;bar&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Operator&quot;,
-    &quot;source&quot;: &quot;:&quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Whitespace&quot;,
-    &quot;source&quot;: &quot; &quot;
-  },
-  Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Bar&quot;
+    &quot;source&quot;: &quot;foo&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
@@ -422,16 +325,72 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     &quot;source&quot;: &quot; &quot;
   },
   Token {
-    &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;Bar&quot;
-  },
-  Token {
     &quot;type&quot;: &quot;OpenParen&quot;,
     &quot;source&quot;: &quot;(&quot;
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
     &quot;source&quot;: &quot;x&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Number&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;,&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;y&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Number&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;,&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;a&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Number&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
@@ -459,7 +418,19 @@ bar: Bar = Bar(x = 10, y = 20)</p>
   },
   Token {
     &quot;type&quot;: &quot;Id&quot;,
-    &quot;source&quot;: &quot;y&quot;
+    &quot;source&quot;: &quot;b&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;:&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;Number&quot;
   },
   Token {
     &quot;type&quot;: &quot;Whitespace&quot;,
@@ -480,6 +451,154 @@ bar: Bar = Bar(x = 10, y = 20)</p>
   Token {
     &quot;type&quot;: &quot;CloseParen&quot;,
     &quot;source&quot;: &quot;)&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&gt;&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;10&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;value&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;foo&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;OpenParen&quot;,
+    &quot;source&quot;: &quot;(&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;y&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;1&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;,&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;x&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;2&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;,&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;b&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;=&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Id&quot;,
+    &quot;source&quot;: &quot;x&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Operator&quot;,
+    &quot;source&quot;: &quot;*&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Whitespace&quot;,
+    &quot;source&quot;: &quot; &quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Integer&quot;,
+    &quot;source&quot;: &quot;2&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;CloseParen&quot;,
+    &quot;source&quot;: &quot;)&quot;
+  },
+  Token {
+    &quot;type&quot;: &quot;Eol&quot;,
+    &quot;source&quot;: &quot;<br>&quot;
   }
 ]</pre></div></div></p>
                 </td>
@@ -490,355 +609,288 @@ bar: Bar = Bar(x = 10, y = 20)</p>
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="1"><div class="jsondiffpatch-property-name">1</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Class&quot;,
-  &quot;source&quot;: &quot;class&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;// class Foo&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="10"><div class="jsondiffpatch-property-name">10</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="11"><div class="jsondiffpatch-property-name">11</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;..&quot;
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;// bar: Bar = Bar(x = 10, y = 20)&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="12"><div class="jsondiffpatch-property-name">12</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="13"><div class="jsondiffpatch-property-name">13</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;10&quot;
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="14"><div class="jsondiffpatch-property-name">14</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Outdent&quot;
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;foo&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="15"><div class="jsondiffpatch-property-name">15</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="16"><div class="jsondiffpatch-property-name">16</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="17"><div class="jsondiffpatch-property-name">17</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Class&quot;,
-  &quot;source&quot;: &quot;class&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="18"><div class="jsondiffpatch-property-name">18</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="16"><div class="jsondiffpatch-property-name">16</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="17"><div class="jsondiffpatch-property-name">17</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="18"><div class="jsondiffpatch-property-name">18</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;OpenParen&quot;,
+  &quot;source&quot;: &quot;(&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="19"><div class="jsondiffpatch-property-name">19</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;Bar&quot;
+  &quot;source&quot;: &quot;x&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="2"><div class="jsondiffpatch-property-name">2</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="20"><div class="jsondiffpatch-property-name">20</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="21"><div class="jsondiffpatch-property-name">21</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Extends&quot;,
-  &quot;source&quot;: &quot;extends&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="22"><div class="jsondiffpatch-property-name">22</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="23"><div class="jsondiffpatch-property-name">23</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;Foo&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="24"><div class="jsondiffpatch-property-name">24</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="25"><div class="jsondiffpatch-property-name">25</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Indent&quot;,
-  &quot;source&quot;: &quot;    &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="26"><div class="jsondiffpatch-property-name">26</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;y&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="27"><div class="jsondiffpatch-property-name">27</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="20"><div class="jsondiffpatch-property-name">20</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Operator&quot;,
   &quot;source&quot;: &quot;:&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="28"><div class="jsondiffpatch-property-name">28</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="21"><div class="jsondiffpatch-property-name">21</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="29"><div class="jsondiffpatch-property-name">29</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;10&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="3"><div class="jsondiffpatch-property-name">3</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="22"><div class="jsondiffpatch-property-name">22</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;Foo&quot;
+  &quot;source&quot;: &quot;Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="23"><div class="jsondiffpatch-property-name">23</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="24"><div class="jsondiffpatch-property-name">24</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="25"><div class="jsondiffpatch-property-name">25</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;y&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="26"><div class="jsondiffpatch-property-name">26</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;:&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="27"><div class="jsondiffpatch-property-name">27</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="28"><div class="jsondiffpatch-property-name">28</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="29"><div class="jsondiffpatch-property-name">29</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="3"><div class="jsondiffpatch-property-name">3</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//     x: 0 .. 10&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="30"><div class="jsondiffpatch-property-name">30</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="31"><div class="jsondiffpatch-property-name">31</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;..&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="32"><div class="jsondiffpatch-property-name">32</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Whitespace&quot;,
-  &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="33"><div class="jsondiffpatch-property-name">33</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;20&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="34"><div class="jsondiffpatch-property-name">34</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Outdent&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="35"><div class="jsondiffpatch-property-name">35</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="36"><div class="jsondiffpatch-property-name">36</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Eol&quot;,
-  &quot;source&quot;: &quot;<br>&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="37"><div class="jsondiffpatch-property-name">37</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;bar&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="38"><div class="jsondiffpatch-property-name">38</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;source&quot;: &quot;a&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="32"><div class="jsondiffpatch-property-name">32</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Operator&quot;,
   &quot;source&quot;: &quot;:&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="39"><div class="jsondiffpatch-property-name">39</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="33"><div class="jsondiffpatch-property-name">33</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="34"><div class="jsondiffpatch-property-name">34</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;Number&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="35"><div class="jsondiffpatch-property-name">35</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="36"><div class="jsondiffpatch-property-name">36</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="37"><div class="jsondiffpatch-property-name">37</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="38"><div class="jsondiffpatch-property-name">38</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Integer&quot;,
+  &quot;source&quot;: &quot;10&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="39"><div class="jsondiffpatch-property-name">39</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="4"><div class="jsondiffpatch-property-name">4</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Eol&quot;,
   &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="40"><div class="jsondiffpatch-property-name">40</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;Bar&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="41"><div class="jsondiffpatch-property-name">41</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="41"><div class="jsondiffpatch-property-name">41</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;b&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="42"><div class="jsondiffpatch-property-name">42</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;=&quot;
+  &quot;source&quot;: &quot;:&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="43"><div class="jsondiffpatch-property-name">43</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="44"><div class="jsondiffpatch-property-name">44</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;Bar&quot;
+  &quot;source&quot;: &quot;Number&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="45"><div class="jsondiffpatch-property-name">45</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;OpenParen&quot;,
-  &quot;source&quot;: &quot;(&quot;
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="46"><div class="jsondiffpatch-property-name">46</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;x&quot;
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="47"><div class="jsondiffpatch-property-name">47</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="48"><div class="jsondiffpatch-property-name">48</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;=&quot;
+  &quot;type&quot;: &quot;Integer&quot;,
+  &quot;source&quot;: &quot;20&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="49"><div class="jsondiffpatch-property-name">49</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;CloseParen&quot;,
+  &quot;source&quot;: &quot;)&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="5"><div class="jsondiffpatch-property-name">5</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="50"><div class="jsondiffpatch-property-name">50</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="5"><div class="jsondiffpatch-property-name">5</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Indent&quot;,
-  &quot;source&quot;: &quot;    &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="50"><div class="jsondiffpatch-property-name">50</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;10&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="51"><div class="jsondiffpatch-property-name">51</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;,&quot;
+  &quot;source&quot;: &quot;=&gt;&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="52"><div class="jsondiffpatch-property-name">52</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="53"><div class="jsondiffpatch-property-name">53</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Id&quot;,
-  &quot;source&quot;: &quot;y&quot;
+  &quot;type&quot;: &quot;Integer&quot;,
+  &quot;source&quot;: &quot;10&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="54"><div class="jsondiffpatch-property-name">54</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="55"><div class="jsondiffpatch-property-name">55</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="56"><div class="jsondiffpatch-property-name">56</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;value&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="57"><div class="jsondiffpatch-property-name">57</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="55"><div class="jsondiffpatch-property-name">55</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="58"><div class="jsondiffpatch-property-name">58</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Operator&quot;,
   &quot;source&quot;: &quot;=&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="56"><div class="jsondiffpatch-property-name">56</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="59"><div class="jsondiffpatch-property-name">59</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="57"><div class="jsondiffpatch-property-name">57</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;20&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="58"><div class="jsondiffpatch-property-name">58</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;CloseParen&quot;,
-  &quot;source&quot;: &quot;)&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="6"><div class="jsondiffpatch-property-name">6</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;// class Bar extends Foo&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="60"><div class="jsondiffpatch-property-name">60</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;foo&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="61"><div class="jsondiffpatch-property-name">61</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;OpenParen&quot;,
+  &quot;source&quot;: &quot;(&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="62"><div class="jsondiffpatch-property-name">62</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;y&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="63"><div class="jsondiffpatch-property-name">63</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="64"><div class="jsondiffpatch-property-name">64</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="65"><div class="jsondiffpatch-property-name">65</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="66"><div class="jsondiffpatch-property-name">66</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Integer&quot;,
+  &quot;source&quot;: &quot;1&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="67"><div class="jsondiffpatch-property-name">67</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="68"><div class="jsondiffpatch-property-name">68</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="69"><div class="jsondiffpatch-property-name">69</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Id&quot;,
   &quot;source&quot;: &quot;x&quot;
 }</pre></div></li><li class="jsondiffpatch-unchanged" data-key="7"><div class="jsondiffpatch-property-name">7</div><div class="jsondiffpatch-value"><pre>Token {
-  &quot;type&quot;: &quot;Operator&quot;,
-  &quot;source&quot;: &quot;:&quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="8"><div class="jsondiffpatch-property-name">8</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="70"><div class="jsondiffpatch-property-name">70</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Whitespace&quot;,
   &quot;source&quot;: &quot; &quot;
-}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="9"><div class="jsondiffpatch-property-name">9</div><div class="jsondiffpatch-value"><pre>Token {
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="71"><div class="jsondiffpatch-property-name">71</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="72"><div class="jsondiffpatch-property-name">72</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="73"><div class="jsondiffpatch-property-name">73</div><div class="jsondiffpatch-value"><pre>Token {
   &quot;type&quot;: &quot;Integer&quot;,
-  &quot;source&quot;: &quot;0&quot;
+  &quot;source&quot;: &quot;2&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="74"><div class="jsondiffpatch-property-name">74</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;,&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="75"><div class="jsondiffpatch-property-name">75</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="76"><div class="jsondiffpatch-property-name">76</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;b&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="77"><div class="jsondiffpatch-property-name">77</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="78"><div class="jsondiffpatch-property-name">78</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;=&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="79"><div class="jsondiffpatch-property-name">79</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="8"><div class="jsondiffpatch-property-name">8</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Comment&quot;,
+  &quot;source&quot;: &quot;//     y: 10 .. 20&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="80"><div class="jsondiffpatch-property-name">80</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Id&quot;,
+  &quot;source&quot;: &quot;x&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="81"><div class="jsondiffpatch-property-name">81</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="82"><div class="jsondiffpatch-property-name">82</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Operator&quot;,
+  &quot;source&quot;: &quot;*&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="83"><div class="jsondiffpatch-property-name">83</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Whitespace&quot;,
+  &quot;source&quot;: &quot; &quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="84"><div class="jsondiffpatch-property-name">84</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Integer&quot;,
+  &quot;source&quot;: &quot;2&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="85"><div class="jsondiffpatch-property-name">85</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;CloseParen&quot;,
+  &quot;source&quot;: &quot;)&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="86"><div class="jsondiffpatch-property-name">86</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
+}</pre></div></li><li class="jsondiffpatch-unchanged" data-key="9"><div class="jsondiffpatch-property-name">9</div><div class="jsondiffpatch-value"><pre>Token {
+  &quot;type&quot;: &quot;Eol&quot;,
+  &quot;source&quot;: &quot;<br>&quot;
 }</pre></div></li></ul></div></p>
                 </td>
             
                 <td>
                     <header><span>parsing</span></header>
                     <p>module test.sample {
-    class Foo {
-        x : 0 .. 10
-    }
-    class Bar extends Foo {
-        y : 10 .. 20
-    }
-    bar : Bar = Bar(x = 10 , y = 20)
+    foo = (x : Number , y : Number , a : Number = 10 , b : Number = 20) => 10
+    value = foo(y = 1 , x = 2 , b = x * 2)
 }</p>
                 </td>
             
                 <td>
                     <header><span>destructuringAndUnaryNumberLiterals</span></header>
                     <p>module test.sample {
-    class Foo {
-        x : 0 .. 10
-    }
-    class Bar extends Foo {
-        y : 10 .. 20
-    }
-    bar : Bar = Bar(x = 10 , y = 20)
+    foo = (x : Number , y : Number , a : Number = 10 , b : Number = 20) => 10
+    value = foo(y = 1 , x = 2 , b = x * 2)
 }</p>
                 </td>
             
                 <td>
                     <header><span>opsToTypeNodes</span></header>
-                    <p><div class="d2h-wrapper">
-    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
-    <div class="d2h-file-header">
-    <span class="d2h-file-name-wrapper">
-    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
-    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
-</svg></span>
-    <span class="d2h-file-name">_</span>
-    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
-    </div>
-    <div class="d2h-file-diff">
-        <div class="d2h-code-wrapper">
-            <table class="d2h-diff-table">
-                <tbody class="d2h-diff-tbody">
-                <tr>
-    <td class="d2h-code-linenumber d2h-info"></td>
-    <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,9 +1,9 @@</div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">1</div>
-<div class="line-num2">1</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">module test.sample {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">2</div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    class Foo {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">3</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        x : 0 .. 10</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">3</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        x : <ins>(</ins>0 .. 10<ins>)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
-<div class="line-num2">4</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
-<div class="line-num2">5</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    class Bar extends Foo {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        y : 10 .. 20</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">6</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        y : <ins>(</ins>10 .. 20<ins>)</ins></span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
-<div class="line-num2">7</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">8</div>
-<div class="line-num2">8</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    bar : Bar = Bar(x = 10 , y = 20)</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
-<div class="line-num2">9</div>
-    </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">}</span>
-        </div>
-    </td>
-</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</div></p>
+                    <p>module test.sample {
+    foo = (x : Number , y : Number , a : Number = 10 , b : Number = 20) => 10
+    value = foo(y = 1 , x = 2 , b = x * 2)
+}</p>
                 </td>
             
                 <td>
@@ -860,7 +912,7 @@ bar: Bar = Bar(x = 10, y = 20)</p>
                 <tr>
     <td class="d2h-code-linenumber d2h-info"></td>
     <td class="d2h-info">
-        <div class="d2h-code-line d2h-info">@@ -1,9 +1,9 @@</div>
+        <div class="d2h-code-line d2h-info">@@ -1,4 +1,9 @@</div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
@@ -874,14 +926,14 @@ bar: Bar = Bar(x = 10, y = 20)</p>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
+    <td class="d2h-code-linenumber d2h-del">
       <div class="line-num1">2</div>
-<div class="line-num2">2</div>
+<div class="line-num2"></div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    class Foo {</span>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    foo = (<del>x : Number , y : Number , a : Number = 10 , b : Number = 20) =&gt; 10</del></span>
         </div>
     </td>
 </tr><tr>
@@ -892,7 +944,18 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        x : (0 .. 10)</span>
+            <span class="d2h-code-line-ctn"><del>    value</del> <del>= foo(y = 1 , </del>x <del>=</del> <del>2 , b = x * 2)</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    <ins>const </ins>foo = (</span>
         </div>
     </td>
 </tr><tr>
@@ -903,40 +966,29 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>var </ins>x : (0 .. 10)</span>
+            <span class="d2h-code-line-ctn"><ins>        var</ins> x <ins>:</ins> <ins>Number</ins></span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">4</div>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
 <div class="line-num2">4</div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var y : Number</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">5</div>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
 <div class="line-num2">5</div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    class Bar extends Foo {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">6</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">        y : (10 .. 20)</span>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var a : Number = 10</span>
         </div>
     </td>
 </tr><tr>
@@ -947,29 +999,18 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">        <ins>var </ins>y : (10 .. 20)</span>
+            <span class="d2h-code-line-ctn">        var b : Number = 20</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">7</div>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
 <div class="line-num2">7</div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-del">
-      <div class="line-num1">8</div>
-<div class="line-num2"></div>
-    </td>
-    <td class="d2h-del">
-        <div class="d2h-code-line d2h-del">
-            <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    bar : Bar = Bar(x = 10<del> </del>, y = 20)</span>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; 10</span>
         </div>
     </td>
 </tr><tr>
@@ -980,12 +1021,12 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    <ins>var </ins>bar : Bar = Bar(<ins>const </ins>x = 10,<ins>const</ins> y = 20)</span>
+            <span class="d2h-code-line-ctn">    const value = foo(const y = 1,const x = 2,const b = `*`(x,2))</span>
         </div>
     </td>
 </tr><tr>
     <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">9</div>
+      <div class="line-num1">4</div>
 <div class="line-num2">9</div>
     </td>
     <td class="d2h-cntx">
@@ -1006,39 +1047,39 @@ bar: Bar = Bar(x = 10, y = 20)</p>
                 <td>
                     <header><span>removeSoloBlocks</span></header>
                     <p>module test.sample {
-    class Foo {
-        var x : (0 .. 10)
-    }
-    class Bar extends Foo {
-        var y : (10 .. 20)
-    }
-    var bar : Bar = Bar(const x = 10,const y = 20)
+    const foo = (
+        var x : Number
+        var y : Number
+        var a : Number = 10
+        var b : Number = 20
+    ) => 10
+    const value = foo(const y = 1,const x = 2,const b = `*`(x,2))
 }</p>
                 </td>
             
                 <td>
                     <header><span>flattenSequencesAddMeta</span></header>
                     <p>module test.sample {
-    class Foo {
-        var x : (0 .. 10)
-    }
-    class Bar extends Foo {
-        var y : (10 .. 20)
-    }
-    var bar : Bar = Bar(const x = 10,const y = 20)
+    const foo = (
+        var x : Number
+        var y : Number
+        var a : Number = 10
+        var b : Number = 20
+    ) => 10
+    const value = foo(const y = 1,const x = 2,const b = `*`(x,2))
 }</p>
                 </td>
             
                 <td>
                     <header><span>moveMetaToFunctions</span></header>
                     <p>module test.sample {
-    class Foo {
-        var x : (0 .. 10)
-    }
-    class Bar extends Foo {
-        var y : (10 .. 20)
-    }
-    var bar : Bar = Bar(const x = 10,const y = 20)
+    const foo = (
+        var x : Number
+        var y : Number
+        var a : Number = 10
+        var b : Number = 20
+    ) => 10
+    const value = foo(const y = 1,const x = 2,const b = `*`(x,2))
 }</p>
                 </td>
             
@@ -1082,40 +1123,29 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    class Foo {</span>
+            <span class="d2h-code-line-ctn">    const foo = (</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-ins">
-      <div class="line-num1"></div>
-<div class="line-num2">2</div>
-    </td>
-    <td class="d2h-ins">
-        <div class="d2h-code-line d2h-ins">
-            <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    class <ins>`test.sample.</ins>Foo<ins>`</ins> {</span>
-        </div>
-    </td>
-</tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
+    <td class="d2h-code-linenumber d2h-del">
       <div class="line-num1">3</div>
-<div class="line-num2">3</div>
+<div class="line-num2"></div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var x : (0 .. 10)</span>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var x : Number</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
+    <td class="d2h-code-linenumber d2h-del">
       <div class="line-num1">4</div>
-<div class="line-num2">4</div>
+<div class="line-num2"></div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var y : Number</span>
         </div>
     </td>
 </tr><tr>
@@ -1126,7 +1156,51 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    class Bar extends Foo {</span>
+            <span class="d2h-code-line-ctn">        var a : Number = 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var b : Number = 20</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const <ins>`test.sample.</ins>foo<ins>`</ins> = (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var x : <ins>(</ins>Number<ins>)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var y : <ins>(</ins>Number<ins>)</ins></span>
         </div>
     </td>
 </tr><tr>
@@ -1137,18 +1211,18 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    class <ins>`test.sample.</ins>Bar<ins>`</ins> extends <ins>`test.sample.</ins>Foo<ins>`</ins> {</span>
+            <span class="d2h-code-line-ctn">        var a : <ins>(</ins>Number<ins>)</ins> = 10</span>
         </div>
     </td>
 </tr><tr>
-    <td class="d2h-code-linenumber d2h-cntx">
-      <div class="line-num1">6</div>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
 <div class="line-num2">6</div>
     </td>
-    <td class="d2h-cntx">
-        <div class="d2h-code-line d2h-cntx">
-            <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">        var y : (10 .. 20)</span>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var b : <ins>(</ins>Number<ins>)</ins> = 20</span>
         </div>
     </td>
 </tr><tr>
@@ -1159,7 +1233,7 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-cntx">
         <div class="d2h-code-line d2h-cntx">
             <span class="d2h-code-line-prefix"> </span>
-            <span class="d2h-code-line-ctn">    }</span>
+            <span class="d2h-code-line-ctn">    ) =&gt; 10</span>
         </div>
     </td>
 </tr><tr>
@@ -1170,7 +1244,7 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-del">
         <div class="d2h-code-line d2h-del">
             <span class="d2h-code-line-prefix">-</span>
-            <span class="d2h-code-line-ctn">    var bar : Bar = Bar<del>(</del>const x = 10,const y = 20)</span>
+            <span class="d2h-code-line-ctn">    const value = foo<del>(</del>const y = 1,const x = 2,const b = `*`(x,2))</span>
         </div>
     </td>
 </tr><tr>
@@ -1181,7 +1255,7 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">    var <ins>`test.sample.</ins>bar<ins>`</ins> : <ins>`test.sample.</ins>Bar<ins>`</ins> = <ins>`test.sample.</ins>Bar<ins>`(</ins>const x = 10,const y = 20)</span>
+            <span class="d2h-code-line-ctn">    const <ins>`test.sample.</ins>value<ins>`</ins> = <ins>`test.sample.</ins>foo<ins>`(</ins>const y = 1,const x = 2,const b = `*`(x,2))</span>
         </div>
     </td>
 </tr><tr>
@@ -1203,7 +1277,7 @@ bar: Bar = Bar(x = 10, y = 20)</p>
     <td class="d2h-ins">
         <div class="d2h-code-line d2h-ins">
             <span class="d2h-code-line-prefix">+</span>
-            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Integer&quot;]</span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Number&quot;,&quot;*&quot;,&quot;Integer&quot;]</span>
         </div>
     </td>
 </tr>
@@ -1218,57 +1292,845 @@ bar: Bar = Bar(x = 10, y = 20)</p>
                 <td>
                     <header><span>insertConditionalAssignments</span></header>
                     <p>module test.sample {
-    class `test.sample.Foo` {
-        var x : (0 .. 10)
-    }
-    class `test.sample.Bar` extends `test.sample.Foo` {
-        var y : (10 .. 20)
-    }
-    var `test.sample.bar` : `test.sample.Bar` = `test.sample.Bar`(const x = 10,const y = 20)
+    const `test.sample.foo` = (
+        var x : (Number)
+        var y : (Number)
+        var a : (Number) = 10
+        var b : (Number) = 20
+    ) => 10
+    const `test.sample.value` = `test.sample.foo`(const y = 1,const x = 2,const b = `*`(x,2))
 }
-// externals: ["Integer"]</p>
+// externals: ["Number","*","Integer"]</p>
                 </td>
             
                 <td>
                     <header><span>ssaForm</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,9 +1,9 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module test.sample {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">2</div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    const `test.sample.foo` = (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var x : (Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var y : (Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var a : (Number) = 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var b : (Number) = 20</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var <ins>`</ins>x<ins>:1:0`</ins> : (Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var <ins>`</ins>y<ins>:1:0`</ins> : (Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var <ins>`</ins>a<ins>:1:0`</ins> : (Number) = 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var <ins>`</ins>b<ins>:1:0`</ins> : (Number) = 20</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">8</div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    const `test.sample.value` = `test.sample.foo`(const y = 1,const x = 2,const b = `*`(x,2))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>checkCalls</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -5,6 +5,6 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">5</div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `a:1:0` : (Number) = 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">6</div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `b:1:0` : (Number) = 20</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">7</div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) =&gt; 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">8</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.value` = `test.sample.foo`(const <del>y</del> = <del>1</del>,const <del>x</del> = <del>2</del>,const b = `*`(x,2))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.value` = `test.sample.foo`(const <ins>x</ins> = <ins>2</ins>,const <ins>y</ins> = <ins>1</ins>,<ins>10,</ins>const b = `*`(x,2))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Number&quot;,&quot;*&quot;,&quot;Integer&quot;]</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (1)</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -1,10 +1,15 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">1</div>
+<div class="line-num2">1</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">module test.sample {</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">2</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.foo` <del>=</del> (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">3</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var `x:1:0` <del>:</del> (Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">4</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var `y:1:0` <del>:</del> (Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">5</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var `a:1:0` : (Number) = 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">6</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">        var `b:1:0` : (Number) = 20</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">7</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    ) <del>=&gt;</del> 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">8</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn"><del>    const</del> `<del>test.sample.value` = `test.sample.foo`(const </del>x<del> = 2,const y = </del>1<del>,10,const</del> <del>b</del> <del>= `*`(x,2))</del></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">2</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.foo` <ins>::</ins> (</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">3</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `x:1:0` <ins>:::</ins> (Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">4</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `y:1:0` <ins>:::</ins> (Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">5</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `a:1:0` : (Number) <ins>:: (10) </ins>= 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">6</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `b:1:0` : (Number) <ins>:: (20) </ins>= 20</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">7</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) <ins>::</ins> <ins>(</ins>10<ins>) = (</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">8</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn"><ins>        var</ins> `x<ins>:</ins>1<ins>:0`</ins> <ins>:::</ins> <ins>(Number)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">9</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `y:1:0` ::: (Number)</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `a:1:0` : (Number) :: (10) = 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">        var `b:1:0` : (Number) :: (20) = 20</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    ) :: (10) =&gt; 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.value` = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b = `*`(x,2))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">9</div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Number&quot;,&quot;*&quot;,&quot;Integer&quot;]</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (2)</span></header>
+                    <p><div class="d2h-wrapper">
+    <div id="d2h-95" class="d2h-file-wrapper" data-lang="">
+    <div class="d2h-file-header">
+    <span class="d2h-file-name-wrapper">
+    <span class="d2h-icon-wrapper"><svg aria-hidden="true" class="d2h-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12">
+    <path d="M6 5H2v-1h4v1zM2 8h7v-1H2v1z m0 2h7v-1H2v1z m0 2h7v-1H2v1z m10-7.5v9.5c0 0.55-0.45 1-1 1H1c-0.55 0-1-0.45-1-1V2c0-0.55 0.45-1 1-1h7.5l3.5 3.5z m-1 0.5L8 2H1v12h10V5z"></path>
+</svg></span>
+    <span class="d2h-file-name">_</span>
+    <span class="d2h-tag d2h-changed d2h-changed-tag">CHANGED</span></span>
+    </div>
+    <div class="d2h-file-diff">
+        <div class="d2h-code-wrapper">
+            <table class="d2h-diff-table">
+                <tbody class="d2h-diff-tbody">
+                <tr>
+    <td class="d2h-code-linenumber d2h-info"></td>
+    <td class="d2h-info">
+        <div class="d2h-code-line d2h-info">@@ -10,6 +10,6 @@</div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">10</div>
+<div class="line-num2">10</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `a:1:0` : (Number) :: (10) = 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">11</div>
+<div class="line-num2">11</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">        var `b:1:0` : (Number) :: (20) = 20</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">12</div>
+<div class="line-num2">12</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">    ) :: (10) =&gt; 10</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-del">
+      <div class="line-num1">13</div>
+<div class="line-num2"></div>
+    </td>
+    <td class="d2h-del">
+        <div class="d2h-code-line d2h-del">
+            <span class="d2h-code-line-prefix">-</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.value` = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b = `*`(x,2))</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-ins">
+      <div class="line-num1"></div>
+<div class="line-num2">13</div>
+    </td>
+    <td class="d2h-ins">
+        <div class="d2h-code-line d2h-ins">
+            <span class="d2h-code-line-prefix">+</span>
+            <span class="d2h-code-line-ctn">    const `test.sample.value` <ins>:: (10) </ins>= `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b <ins>:: (4) </ins>= `*`(x,2<ins>) :: (4</ins>))<ins> :: (10)</ins></span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">14</div>
+<div class="line-num2">14</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">}</span>
+        </div>
+    </td>
+</tr><tr>
+    <td class="d2h-code-linenumber d2h-cntx">
+      <div class="line-num1">15</div>
+<div class="line-num2">15</div>
+    </td>
+    <td class="d2h-cntx">
+        <div class="d2h-code-line d2h-cntx">
+            <span class="d2h-code-line-prefix"> </span>
+            <span class="d2h-code-line-ctn">&#x2F;&#x2F; externals: [&quot;Number&quot;,&quot;*&quot;,&quot;Integer&quot;]</span>
+        </div>
+    </td>
+</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div></p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (3)</span></header>
                     <p>module test.sample {
-    class `test.sample.Foo` {
-        var x : (0 .. 10)
-    }
-    class `test.sample.Bar` extends `test.sample.Foo` {
-        var y : (10 .. 20)
-    }
-    var `test.sample.bar` : `test.sample.Bar` = `test.sample.Bar`(const x = 10,const y = 20)
+    const `test.sample.foo` :: (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) = (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) => 10
+    const `test.sample.value` :: (10) = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b :: (4) = `*`(x,2) :: (4)) :: (10)
 }
-// externals: ["Integer"]</p>
+// externals: ["Number","*","Integer"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (4)</span></header>
+                    <p>module test.sample {
+    const `test.sample.foo` :: (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) = (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) => 10
+    const `test.sample.value` :: (10) = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b :: (4) = `*`(x,2) :: (4)) :: (10)
+}
+// externals: ["Number","*","Integer"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (5)</span></header>
+                    <p>module test.sample {
+    const `test.sample.foo` :: (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) = (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) => 10
+    const `test.sample.value` :: (10) = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b :: (4) = `*`(x,2) :: (4)) :: (10)
+}
+// externals: ["Number","*","Integer"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (6)</span></header>
+                    <p>module test.sample {
+    const `test.sample.foo` :: (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) = (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) => 10
+    const `test.sample.value` :: (10) = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b :: (4) = `*`(x,2) :: (4)) :: (10)
+}
+// externals: ["Number","*","Integer"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (7)</span></header>
+                    <p>module test.sample {
+    const `test.sample.foo` :: (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) = (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) => 10
+    const `test.sample.value` :: (10) = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b :: (4) = `*`(x,2) :: (4)) :: (10)
+}
+// externals: ["Number","*","Integer"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (8)</span></header>
+                    <p>module test.sample {
+    const `test.sample.foo` :: (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) = (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) => 10
+    const `test.sample.value` :: (10) = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b :: (4) = `*`(x,2) :: (4)) :: (10)
+}
+// externals: ["Number","*","Integer"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (9)</span></header>
+                    <p>module test.sample {
+    const `test.sample.foo` :: (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) = (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) => 10
+    const `test.sample.value` :: (10) = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b :: (4) = `*`(x,2) :: (4)) :: (10)
+}
+// externals: ["Number","*","Integer"]</p>
+                </td>
+            
+                <td>
+                    <header><span>typeInference (10)</span></header>
+                    <p>module test.sample {
+    const `test.sample.foo` :: (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) = (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) => 10
+    const `test.sample.value` :: (10) = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b :: (4) = `*`(x,2) :: (4)) :: (10)
+}
+// externals: ["Number","*","Integer"]</p>
                 </td>
             
                 <td>
                     <header><span>identity</span></header>
                     <p>module test.sample {
-    class `test.sample.Foo` {
-        var x : (0 .. 10)
-    }
-    class `test.sample.Bar` extends `test.sample.Foo` {
-        var y : (10 .. 20)
-    }
-    var `test.sample.bar` : `test.sample.Bar` = `test.sample.Bar`(const x = 10,const y = 20)
+    const `test.sample.foo` :: (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) = (
+        var `x:1:0` ::: (Number)
+        var `y:1:0` ::: (Number)
+        var `a:1:0` : (Number) :: (10) = 10
+        var `b:1:0` : (Number) :: (20) = 20
+    ) :: (10) => 10
+    const `test.sample.value` :: (10) = `test.sample.foo`(const x :: (2) = 2,const y :: (1) = 1,10,const b :: (4) = `*`(x,2) :: (4)) :: (10)
 }
-// externals: ["Integer"]</p>
-                </td>
-            
-                <td>
-                    <header><span>checkCalls</span></header>
-                    <p>module test.sample {
-    class `test.sample.Foo` {
-        var x : (0 .. 10)
-    }
-    class `test.sample.Bar` extends `test.sample.Foo` {
-        var y : (10 .. 20)
-    }
-    var `test.sample.bar` : `test.sample.Bar` = `test.sample.Bar`(const x = 10,const y = 20)
-}
-// externals: ["Integer"]</p>
+// externals: ["Number","*","Integer"]</p>
                 </td>
             </tr>
         </div>

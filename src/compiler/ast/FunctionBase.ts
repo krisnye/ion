@@ -40,20 +40,20 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
         }
         //  semantic check that if we declare any root variables that their names must match
         //  their function parameter names.
-        let semanticErrors = new Array<Error>();
-        for (let i = 0; i < args.length; i++) {
-            let arg = args[i];
-            let param = this.parameters[i];
-            if (arg instanceof Variable) {
-                if (arg.id.name !== param.id.name) {
-                    semanticErrors.push(new SemanticError(`Variable name in call scope did not match expected parameter name "${param.id.name}"`, arg.id));
-                }
-            }
-        }
-        if (semanticErrors.length > 0) {
-            errors.push(...semanticErrors);
-            return false;
-        }
+        // let semanticErrors = new Array<Error>();
+        // for (let i = 0; i < args.length; i++) {
+        //     let arg = args[i];
+        //     let param = this.parameters[i];
+        //     if (arg instanceof Variable) {
+        //         if (arg.id.name !== param.id.name) {
+        //             semanticErrors.push(new SemanticError(`Variable name in call scope did not match expected parameter name "${param.id.name}"`, arg.id));
+        //         }
+        //     }
+        // }
+        // if (semanticErrors.length > 0) {
+        //     errors.push(...semanticErrors);
+        //     return false;
+        // }
         let firstErrors = new Array<Error>();
         if (!this.areArgumentsValid_internal(args, types, c, firstErrors, false)) {
             let secondErrors = new Array<Error>();

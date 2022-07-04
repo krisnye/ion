@@ -117,7 +117,7 @@ export class Class extends Container implements Type, Declaration, Callable {
     }
 
     getReturnType(source: Node, args: Type[] | undefined, c: EvaluationContext) {
-        let parameters = this.getAllParameters(c);
+        let parameters = this.getParameters(c);
         if (!args) {
             args = parameters.map(p => p.type!);
         }
@@ -155,7 +155,7 @@ export class Class extends Container implements Type, Declaration, Callable {
 
     _cachedPreResolveFunctionType?: FunctionType
 
-    private getAllParameters(c: EvaluationContext): Variable[] {
+    getParameters(c: EvaluationContext): Variable[] {
         return this.getFunctionType(c).parameters;
     }
 

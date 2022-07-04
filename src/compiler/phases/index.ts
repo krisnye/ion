@@ -29,7 +29,6 @@ export const parsingPhases: Phase[] = [
     resolveExternalReferences,
     insertConditionalAssignments,
     ssaForm,
-    identity,
     //  MUST be solo up to this point so we can get external dependencies.
 ];
 

@@ -62,9 +62,13 @@ export default class ErrorContext extends Context
 
     getError(errorDescription: string, ...locations: SourceLocation[]) {
         let message = errorDescription + "\n"
+        locations = locations.filter(Boolean);
         for (let i = 0; i < locations.length; i++) {
             let location = locations[i]
-            let {filename} = location
+            if (location == null) {
+                debugger;
+            }
+            let { filename } = location
             let combineLocations = [location]
             while (isCloseLine(location, locations[i + 1])) {
                 combineLocations.push(locations[++i])
