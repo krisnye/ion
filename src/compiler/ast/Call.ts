@@ -154,7 +154,6 @@ export function replaceParamReferencesWithArgumentTypes(c: EvaluationContext, ar
                         if (propertyType) {
                             return propertyType;
                         }
-                        // console.log("FOUND!!!!!!!!!!!!! " + node + " ====> " + objectType + " ???? " + propertyType);
                     }
                 }
             }

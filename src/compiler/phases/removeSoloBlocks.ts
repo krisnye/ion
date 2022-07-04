@@ -2,7 +2,7 @@ import { Block } from "../ast/Block";
 import { Phase } from "./Phase";
 import { traverse } from "../traverse";
 import { Conditional } from "../ast/Conditional";
-import { Function } from "../ast/Function";
+import { Group } from "../pst/Group";
 
 function removeSoloBlock(node) {
     return (node.constructor === Block && node.nodes.length === 1) ? node.nodes[0] : node;

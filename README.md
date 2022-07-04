@@ -118,6 +118,6 @@ Cross platform modeling language
       - [x] Type && Array checking is not right yet... FFS.
     - [?] Chained Conditional Type, check property
   - [x] Check and re-order named function arguments semantically.
-  - [ ] UFCS conversion to static call.
   - [ ] Start adding some useful basic semantic checks.
+  - [ ] UFCS conversion to static call.
   - [ ] MultiFunction runtime dispatch algorithm.

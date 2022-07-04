@@ -14,6 +14,7 @@ import { ssaForm } from "./ssaForm";
 import { removeInlineDents } from "./removeInlineDents";
 import { insertConditionalAssignments } from "./insertConditionalAssignments";
 import { checkCalls } from "./checkCalls";
+import { semanticChecks } from "./semanticChecks";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -25,6 +26,7 @@ export const parsingPhases: Phase[] = [
     removeSoloBlocks,
     flattenSequencesAddMeta,
     moveMetaToFunctions,
+    semanticChecks,
     // createMultiFunctions,
     resolveExternalReferences,
     insertConditionalAssignments,

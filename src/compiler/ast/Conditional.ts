@@ -1,12 +1,11 @@
-import { Node, NodeProps } from "../Node";
-import { Expression } from "./Expression";
+import { Expression, ExpressionProps } from "./Expression";
 
-export interface ConditionalProps extends NodeProps {
+export interface ConditionalProps extends ExpressionProps {
     test: Expression;
     consequent: Expression;
     alternate: Expression | null;    
 }
-export class Conditional extends Node {
+export class Conditional extends Expression {
 
     test!: Expression;
     consequent!: Expression;
