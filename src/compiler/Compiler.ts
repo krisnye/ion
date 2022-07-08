@@ -230,7 +230,7 @@ export class Compiler {
         }
     }
 
-    logFilter = new Set([ "test.sample", "test.lerp" ])
+    logFilter = new Set([ "test.sample" ])
     logModule(name: string) {
         // return true;
         return this.logFilter && this.logFilter.has(name);

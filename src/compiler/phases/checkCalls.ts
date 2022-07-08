@@ -7,7 +7,7 @@ import { Variable } from "../ast/Variable";
 import { SemanticError } from "../SemanticError";
 import { Call } from "../ast/Call";
 import { EvaluationContext } from "../EvaluationContext";
-import { Callable } from "../ast/Callable";
+import { Callable, isCallable } from "../ast/Callable";
 import { Expression } from "../ast/Expression";
 
 export function checkCalls(moduleName, module: Container, externals: Map<string, Container>): ReturnType<Phase> {
@@ -38,11 +38,16 @@ export function checkCalls(moduleName, module: Container, externals: Map<string,
     return [result, errors];
 }
 
-function reorderCallArguments(c: EvaluationContext, call: Call) {
+function reorderCallArguments(c: EvaluationContext, call: Call): Call {
     let originalArgs = call.nodes;
-    let values = c.getValues(call.callee) as Callable[];
+    let values = c.getValues(call.callee).filter(isCallable);
     //  get the function with the most parameters.
-    let func = values.sort((a, b) => b.getParameters(c).length - a.getParameters(c).length)[0];
+    let func: Callable | undefined = values.sort((a, b) => b.getParameters(c).length - a.getParameters(c).length)[0];
+    if (func == null) {
+        //  UFCS functions may not be identified as callable yet.
+        //  This also means we cannot reorder UFCS call arguments.
+        return call;
+    }
     let parameters = func.getParameters(c);
     //  get the parameter names mapped to indices.
     let namesToParametersAndIndexes = new Map(func.getParameters(c).map((parameter, index) => [getSSAOriginalName(parameter.id.name), { parameter, index }]));

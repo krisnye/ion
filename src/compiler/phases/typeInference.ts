@@ -3,14 +3,16 @@ import { Container } from "../ast/Container";
 import { traverseWithScope } from "./createScopeMaps";
 import { Expression } from "../ast/Expression";
 import { Function } from "../ast/Function";
-import { skip, traverse } from "../traverse";
+import { skip } from "../traverse";
 import { Call } from "../ast/Call";
 import { FunctionDeclaration } from "../ast/FunctionDeclaration";
 import { clone } from "../common";
-import { Node } from "../Node";
 
-export function isInferFunction(node): node is Function {
-    return node.parameters.some(p => p.declaredType == null);
+export function isInferFunction(node: Expression): node is Function {
+    if (node instanceof Function) {
+        return node.parameters.some(p => p.declaredType == null);
+    }
+    return false;
 }
 
 function getCreateFunctionKey(func: FunctionDeclaration) {

@@ -30,20 +30,23 @@ export function join(...steps: string[]) {
     return steps.join(pathSeparator)
 }
 
+export function *getResolvePaths(path: string) {
+    let steps = split(path);
+    while (steps.length > 0) {
+        yield join(...steps);
+        steps.splice(steps.length - 2, 1);
+    }
+}
+
 //  will successively test to find a path that exists
 //  for instance, for path foo.bar.baz
 //  will test "foo.bar.baz", "foo.baz", "baz"
 export function resolve<T>(path: string, map: Map<string,T>): string | null {
-    let steps = split(path);
-    while (true) {
-        let check = join(...steps);
+    for (let check of getResolvePaths(path)) {
         let value = map.get(check);
         if (value != null) {
             return check;
         }
-        if (steps.length <= 1) {
-            return null;
-        }
-        steps.splice(steps.length - 2, 1);
     }
+    return null;
 }

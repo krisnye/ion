@@ -101,7 +101,7 @@ export function traverseWithScope(
         }
         let original = lookup.getOriginal(ref);
         let scope = scopeMaps.get(original) ?? scopeMaps.get(null);
-        return scope[name];
+        return scope[name] ?? [];
     }
     let c = new EvaluationContext(getDeclarations, lookup);
     let visitor = callback(c);

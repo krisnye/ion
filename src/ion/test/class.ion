@@ -1,13 +1,3 @@
 class Vector
     x: 2.0 .. 4.0
     y: 3.0 .. 5.0
-
-foo() =>
-    vector: Vector
-// add(a: Vector): 5.0 .. 9.0 => a.x + a.y
-// bar: 5.0 .. 9.0 = add(vector)
-
-// vector2: Vector( x: 2.0, y: 3.0 ) = Vector(2.0, 3.0)
-
-//  todo: check that this fails
-// vector3 = Vector(2, 3, 5)

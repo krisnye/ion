@@ -119,5 +119,6 @@ Cross platform modeling language
     - [?] Chained Conditional Type, check property
   - [x] Check and re-order named function arguments semantically.
   - [ ] Start adding some useful basic semantic checks.
-  - [ ] UFCS conversion to static call.
+  - [/] UFCS conversion to static call.
+    - [ ] References need to be converted to their absolute reference name.
   - [ ] MultiFunction runtime dispatch algorithm.

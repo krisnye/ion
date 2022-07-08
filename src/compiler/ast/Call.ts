@@ -1,7 +1,7 @@
 import { EvaluationContext } from "../EvaluationContext";
 import { Expression } from "./Expression";
 import { Function } from "./Function";
-import { isMetaName, logOnce } from "../utility";
+import { isMetaName } from "../utility";
 import { Reference } from "./Reference";
 import { Container, ContainerProps } from "./Container";
 import { isCallable } from "./Callable";
@@ -19,6 +19,7 @@ import { Member } from "./Member";
 
 export interface CallProps extends ContainerProps {
     callee: Expression;
+    uniformFunctionCallSyntax?: boolean;
 }
 
 export type MetaCall = Call & { callee: Reference }
@@ -30,8 +31,14 @@ export function isMetaCall(node): node is MetaCall {
 export class Call extends Container {
 
     callee!: Expression;
+    uniformFunctionCallSyntax!: boolean;
 
-    constructor(props: CallProps) { super(props); }
+    constructor(props: CallProps) {
+        super({
+            uniformFunctionCallSyntax: false,
+            ...props
+        });
+    }
     patch(props: Partial<CallProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {
@@ -39,7 +46,7 @@ export class Call extends Container {
         // can't resolve the callee type if it's a multi-method until the arguments are known.
         let possibleFunctions = this.getResolvedPossibleFunctions(c);
         if (possibleFunctions) {
-            let allInferred = possibleFunctions.length > 0 && possibleFunctions.every(f => isInferFunction(f));
+            let allInferred = possibleFunctions.length > 0 && possibleFunctions.every(isInferFunction);
             if (possibleFunctions.length > 0 && !allInferred) {
                 yield* possibleFunctions.filter(f => !isInferFunction(f));
                 return;
@@ -49,7 +56,7 @@ export class Call extends Container {
         yield* c.getValues(this.callee);
     }
 
-    getResolvedPossibleFunctions(c: EvaluationContext): Function[] | null {
+    getResolvedPossibleFunctions(c: EvaluationContext): Expression[] | null {
         const areAllParametersResolved = this.nodes.every(param => param.resolved);
         if (areAllParametersResolved) {
             let values = c.getValues(this.callee) as Function[];
@@ -84,6 +91,14 @@ export class Call extends Container {
         return this.nodes.map(node => node.type!);
     }
 
+    protected resolve(c: EvaluationContext) {
+        let callee = this.callee;
+        if (callee instanceof Call && callee.uniformFunctionCallSyntax) {
+            return callee.patch({ nodes: [...callee.nodes, ...this.nodes], uniformFunctionCallSyntax: false });
+        }
+        return super.resolve(c);
+    }
+
     protected resolveType(c: EvaluationContext) {
         let callables = c.getValues(this.callee) as Function[];
         let args = this.nodes;
@@ -101,7 +116,7 @@ export class Call extends Container {
             return null;
         }
         let errors = new Array<Error>();
-        if (!callable.areArgumentsValid(args, types, c, errors)) {
+        if (!this.uniformFunctionCallSyntax && !callable.areArgumentsValid(args, types, c, errors)) {
             c.errors.push(...errors);
         }
 

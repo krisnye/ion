@@ -99,7 +99,7 @@ export class Function extends FunctionBase implements Callable {
             meta: [],
             resolved: true,
         });
-        return this.patch({ returnType, type });
+        return this.patch({ returnType, type, resolved: true });
     }
 
     toString() {

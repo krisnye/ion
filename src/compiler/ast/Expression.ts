@@ -45,7 +45,6 @@ export class Expression extends Node implements Required<ExpressionProps> {
             return null;
         }
         let resolved = this.resolve(c);
-        resolved = resolved.patch({ resolved: true });
         return resolved;
     }
 
@@ -54,7 +53,7 @@ export class Expression extends Node implements Required<ExpressionProps> {
         if (type?.simplify) {
             type = type.simplify(c) as Type;
         }
-        return this.patch({ type });
+        return this.patch({ type, resolved: true });
     }
 
     protected resolveType(c: EvaluationContext): Type | null {
