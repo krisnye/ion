@@ -1,7 +1,7 @@
 import { EvaluationContext } from "../EvaluationContext";
 import { Expression } from "./Expression";
 import { Function } from "./Function";
-import { isMetaName } from "../utility";
+import { isMetaName, logOnce } from "../utility";
 import { Reference } from "./Reference";
 import { Container, ContainerProps } from "./Container";
 import { isCallable } from "./Callable";
@@ -16,6 +16,7 @@ import { Identifier } from "./Identifier";
 import { Type } from "./Type";
 import { ObjectType } from "./ObjectType";
 import { Member } from "./Member";
+import { runInThisContext } from "vm";
 
 export interface CallProps extends ContainerProps {
     callee: Expression;
@@ -81,8 +82,9 @@ export class Call extends Container {
                         (param, index) => param.patch({ declaredType: param.declaredType ?? argTypes[index] })
                     )
                 });
-                // logOnce("!!!!! we should infer: " + createFunction);
-                return new FunctionDeclaration(createFunction);
+                // logOnce("!!!!! we should infer: " + createFunction + " ??? " + this.callee);
+                let id = this.callee instanceof Reference ? new Identifier(this.callee) : undefined;
+                return new FunctionDeclaration({ id, ...createFunction as any });
             }
         }
     }

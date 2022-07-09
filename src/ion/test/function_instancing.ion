@@ -1,5 +1,5 @@
 
-add_function_instancing_testing(a, b) => a + b
+add = (a, b) => a + b
 
-combine(a: Integer, b: Integer) => add_function_instancing_testing(a, b)
-combine(a: Number, b: Number) => add_function_instancing_testing(a, b)
+combine(a: Integer, b: Integer) => add(a, b)
+combine(a: Number, b: Number) => add(a, b)

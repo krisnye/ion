@@ -15,9 +15,9 @@ export function isInferFunction(node: Expression): node is Function {
     return false;
 }
 
-function getCreateFunctionKey(func: FunctionDeclaration) {
-    return `${func.id.name}(${func.parameters.map(p => p.declaredType)})`;
-}
+// function getCreateFunctionKey(func: FunctionDeclaration) {
+//     return `${func.id.name}(${func.parameters.map(p => p.declaredType)})`;
+// }
 
 export function typeInference(moduleName, module: Container, externals: Map<string, Container>): ReturnType<Phase> {
     let errors!: Error[];
