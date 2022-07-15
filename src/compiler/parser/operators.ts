@@ -84,9 +84,14 @@ export const infixPrecedence: { [op: string]: number | undefined } = {
     "&&=": 3,
     "||=": 3,
     ",": 1,
+    ";": 1,
 } as const;
 
 export const infixRightAssociative: { [op: string]: boolean | undefined } = {
     "=": true,
     "**": true,
 } as const;
+
+export function isOperator(name: string) {
+    return prefixPrecedence[name] != null || infixPrecedence[name] != null;
+}

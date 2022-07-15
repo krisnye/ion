@@ -21,9 +21,6 @@ export class FunctionDeclaration extends Function implements Declaration {
     patch(props: Partial<FunctionDeclarationProps>) { return super.patch(props); }
 
     get inferredKey() {
-        if (this.id == null) {
-            console.log("NULL", { string: this.toString() }, this);
-        }
         return this.inferred ? `${this.id.name}(${this.parameters.map(p => p.declaredType).join(`,`)})` : null;
     }
 

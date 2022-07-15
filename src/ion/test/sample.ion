@@ -1,7 +1,9 @@
 
-add = (x: Number, y: Number) => x + y
+x = ( y = 4 ; y * 2 )
 
-double = (x: Number) => x * 2
+// add = (x: Number, y: Number) => x + y
 
-value = 12
-value2 = value.add(5).double.double
+// double = (x: Number) => x * 2
+
+// value = 12
+// value2 = value.add(5).double.double

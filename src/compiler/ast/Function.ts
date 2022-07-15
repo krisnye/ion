@@ -64,8 +64,9 @@ export class Function extends FunctionBase implements Callable {
         let native = getMetaCall(this, coreTypes.Native);
         if (native) {
             const types = this.parameters.map(node => node.type);
-            const nativeName = `${this.id!.name}(${types.join(`,`)})`;
-            const nativeTypeFunction = nativeTypeFunctions[nativeName];
+            const shortNativeName = `${this.id!.name}`;
+            const longNativeName = `${this.id!.name}(${types.join(`,`)})`;
+            const nativeTypeFunction = nativeTypeFunctions[longNativeName] ?? nativeTypeFunctions[shortNativeName];
             if (nativeTypeFunction) {
                 return this.getNativeReturnType(argTypes, nativeTypeFunction, c);
             }

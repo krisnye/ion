@@ -1,0 +1,3 @@
+
+@Native("null")
+`;`(a, b): Boolean => 0

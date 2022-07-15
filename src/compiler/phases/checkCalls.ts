@@ -9,6 +9,9 @@ import { Call } from "../ast/Call";
 import { EvaluationContext } from "../EvaluationContext";
 import { Callable, isCallable } from "../ast/Callable";
 import { Expression } from "../ast/Expression";
+import { isOperator } from "../parser/operators";
+import { getMetaCall, MetaContainer } from "../ast/MetaContainer";
+import { coreTypes } from "../coreTypes";
 
 export function checkCalls(moduleName, module: Container, externals: Map<string, Container>): ReturnType<Phase> {
     let errors: Error[] = [];
@@ -48,6 +51,11 @@ function reorderCallArguments(c: EvaluationContext, call: Call): Call {
         //  This also means we cannot reorder UFCS call arguments.
         return call;
     }
+    let native = getMetaCall(func as any, coreTypes.Native);
+    if (native) {
+        return call;
+    }
+
     let parameters = func.getParameters(c);
     //  get the parameter names mapped to indices.
     let namesToParametersAndIndexes = new Map(func.getParameters(c).map((parameter, index) => [getSSAOriginalName(parameter.id.name), { parameter, index }]));
@@ -76,6 +84,7 @@ function reorderCallArguments(c: EvaluationContext, call: Call): Call {
                 setArg(values.index, arg);
             }
             else {
+                // this shouldn't be thrown for native functions/operations.
                 throw new SemanticError(`Invalid argument name ${name}`, arg);
             }
         }

@@ -267,6 +267,8 @@ export const nativeTypeFunctions: { [key: string]: TypeFunction | undefined } = 
 
     "sqrt((>= 0.0))": (node, types, c) => { return calculateMonotonic(node, types[0] as NumberType, "sqrt") },
 
+    ";": (node, types, c) => { return types[1] },
+
     "-((Number))": (node, types) => calculateNegation(node, types[0] as NumberType),
     "-((Integer))": (node, types) => calculateNegation(node, types[0] as NumberType),
     "abs((Number))": (node, types) => calculateAbsType(node, types[0] as NumberType),

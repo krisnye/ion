@@ -118,6 +118,11 @@ Cross platform modeling language
       - [x] Type && Array checking is not right yet... FFS.
     - [?] Chained Conditional Type, check property
   - [x] Check and re-order named function arguments semantically.
-  - [ ] Start adding some useful basic semantic checks.
   - [x] UFCS conversion to static call.
-  - [ ] MultiFunction runtime dispatch algorithm.
+  - [ ] Make call argument checking work with UFCS.
+  - [ ] Define and add patching or 'with' semantics.
+    - [ ] Add a Void type
+    - [ ] Use the Void type for any un-provided arguments.
+  - [x] Add ; operator that evaluates left and right and returns right
+  - [ ] Add ! operator as syntactic sugar so a!b() becomes [a, value] = a.b() ; value
+  - [ ] Start adding some useful basic semantic checks.
