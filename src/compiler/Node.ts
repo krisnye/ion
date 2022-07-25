@@ -29,4 +29,14 @@ export class Node extends Immutable implements Required<NodeProps> {
         };
     }
 
+    toESNode(c: EvaluationContext): any {
+        return {
+            type: "ExpressionStatement",
+            expression: {
+                type: "Literal",
+                value: `${this.constructor.name}.toESNode() not implemented`
+            }
+        }
+    }
+
 }

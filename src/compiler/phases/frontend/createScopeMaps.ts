@@ -1,14 +1,13 @@
 import { Visitor } from "@glas/traverse";
-import { Reference } from "../ast/Reference";
-import { Container } from "../ast/Container";
-import { EvaluationContext } from "../EvaluationContext";
-import { Node } from "../Node";
-import { SemanticError } from "../SemanticError";
-import { traverse, skip, Lookup } from "../traverse";
-import { isScope } from "../ast/Scope";
-import { Function } from "../ast/Function";
-import { isSSAVersionName } from "./ssaForm";
-import { Declaration, isDeclaration } from "../ast/Declaration";
+import { Reference } from "../../ast/Reference";
+import { Container } from "../../ast/Container";
+import { EvaluationContext } from "../../EvaluationContext";
+import { Node } from "../../Node";
+import { traverse, skip, Lookup } from "../../traverse";
+import { isScope } from "../../ast/Scope";
+import { Function } from "../../ast/Function";
+import { isSSAVersionName } from "../frontend/ssaForm";
+import { Declaration, isDeclaration } from "../../ast/Declaration";
 
 export type NodeMap<T> = {
     get(node: Node | null): T
@@ -32,15 +31,18 @@ function setScopeValue(scope, name, value) {
  */
 export default function createScopeMaps(root, externals?: Map<string,Container>): ScopeMaps {
     let globalScope: ScopeMap = {};
-    // if (externals != null) {
-    //     for (let { nodes } of externals.values()) {
-    //         for (let node of nodes) {
-    //             if (isDeclaration(node)) {
-    //                 globalScope[node.id.name] = node;
-    //             }
-    //         }
-    //     }
-    // }
+    if (externals != null) {
+        for (let { nodes } of externals.values()) {
+            if (Array.isArray(nodes)) {
+                for (let node of nodes) {
+                    if (isDeclaration(node)) {
+                        globalScope[node.id.name] ??= [];
+                        globalScope[node.id.name].push(node);
+                    }
+                }
+            }
+        }
+    }
     let map = new Map<Node | null, ScopeMap>();
     map.set(null, globalScope);
     let scopes: ScopeMap[] = [globalScope];
@@ -90,7 +92,7 @@ export type GetVariableFunction = {
 
 export function traverseWithScope(
     externals: Map<string,Container>,
-    node: Readonly<any>,
+    node: Node,
     callback: (c: EvaluationContext) => Visitor,
 ): any {
     let lookup = new Lookup();
@@ -98,6 +100,9 @@ export function traverseWithScope(
     function getDeclarations(ref: Reference | Node, name?: string): Declaration[] {
         if (name == null) {
             name = (ref as Reference).name;
+        }
+        if (externals == null) {
+            console.log(externals);
         }
         let original = lookup.getOriginal(ref);
         let scope = scopeMaps.get(original) ?? scopeMaps.get(null);

@@ -26,6 +26,7 @@ export function testModule(source: string, expected: string | object | number, o
             assert.equal(result.length, expected, `Expected ${expected} errors, actual: ${result.length}`);
         }
         else {
+            console.log(result);
             assert.fail(`Unexpected errors: ${result}`);
         }
     }

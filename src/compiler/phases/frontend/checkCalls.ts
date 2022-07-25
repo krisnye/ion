@@ -1,17 +1,18 @@
-import { Phase } from "./Phase";
-import { Container } from "../ast/Container";
+import { Phase } from "../Phase";
+import { Container } from "../../ast/Container";
 import { traverseWithScope } from "./createScopeMaps";
-import { FunctionDeclaration } from "../ast/FunctionDeclaration";
-import { getSSAOriginalName } from "./ssaForm";
-import { Variable } from "../ast/Variable";
-import { SemanticError } from "../SemanticError";
-import { Call } from "../ast/Call";
-import { EvaluationContext } from "../EvaluationContext";
-import { Callable, isCallable } from "../ast/Callable";
-import { Expression } from "../ast/Expression";
-import { isOperator } from "../parser/operators";
-import { getMetaCall, MetaContainer } from "../ast/MetaContainer";
-import { coreTypes } from "../coreTypes";
+import { FunctionDeclaration } from "../../ast/FunctionDeclaration";
+import { getSSAOriginalName } from "../frontend/ssaForm";
+import { Variable } from "../../ast/Variable";
+import { SemanticError } from "../../SemanticError";
+import { Call } from "../../ast/Call";
+import { EvaluationContext } from "../../EvaluationContext";
+import { Callable, isCallable } from "../../ast/Callable";
+import { Expression } from "../../ast/Expression";
+import { isOperator } from "../../parser/operators";
+import { getMetaCall, MetaContainer } from "../../ast/MetaContainer";
+import { coreTypes } from "../../coreTypes";
+import { Undefined } from "../../ast/Undefined";
 
 export function checkCalls(moduleName, module: Container, externals: Map<string, Container>): ReturnType<Phase> {
     let errors: Error[] = [];
@@ -101,7 +102,7 @@ function reorderCallArguments(c: EvaluationContext, call: Call): Call {
             }
             let defaultValue = parameter.value;
             if (defaultValue != null) {
-                reorderedArgs[index] = defaultValue;
+                reorderedArgs[index] = new Undefined({ location: call.location });
             }
             else {
                 throw new SemanticError(`Missing required property ${parameterName}`, call);

@@ -8,7 +8,6 @@ import { EvaluationContext } from "../EvaluationContext";
 import { isSubtype } from "../analysis/isSubtype";
 import { SemanticError } from "../SemanticError";
 import { Type } from "./Type";
-import { getSSAOriginalName } from "../phases/ssaForm";
 
 export interface VariableProps extends ExpressionProps {
     id: Identifier;
@@ -72,11 +71,34 @@ export class Variable extends Expression implements Declaration {
         return `${toMetaString(this)}${this.isType() ? `type` : this.constant ? `const` : `var`} ${this.id}${this.toTypeString()}${this.value != null ? ` = ${this.value}`: ``}`;
     }
 
+    toESParameter(c: EvaluationContext) {
+        let id = this.id.toESNode(c);
+        return this.value ? {
+            type: "AssignmentPattern",
+            left: id,
+            right: this.value.toESNode(c)
+        } : id;
+    }
+
     toJSON(): any {
         return {
             ...super.toJSON(),
             //  prevent declaredType from being written if false
             declaredType: this.declaredType ?? void 0,
+        };
+    }
+
+    toESNode(c: EvaluationContext) {
+        return {
+            type: "VariableDeclaration",
+            kind: "let",
+            declarations: [
+                {
+                    type: "VariableDeclarator",
+                    id: this.id.toESNode(c),
+                    init: this.value?.toESNode(c),
+                }
+            ]
         };
     }
 

@@ -1,7 +1,5 @@
-import { isSubtype } from "../analysis/isSubtype";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
-import { getSSAUniqueName } from "../phases/ssaForm";
 import { SemanticError } from "../SemanticError";
 import { Expression, ExpressionProps } from "./Expression";
 import { Reference } from "./Reference";

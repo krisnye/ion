@@ -1,16 +1,16 @@
-import { isSubtype } from "../analysis/isSubtype";
-import { Call } from "../ast/Call";
-import { Expression } from "../ast/Expression";
-import { Function } from "../ast/Function";
-import { NumberLiteral } from "../ast/NumberLiteral";
-import { NumberType } from "../ast/NumberType";
-import { Reference } from "../ast/Reference";
-import { Type } from "../ast/Type";
-import { UnionType } from "../ast/UnionType";
-import { isValidId } from "../common";
-import { EvaluationContext } from "../EvaluationContext";
-import { Node } from "../Node";
-import { SourceLocation } from "../SourceLocation";
+import { isSubtype } from "../../analysis/isSubtype";
+import { Call } from "../../ast/Call";
+import { Expression } from "../../ast/Expression";
+import { Function } from "../../ast/Function";
+import { NumberLiteral } from "../../ast/NumberLiteral";
+import { NumberType } from "../../ast/NumberType";
+import { Reference } from "../../ast/Reference";
+import { Type } from "../../ast/Type";
+import { UnionType } from "../../ast/UnionType";
+import { isValidId } from "../../common";
+import { EvaluationContext } from "../../EvaluationContext";
+import { Node } from "../../Node";
+import { SourceLocation } from "../../SourceLocation";
 
 export type TypeFunction = (node: Function, types: Type[], c: EvaluationContext) => Type;
 

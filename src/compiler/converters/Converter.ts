@@ -1,9 +1,8 @@
 import { Container } from "../ast/Container";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
-import { GetVariableFunction, traverseWithScope } from "../phases/createScopeMaps";
+import { traverseWithScope } from "../phases/frontend/createScopeMaps";
 import { Phase } from "../phases/Phase";
-import { Lookup } from "../traverse";
 
 type ConverterType<A extends Node> = new (props: any) => A;
 type ConverterFunction<A extends Node> = (a: A, c: EvaluationContext) => Node | null | boolean | void | Error[];

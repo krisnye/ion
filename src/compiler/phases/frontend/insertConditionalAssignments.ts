@@ -1,14 +1,14 @@
-import { Phase } from "./Phase";
-import { traverse } from "../traverse";
-import { Conditional } from "../ast/Conditional";
-import { Reference } from "../ast/Reference";
+import { Phase } from "../Phase";
+import { traverse } from "../../traverse";
+import { Conditional } from "../../ast/Conditional";
+import { Reference } from "../../ast/Reference";
 import { traverseWithScope } from "./createScopeMaps";
-import { isValidId } from "../common";
-import { isTypeName } from "../utility";
-import { addToBlock } from "../ast/Block";
-import { ConditionalAssertion } from "../ast/ConditionalAssertion";
-import { Expression } from "../ast/Expression";
-import { Assignment } from "../ast/Assignment";
+import { isValidId } from "../../common";
+import { isTypeName } from "../../utility";
+import { addToBlock } from "../../ast/Block";
+import { ConditionalAssertion } from "../../ast/ConditionalAssertion";
+import { Expression } from "../../ast/Expression";
+import { Assignment } from "../../ast/Assignment";
 
 function getReferences(root, predicate: (ref: Reference) => boolean) {
     let refs = new Map<string,Reference>();

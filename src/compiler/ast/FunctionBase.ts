@@ -34,7 +34,7 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
     }
 
     areArgumentsValid(args: Expression[], types: Type[], c: EvaluationContext, errors = new Array<Error>()) : boolean {
-        if (args.length !== this.parameters.length) {
+        if (args.length > this.parameters.length) {
             errors.push(new SemanticError(`Expected ${this.parameters.length} arguments but received ${args.length}`, ...args));
             return false;
         }
@@ -66,13 +66,15 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
     }
 
     private areArgumentsValid_internal(args: Expression[], argTypes: Type[], c: EvaluationContext, errors = new Array<Error>(), secondTry = false) : boolean {
-        if (argTypes.length !== this.parameters.length) {
-            return false;
-        }
         let paramTypes = toUniformArgParameterTypes(this.parameters);
-        for (let i = 0; i < argTypes.length; i++) {
+        for (let i = 0; i < paramTypes.length; i++) {
             let arg = args[i];
-            let argType = argTypes[i];
+            let argType: Type | undefined = argTypes[i];
+            let parameter = this.parameters[i];
+            let required = parameter.value == null;
+            if (arg == null && !required) {
+                continue;
+            }
             let paramType = paramTypes[i];
             // let debug = arg.toString().startsWith("`bazzle");
             if (secondTry) {

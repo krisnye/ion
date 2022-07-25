@@ -1,18 +1,16 @@
-import { traverse, skip } from "../traverse";
-import { createParser } from "../parser/createParser";
-import { Phase } from "./Phase";
-import { BinaryExpression } from "../pst/BinaryExpression";
-import { Group } from "../pst/Group";
-import { SemanticError } from "../SemanticError";
-import { UnaryOperation } from "../pst/UnaryOperation";
-import { NumberLiteral } from "../ast/NumberLiteral";
-import { Identifier } from "../ast/Identifier";
-import { Call as PstCall } from "../pst/Call";
-import { Variable } from "../ast/Variable";
-import { Token } from "../Token";
-import { tokenTypes } from "../tokenizer/TokenType";
-import { For } from "../pst/For";
-import { FunctionDeclaration } from "../ast/FunctionDeclaration";
+import { traverse, skip } from "../../traverse";
+import { createParser } from "../../parser/createParser";
+import { Phase } from "../Phase";
+import { BinaryExpression } from "../../pst/BinaryExpression";
+import { Group } from "../../pst/Group";
+import { SemanticError } from "../../SemanticError";
+import { UnaryOperation } from "../../pst/UnaryOperation";
+import { NumberLiteral } from "../../ast/NumberLiteral";
+import { Identifier } from "../../ast/Identifier";
+import { Call as PstCall } from "../../pst/Call";
+import { Token } from "../../Token";
+import { tokenTypes } from "../../tokenizer/TokenType";
+import { For } from "../../pst/For";
 
 const parser = createParser();
 

@@ -1,17 +1,17 @@
-import { isDeclaration } from "../ast/Declaration";
-import { Reference } from "../ast/Reference";
-import { join, resolve, getAbsolutePath } from "../pathFunctions";
-import { Module } from "../pst/Module";
-import { SemanticError } from "../SemanticError";
+import { isDeclaration } from "../../ast/Declaration";
+import { Reference } from "../../ast/Reference";
+import { join, resolve, getAbsolutePath } from "../../pathFunctions";
+import { Module } from "../../ast/Module";
+import { SemanticError } from "../../SemanticError";
 import createScopeMaps, { NodeMap, ScopeMap } from "./createScopeMaps";
-import { Phase } from "./Phase";
-import { traverse } from "../traverse";
-import { Identifier } from "../ast/Identifier";
-import { coreTypes } from "../coreTypes";
-import { NumberType } from "../ast/NumberType";
-import { TypeReference } from "../ast/TypeReference";
-import { ArrayExpression } from "../ast/ArrayExpression";
-import { NumberLiteral } from "../ast/NumberLiteral";
+import { Phase } from "../Phase";
+import { traverse } from "../../traverse";
+import { Identifier } from "../../ast/Identifier";
+import { coreTypes } from "../../coreTypes";
+import { NumberType } from "../../ast/NumberType";
+import { TypeReference } from "../../ast/TypeReference";
+import { ArrayExpression } from "../../ast/ArrayExpression";
+import { NumberLiteral } from "../../ast/NumberLiteral";
 
 export function resolveExternalReferences(moduleName, module, externalModules: Map<string,Module>): ReturnType<Phase> {
     let errors: Error[] = [];

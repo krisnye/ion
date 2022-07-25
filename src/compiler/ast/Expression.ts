@@ -3,6 +3,7 @@ import { Node } from "../Node";
 import { EvaluationContext } from "../EvaluationContext";
 import { SourceLocation } from "../SourceLocation";
 import { logOnce } from "../utility";
+import { ESNode } from "./ESNode";
 
 export interface ExpressionProps {
     location: SourceLocation;

@@ -5,11 +5,10 @@ import { InfixParselet } from "./InfixParslet";
 import { Node } from "../Node";
 import { Block } from "../ast/Block";
 import { SourceLocation } from "../SourceLocation";
-import { Module } from "../pst/Module";
+import { Module } from "../ast/Module";
 import { SourcePosition } from "../SourcePosition";
 import { tokenTypes } from "../tokenizer/TokenType";
 import { Expression } from "../ast/Expression";
-import { resourceLimits } from "worker_threads";
 
 export class Parser {
 

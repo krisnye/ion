@@ -70,6 +70,7 @@ export const tokenTypes = {
     //  Id has to come after Operator because of operator 'void'
     In: new TokenType("In", /^in\b/),
     If: new TokenType("If", /^if\b/),
+    Null: new TokenType("Null", /^null\b/),
     Else: new TokenType("Else", /^else\b/),
     Return: new TokenType("Return", /^return\b/),
     Class: new TokenType("Class", /^class\b/),

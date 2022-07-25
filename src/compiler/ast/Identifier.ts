@@ -1,4 +1,5 @@
 import { isValidId } from "../common";
+import { EvaluationContext } from "../EvaluationContext";
 import { Node, NodeProps } from "../Node";
 
 export interface IdentifierProps extends NodeProps {
@@ -14,6 +15,13 @@ export class Identifier extends Node {
 
     toString() {
         return `${isValidId(this.name) ? this.name : `\`${this.name}\``}`;
+    }
+
+    toESNode(c: EvaluationContext) {
+        return {
+            type: "Identifier",
+            name: this.name,
+        }        
     }
 
 }

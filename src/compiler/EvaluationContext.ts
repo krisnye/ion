@@ -3,7 +3,7 @@ import { Expression } from "./ast/Expression";
 import { Reference } from "./ast/Reference";
 import { Type } from "./ast/Type";
 import { Variable } from "./ast/Variable";
-import { GetVariableFunction as GetDeclarationsFunction } from "./phases/createScopeMaps";
+import { GetVariableFunction as GetDeclarationsFunction } from "./phases/frontend/createScopeMaps";
 import { Lookup } from "./traverse";
 
 export class EvaluationContext {

@@ -19,6 +19,7 @@ import { Expression } from "./Expression";
 import { coreTypes } from "../coreTypes";
 import { NumberType } from "./NumberType";
 import { SemanticError } from "../SemanticError";
+import { ESNode } from "./ESNode";
 
 export interface ClassProps extends ContainerProps {
     id: Identifier;
@@ -190,6 +191,44 @@ export class Class extends Container implements Type, Declaration, Callable {
 
     toString() {
         return `${toMetaString(this)}class ${this.id}${this.extends.length > 0 ? " extends " + this.extends : ""} ${ Container.toString([...this.meta, ...this.nodes]) }`;
+    }
+
+    toESNode(c: EvaluationContext) {
+        let vars = this.nodes;
+        return new ESNode({
+            type: "ClassDeclaration",
+            id: this.id.toESNode(c),
+            body: {
+                type: "ClassBody",
+                body: [
+                    {
+                        type: "MethodDefinition",
+                        kind: "constructor",
+                        key: { type: "Identifier", name: "constructor" },
+                        value: {
+                            type: "FunctionExpression",
+                            params: vars.map(v => v.toESParameter(c)),
+                            body: {
+                                type: "BlockStatement",
+                                body: vars.map(variable => ({
+                                    type: "ExpressionStatement",
+                                    expression: {
+                                        type: "AssignmentExpression",
+                                        operator: "=",
+                                        left: {
+                                            type: "MemberExpression",
+                                            object: { type: "ThisExpression" },
+                                            property: variable.id.toESNode(c),
+                                        },
+                                        right: variable.id.toESNode(c)
+                                    }
+                                }))
+                            }
+                        }
+                    }
+                ]
+            }
+        });
     }
 
 }

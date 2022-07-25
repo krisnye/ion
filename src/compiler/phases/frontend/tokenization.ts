@@ -1,5 +1,5 @@
-import { createTokenizer } from "../tokenizer/createTokenizer";
-import { Phase } from "./Phase";
+import { createTokenizer } from "../../tokenizer/createTokenizer";
+import { Phase } from "../Phase";
 
 const tokenizer = createTokenizer();
 

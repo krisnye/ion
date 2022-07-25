@@ -3,7 +3,7 @@ import { BinaryExpression } from "./BinaryExpression";
 import { Expression } from "./Expression";
 
 export enum BasicType {
-    None        = 0,
+    Void        = 0,
     Number      = 1 << 0,
     String      = 1 << 1,
     Object      = 1 << 2,
@@ -12,6 +12,8 @@ export enum BasicType {
     Map         = 1 << 5,
     Function    = 1 << 6,
     Type        = 1 << 7,
+    Null        = 1 << 8,
+    Undefined   = 1 << 9,
     All         = 0xFF,
 }
 

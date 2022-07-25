@@ -38,4 +38,11 @@ export class Reference extends Expression  {
         return `${Identifier.prototype.toString.call(this)}`;
     }
 
+    toESNode(c: EvaluationContext) {
+        return {
+            type: "Identifier",
+            name: this.name,
+        }        
+    }
+
 }

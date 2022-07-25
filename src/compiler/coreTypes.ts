@@ -9,4 +9,9 @@ export const coreTypes = {
     Type: getAbsolutePath("Type"),
     Any: getAbsolutePath("Any"),
     Infer: getAbsolutePath("Infer"),
+    Null: getAbsolutePath("Null"),
+    Void: getAbsolutePath("Void"),
+    Undefined: getAbsolutePath("Undefined"),
 }
+
+export const Native_javascript = "javascript";

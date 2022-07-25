@@ -11,3 +11,15 @@ export function traverse(node: Readonly<any>, visitor: Visitor) {
     })
 }
 
+export const skipTypePaths = function skip(node, ancestors, path) {
+    let step = path[path.length - 1];
+    if (step === "type") {
+        return true;
+    }
+    return node instanceof SourceLocation;
+}
+
+export function traverseSkipTypePaths(node: Readonly<any>, visitor: Visitor) {
+    return glasTraverse(node, { skip: skipTypePaths, ...visitor, });
+}
+

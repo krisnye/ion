@@ -1,5 +1,18 @@
 import { isValidId } from "./common";
 
+export function memoize<A,B>(fn: (a: A) => B): (a: A) => B {
+    let cache = new Map<A,B>();
+    return (a: A) => {
+        let cached = cache.get(a);
+        if (cached == null) {
+            cache.set(a, cached = fn(a)); 
+        }
+        return cached;
+    }
+}
+
+export const evalMemoized = memoize(eval);
+
 function firstLetterOfLastName(name: string) {
     return name[name.lastIndexOf(".") + 1];
 }

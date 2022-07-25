@@ -2,33 +2,49 @@ import { Call, isMetaCall, MetaCall } from "./Call";
 import { Node } from "../Node";
 import { SemanticError } from "../SemanticError";
 import { Container } from "./Container";
-import { Instance } from "./Instance";
 import { Reference } from "./Reference";
+import { EvaluationContext } from "../EvaluationContext";
+import { Class } from "./Class";
+import { Expression } from "./Expression";
 
 export interface MetaContainer extends Node {
     meta: Node[];
 }
 
-export function getMetaCall(container: MetaContainer, globalPath: string): Instance | Call | null {
+export function getMetaFieldArgument(call: MetaCall, field: string, c: EvaluationContext): Expression | null {
+    let nativeClass = c.getValue(call.callee) as Class;
+    let index = nativeClass.nodes.findIndex(node => node.id.name === field);
+    if (index >= 0) {
+        return call.nodes[index];
+    }
+    return null;
+}
+
+export function getMetaFieldValue(call: MetaCall, field: string, c: EvaluationContext): Expression | null {
+    let arg = getMetaFieldArgument(call, field, c);
+    return arg ? c.getValue(arg) : null;
+}
+
+export function getMetaCall(container: MetaContainer, globalPath: string): MetaCall | null {
     let calls = getMetaCalls(container, globalPath);
     if (calls.length > 1) {
         throw new SemanticError(`Can only have a Meta attribute of each type`, ...calls);
     }
-    return calls[0] ?? null;
+    return calls[0] as MetaCall ?? null;
 }
 
 function getMetaCalls(container: MetaContainer, globalPath: string) {
-    let calls = new Array<Instance | Call>();
+    let calls = new Array<Call>();
     for (let meta of container.meta) {
         // handle both right now
         //  TODO: Fix this later.
         if (meta instanceof Call && meta.callee instanceof Reference && meta.callee.name === globalPath) {
             calls.push(meta);
         } 
-        // this only works once the MetaCalls are converted into Instance
-        if (meta instanceof Instance && meta.class.name  === globalPath) {
-            calls.push(meta);
-        }
+        // // this only works once the MetaCalls are converted into Instance
+        // if (meta instanceof Instance && meta.class.name  === globalPath) {
+        //     calls.push(meta);
+        // }
     }
     return calls;
 }

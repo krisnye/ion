@@ -1,19 +1,19 @@
-import { Phase } from "./Phase";
+import { Phase } from "../Phase";
 import { traverseWithScope } from "./createScopeMaps";
-import { Variable } from "../ast/Variable";
-import { Node } from "../Node";
-import { isScope, Scope } from "../ast/Scope";
-import { Conditional } from "../ast/Conditional";
-import { Assignment } from "../ast/Assignment";
-import { EvaluationContext } from "../EvaluationContext";
-import { Block } from "../ast/Block";
+import { Variable } from "../../ast/Variable";
+import { Node } from "../../Node";
+import { isScope, Scope } from "../../ast/Scope";
+import { Conditional } from "../../ast/Conditional";
+import { Assignment } from "../../ast/Assignment";
+import { EvaluationContext } from "../../EvaluationContext";
+import { Block } from "../../ast/Block";
 import { traverse } from "@glas/traverse";
-import { Reference } from "../ast/Reference";
-import { Identifier } from "../ast/Identifier";
-import { TypeofExpression } from "../ast/TypeofExpression";
-import { UnionType } from "../ast/UnionType";
-import { Loop } from "../ast/Loop";
-import { Function } from "../ast/Function";
+import { Reference } from "../../ast/Reference";
+import { Identifier } from "../../ast/Identifier";
+import { TypeofExpression } from "../../ast/TypeofExpression";
+import { UnionType } from "../../ast/UnionType";
+import { Loop } from "../../ast/Loop";
+import { Function } from "../../ast/Function";
 
 const ssaVersionSeparator = ":";
 

@@ -63,7 +63,7 @@ export class Member extends Expression {
                 type = option.getPropertyType(key, c);
             }
             if (type == null) {
-                // check for a method call syntax
+                // check for a uniform function call syntax UFCS
                 if (this.property instanceof Identifier) {
                     let name = this.property.name;
                     let fullPath = join(this.property.location.filename, name);
@@ -75,6 +75,8 @@ export class Member extends Expression {
                             // convert this to a function call.
                             return new Call({
                                 location: this.location,
+                                //  mark as uniform function call syntax so it's not tested yet.
+                                //  as it may be incomplete with more parameters to come later.
                                 uniformFunctionCallSyntax: true,
                                 callee: new Reference({
                                     location: this.property.location,

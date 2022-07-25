@@ -1,5 +1,5 @@
 import { strict as assert } from "assert";
-import { parsing } from "../phases/parsing";
+import { parsing } from "../phases/frontend/parsing";
 import { testExpression } from "./testExpression";
 import { testModule } from "./testModule";
 

@@ -1,10 +1,10 @@
-import { Phase } from "./Phase";
+import { Phase } from "../Phase";
 import { tokenization } from "./tokenization";
 import { parsing } from "./parsing";
 import { destructuringAndUnaryNumberLiterals } from "./destructuringAndUnaryNumberLiterals";
 import { opsToValueNodes as opsToValueNodes } from "./opsToValueNodes";
 import { flattenSequencesAddMeta } from "./flattenSequencesAddMeta";
-import { identity } from "./identity";
+import { identity } from "../identity";
 import { resolveExternalReferences } from "./resolveExternalReferences";
 import { typeInference } from "./typeInference";
 import { opsToTypeNodes } from "./opsToTypeNodes";
@@ -15,6 +15,7 @@ import { removeInlineDents } from "./removeInlineDents";
 import { insertConditionalAssignments } from "./insertConditionalAssignments";
 import { checkCalls } from "./checkCalls";
 import { semanticChecks } from "./semanticChecks";
+import { checkUFCS } from "./checkUFCS";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -47,5 +48,7 @@ export const assemblyPhases: Phase[] = [
     //  before type inference, fix named function calls, check all args same name, reorder names
     checkCalls,
     typeInference,
+    //  some UFCS functions may not have been checked yet, so we check them now.
+    checkUFCS,
     identity,
 ];

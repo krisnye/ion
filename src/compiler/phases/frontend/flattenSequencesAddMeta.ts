@@ -1,11 +1,11 @@
-import { ArrayExpression } from "../ast/ArrayExpression";
-import { addMetaCallsToContainers } from "../ast/MetaContainer";
-import { Container } from "../ast/Container";
-import { Group } from "../pst/Group";
-import { Sequence } from "../pst/Sequence";
-import { tokenTypes } from "../tokenizer/TokenType";
-import { Phase } from "./Phase";
-import { traverse } from "../traverse";
+import { ArrayExpression } from "../../ast/ArrayExpression";
+import { addMetaCallsToContainers } from "../../ast/MetaContainer";
+import { Container } from "../../ast/Container";
+import { Group } from "../../pst/Group";
+import { Sequence } from "../../pst/Sequence";
+import { tokenTypes } from "../../tokenizer/TokenType";
+import { Phase } from "../Phase";
+import { traverse } from "../../traverse";
 
 export function flattenSequencesAddMeta(moduleName, module): ReturnType<Phase> {
     let errors = [];

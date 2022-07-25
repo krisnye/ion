@@ -2,7 +2,7 @@ import getFinalExpressions from "../analysis/getFinalExpressions";
 import { isSubtype } from "../analysis/isSubtype";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
-import { nativeTypeFunctions, TypeFunction } from "../phases/nativeTypeFunctions";
+import { nativeTypeFunctions, TypeFunction } from "../phases/frontend/nativeTypeFunctions";
 import { SemanticError } from "../SemanticError";
 import { Node } from "../Node";
 import { Call } from "./Call";
@@ -105,6 +105,20 @@ export class Function extends FunctionBase implements Callable {
 
     toString() {
         return `${toMetaString(this)}${this.id ?? ``}${super.toString()} => ${this.body}`;
+    }
+
+    toESNode(c: EvaluationContext) {
+        return {
+            type: "FunctionExpression",
+            id: this.id?.toESNode(c),
+            params: this.parameters.map(p => p.toESNode(c)),
+            body: {
+                type: "BlockStatement",
+                body: [
+                    this.body.toESNode(c),
+                ]
+            }
+        }
     }
 
 }

@@ -1,8 +1,8 @@
-import { Expression } from "../ast/Expression";
-import { EvaluationContext } from "../EvaluationContext";
-import { SemanticError } from "../SemanticError";
+import { Expression } from "../../ast/Expression";
+import { EvaluationContext } from "../../EvaluationContext";
+import { SemanticError } from "../../SemanticError";
 import { traverseWithScope } from "./createScopeMaps";
-import { Phase } from "./Phase";
+import { Phase } from "../Phase";
 
 function *getUnresolvedDependencies(node: Expression, c: EvaluationContext) {
     for (const dep of node.getDependencies(c)) {

@@ -1,22 +1,24 @@
 import { EvaluationContext } from "../EvaluationContext";
 import { Expression } from "./Expression";
 import { Function } from "./Function";
-import { isMetaName, logOnce } from "../utility";
+import { evalMemoized, isMetaName, logOnce } from "../utility";
 import { Reference } from "./Reference";
 import { Container, ContainerProps } from "./Container";
 import { isCallable } from "./Callable";
 import { SemanticError } from "../SemanticError";
 import { getPossibleFunctionCalls, getReturnType } from "./MultiFunction";
 import { FunctionDeclaration } from "./FunctionDeclaration";
-import { isInferFunction } from "../phases/typeInference";
-import { getSSAOriginalName } from "../phases/ssaForm";
+import { isInferFunction } from "../phases/frontend/typeInference";
+import { getSSAOriginalName } from "../phases/frontend/ssaForm";
 import { traverse } from "../traverse";
 import { Variable } from "./Variable";
 import { Identifier } from "./Identifier";
 import { Type } from "./Type";
 import { ObjectType } from "./ObjectType";
 import { Member } from "./Member";
-import { runInThisContext } from "vm";
+import { getMetaCall, getMetaFieldValue } from "./MetaContainer";
+import { coreTypes, Native_javascript } from "../coreTypes";
+import { StringLiteral } from "./StringLiteral";
 
 export interface CallProps extends ContainerProps {
     callee: Expression;
@@ -32,13 +34,10 @@ export function isMetaCall(node): node is MetaCall {
 export class Call extends Container {
 
     callee!: Expression;
-    uniformFunctionCallSyntax!: boolean;
+    uniformFunctionCallSyntax?: boolean;
 
     constructor(props: CallProps) {
-        super({
-            uniformFunctionCallSyntax: false,
-            ...props
-        });
+        super(props);
     }
     patch(props: Partial<CallProps>) { return super.patch(props); }
 
@@ -57,13 +56,13 @@ export class Call extends Container {
         yield* c.getValues(this.callee);
     }
 
-    getResolvedPossibleFunctions(c: EvaluationContext): Expression[] | null {
+    getResolvedPossibleFunctions(c: EvaluationContext, errors: Error[] = []): Expression[] | null {
         const areAllParametersResolved = this.nodes.every(param => param.resolved);
         if (areAllParametersResolved) {
             let values = c.getValues(this.callee) as Function[];
             let args = this.nodes;
             let argTypes = this.getArgTypes();
-            let possibleFunctionCalls = getPossibleFunctionCalls(values, args, argTypes, c);
+            let possibleFunctionCalls = getPossibleFunctionCalls(values, args, argTypes, c, errors);
             return possibleFunctionCalls;
         }
         return null;
@@ -127,6 +126,43 @@ export class Call extends Container {
 
     toString() {
         return `${this.callee}(${this.nodes})${this.toTypeString()}`;
+    }
+
+    toESNode(c: EvaluationContext) {
+        const nodes = this.nodes.map(n => n.toESNode(c));
+        if (this.callee instanceof Reference && this.callee.name === "+") {
+            let callee = c.getValue(this.callee);
+            //  TODO: Check all possible function calls
+            //  only replace IF all possible have the same runtime implementation.
+            if (callee instanceof FunctionDeclaration) {
+                let native = getMetaCall(callee, coreTypes.Native);
+                if (native) {
+                    let jsExpression = getMetaFieldValue(native, Native_javascript, c);
+                    if (jsExpression instanceof StringLiteral) {
+                        let jsFunction: any;
+                        try {
+                            jsFunction = evalMemoized(jsExpression.value);
+                        }
+                        catch (e) {
+                            throw new SemanticError(`Error calling javascript eval: `, jsExpression);
+                        }
+                        if (typeof jsFunction !== "function") {
+                            throw new SemanticError(`Expected Javascript function`);
+                        }
+                        if (jsFunction.length !== this.nodes.length) {
+                            throw new SemanticError(`Native.javascript function has different arguments length, expected ${this.nodes.length}`, this, jsExpression);
+                        }
+                        let newNode = jsFunction(...nodes);
+                        return newNode;
+                    }
+                }
+            }
+        }
+        return {
+            type: "CallExpression",
+            callee: this.callee.toESNode(c),
+            arguments: nodes
+        }
     }
 
 }

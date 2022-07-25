@@ -1,8 +1,7 @@
-import { Block } from "../ast/Block";
-import { Phase } from "./Phase";
-import { traverse } from "../traverse";
-import { Conditional } from "../ast/Conditional";
-import { Group } from "../pst/Group";
+import { Block } from "../../ast/Block";
+import { Phase } from "../Phase";
+import { traverse } from "../../traverse";
+import { Conditional } from "../../ast/Conditional";
 
 function removeSoloBlock(node) {
     return (node.constructor === Block && node.nodes.length === 1) ? node.nodes[0] : node;

@@ -101,14 +101,15 @@ export class ObjectType extends BaseType {
         return this.getPropertyPair(propertyKey, c)?.value ?? null;
     }
 
-    getPropertyPair(propertyKey: Type | Identifier, c: EvaluationContext) {
+    getPropertyPair(propertyKey: Type | Identifier | string, c: EvaluationContext) {
         let quickResult = this.quickLookup.get(propertyKey.toString());
         if (quickResult != null) {
             return quickResult;
         }
-        if (propertyKey instanceof Identifier) {
+        if (propertyKey instanceof Identifier || typeof propertyKey === "string") {
+            let name = typeof propertyKey === "string" ? propertyKey : propertyKey.name;
             for (let property of this.properties.values()) {
-                if (property.key instanceof Identifier && property.key.name === propertyKey.name) {
+                if (property.key instanceof Identifier && property.key.name === name) {
                     return property;
                 }
             }

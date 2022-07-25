@@ -1,15 +1,20 @@
+jsplus = ""
+    (left, right) => ({ type: "BinaryExpression", operator: "+", left, right })
 
-@Native("(a, b) => ({ ...a, value: a.value + b.value })")
+@Native(javascript=jsplus)
 `+`(a: Integer, b: Integer): Integer => 0
 
-@Native("(a, b) => ({ ...a, value: a.value + b.value })")
+@Native(javascript=jsplus)
 `+`(a: Number, b: Number): Number => 0.0
 
-@Native("(a, b) => ({ ...a, value: a.value + b.value })")
+@Native(javascript=jsplus)
 `+`(a: Integer, b: Number): Number => 0.0
 
-@Native("(a, b) => ({ ...a, value: a.value + b.value })")
+@Native(javascript=jsplus)
 `+`(a: Number, b: Integer): Number => 0.0
+
+@Native(javascript=jsplus)
+`+`(a: String, b: String): String => ""
 
 @Native("(a, b) => ({ ...a, value: a.map((e, i) => e + a[i]) })")
 `+`(a: Number[], b: Number[]): Number[] => []

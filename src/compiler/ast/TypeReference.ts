@@ -1,3 +1,4 @@
+import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { SemanticError } from "../SemanticError";
 import { BinaryExpression } from "./BinaryExpression";
@@ -23,6 +24,15 @@ export class TypeReference extends Reference implements Type  {
     }
 
     getBasicTypes(c: EvaluationContext) {
+        if (this.name === coreTypes.Void) {
+            return BasicType.Void;
+        }
+        if (this.name === coreTypes.Null) {
+            return BasicType.Null;
+        }
+        if (this.name === coreTypes.Undefined) {
+            return BasicType.Undefined;
+        }
         const value = c.getValue(this);
         if (isType(value)) {
             return value.getBasicTypes(c);

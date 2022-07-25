@@ -2,10 +2,11 @@ import { Assembly } from "./ast/Assembly";
 import { getInputFilesRecursive } from "./common";
 import ErrorContext from "./errors/ErrorContext";
 import { Node } from "./Node";
+import { javascriptPhases } from "./phases/backend/javascript";
 // import { globalNamespace } from "./pathFunctions";
-import { assemblyPhases, intermediatePhases, parsingPhases } from "./phases";
+import { assemblyPhases, intermediatePhases, parsingPhases } from "./phases/frontend";
 import { Phase } from "./phases/Phase";
-import { Module } from "./pst/Module";
+import { Module } from "./ast/Module";
 import { SemanticError } from "./SemanticError";
 import { SourceLocation } from "./SourceLocation";
 import { SourcePosition } from "./SourcePosition";
@@ -68,7 +69,9 @@ export class Compiler {
         }
     }
 
-    runPhases(sources: Map<string,string>, modules: Map<string,any>, phases: Phase[], group: boolean, options?: DebugOptions): Error[] | void {
+    runPhases(sources: Map<string,string>, modules: Map<string,any>, externals: Map<string,any>, phases: Phase[], group: boolean, options?: DebugOptions): [Map<string,any>, Error[] | null] {
+        // don't modify modules directly, make a copy
+        modules = new Map(modules.entries());
         let removedModules = new Set<string>();
         let removeExpectedErrors = (errors: Error[]): Error[] => {
             for (let i = errors.length - 1; i >= 0; i--) {
@@ -97,14 +100,14 @@ export class Compiler {
                         location: new SourceLocation(globalName, new SourcePosition(0, 0), new SourcePosition(0, 0)),
                         nodes: [...modules.values()].map((module: Module) => module.nodes).flat(),
                     })
-                    let [newAssembly, errors, runPhaseAgain] = this.runPhase(phase, globalName, assembly, modules, this.options);
+                    let [newAssembly, errors, runPhaseAgain] = this.runPhase(phase, globalName, assembly, externals, this.options);
                     errors = removeExpectedErrors(errors);
                     if (errors.length > 0) {
                         console.log(phase.name);
                         for (let error of errors) {
                             this.printErrorConsole(error, sources);
                         }
-                        return errors;
+                        return [modules, errors];
                     }
                     // split all nodes back into modules
                     let newNodes = new Map([...modules.keys()].map(name => [name, [] as Node[]]));
@@ -131,14 +134,14 @@ export class Compiler {
                 let phaseRepeatCount = 0;
                 for (let i = 0; i < phases.length; i++) {
                     let phase = phases[i];
-                    let [newModule, errors, runPhaseAgain] = this.runPhase(phase, name, modul, modules, this.options);
+                    let [newModule, errors, runPhaseAgain] = this.runPhase(phase, name, modul, externals, this.options);
                     errors = removeExpectedErrors(errors);
                     if (errors.length > 0) {
                         console.log(`${name} : ${phase.name}`);
                         for (let error of errors) {
                             this.printErrorConsole(error, sources);
                         }
-                        return errors;
+                        return [modules, errors];
                     }
                     if (!removedModules.has(name)) {
                         modules.set(name, modul = newModule);
@@ -156,6 +159,7 @@ export class Compiler {
                 }
             }
         }
+        return [modules, null];
     }
 
     compile(
@@ -174,7 +178,9 @@ export class Compiler {
             }
 
             //  do solo phases
-            let errors = this.runPhases(sources, modules, parsingPhases, false, debugOptions);
+            let externals = modules;
+            let errors: Error[] | null = null;
+            [modules, errors] = this.runPhases(sources, modules, externals, parsingPhases, false, debugOptions);
             if (errors) { return errors; }
             if (finalPhase != null) { return modules; }
 
@@ -185,11 +191,20 @@ export class Compiler {
                 })];
             }).flat() as [any,any][]);
             modules = new Map(sortedModuleNames.map(name => [name, modules.get(name)]));
+            externals = modules;
 
-            errors = this.runPhases(sources, modules, intermediatePhases, false, debugOptions);
+            [modules, errors] = this.runPhases(sources, modules, externals, intermediatePhases, false, debugOptions);
+            externals = modules;
             if (errors) { return errors; }
-            errors = this.runPhases(sources, modules, assemblyPhases, true, debugOptions);
+            [modules, errors] = this.runPhases(sources, modules, externals, assemblyPhases, true, debugOptions);
             if (errors) { return errors; }
+            externals = modules;
+
+            //  This final output should NOT be using the final outputs at input
+            //  the "externals" needs to be the output from the previous phases.
+            [modules, errors] = this.runPhases(sources, modules, externals, javascriptPhases, false, debugOptions);
+            if (errors) { return errors; }
+            //  we DO NOT reset the externals now from the back end phases.
 
             // // finally check that any expected fail files failed to compile.
             // if (this.options.test) {
@@ -241,7 +256,10 @@ export class Compiler {
         }
         let viewAsCode = !Array.isArray(module);
         if (viewAsCode) {
-            module = module.toString();
+            let text = module.toString();
+            if (text != "[object Object]") {
+                module = text;                
+            }
         }
         logger(phase, module, name);
     }

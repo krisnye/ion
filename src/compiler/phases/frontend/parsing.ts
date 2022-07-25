@@ -1,5 +1,5 @@
-import { createParser } from "../parser/createParser";
-import { Phase } from "./Phase";
+import { createParser } from "../../parser/createParser";
+import { Phase } from "../Phase";
 
 const parser = createParser();
 

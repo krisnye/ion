@@ -1,12 +1,12 @@
-import { Phase } from "./Phase";
-import { isType } from "../ast/Type";
+import { Phase } from "../Phase";
+import { isType } from "../../ast/Type";
 import { traverseWithScope } from "./createScopeMaps";
-import { TypeReference } from "../ast/TypeReference";
-import { Class } from "../ast/Class";
-import { SemanticError } from "../SemanticError";
-import { IntersectionType } from "../ast/IntersectionType";
-import { UnionType } from "../ast/UnionType";
-import { isSubtype } from "../analysis/isSubtype";
+import { TypeReference } from "../../ast/TypeReference";
+import { Class } from "../../ast/Class";
+import { SemanticError } from "../../SemanticError";
+import { IntersectionType } from "../../ast/IntersectionType";
+import { UnionType } from "../../ast/UnionType";
+import { isSubtype } from "../../analysis/isSubtype";
 
 // maybe we should simplify indirect constant references first
 

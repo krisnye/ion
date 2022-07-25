@@ -1,7 +1,7 @@
-import { createParser } from "../parser/createParser";
-import { Token } from "../Token";
-import { tokenTypes } from "../tokenizer/TokenType";
-import { Phase } from "./Phase";
+import { createParser } from "../../parser/createParser";
+import { Token } from "../../Token";
+import { tokenTypes } from "../../tokenizer/TokenType";
+import { Phase } from "../Phase";
 
 const parser = createParser();
 

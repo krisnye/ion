@@ -1,4 +1,4 @@
-import { coreTypes } from "../coreTypes";
+import { EvaluationContext } from "../EvaluationContext";
 import { Expression, ExpressionProps } from "./Expression";
 
 export interface LiteralProps extends ExpressionProps {
@@ -7,13 +7,30 @@ export interface LiteralProps extends ExpressionProps {
 
 export abstract class Literal extends Expression {
 
-    constructor(props: ExpressionProps) { super(props); }
-    patch(props: Partial<ExpressionProps>) { return super.patch(props); }
-
     value!: any;
+
+    constructor(props: LiteralProps) { super(props); }
+    patch(props: Partial<LiteralProps>) { return super.patch(props); }
 
     toString() {
         throw new Error("not implemented");
+    }
+
+    toESNode(c: EvaluationContext) {
+        if (typeof this.value === "number" && this.value < 0) {
+            return {
+                type: "UnaryExpression",
+                operator: "-",
+                argument: {
+                    type: "Literal",
+                    value: - this.value,
+                }
+            }
+        }
+        return {
+            type: "Literal",
+            value: this.value,
+        }
     }
 
 }

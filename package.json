@@ -29,6 +29,8 @@
     "@glas/diff-logger": "^1.0.0",
     "@glas/test": "^1.0.3",
     "@glas/traverse": "^1.0.7",
+    "@types/escodegen": "^0.0.7",
+    "escodegen": "^2.0.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {

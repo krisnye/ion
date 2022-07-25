@@ -1,7 +1,7 @@
-import { Phase } from "./Phase";
-import { Variable } from "../ast/Variable";
-import { Function } from "../ast/Function";
-import { traverse } from "../traverse";
+import { Phase } from "../Phase";
+import { Variable } from "../../ast/Variable";
+import { Function } from "../../ast/Function";
+import { traverse } from "../../traverse";
 
 export function moveMetaToFunctions(moduleName, module): ReturnType<Phase> {
     let errors = [];

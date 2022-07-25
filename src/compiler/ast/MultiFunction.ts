@@ -15,13 +15,12 @@ export function getReturnType(source: Call, funcs: Function[], args: Expression[
     return UnionType.join(...returnTypes);
 }
 
-export function getPossibleFunctionCalls(funcs: (Expression | null)[], args: Expression[], argTypes: Type[], c: EvaluationContext): Expression[] {
+export function getPossibleFunctionCalls(funcs: (Expression | null)[], args: Expression[], argTypes: Type[], c: EvaluationContext, errors: Error[] = []): Expression[] {
     let functions = new Array<Expression>();
-    let funcErrors = new Array<Error>();
     for (let func of funcs) {
         //  we only want to keep the first function errors.
         if (func instanceof Function) {
-            if (func.areArgumentsValid(args, argTypes, c, funcErrors.length > 0 ? [] : funcErrors)) {
+            if (func.areArgumentsValid(args, argTypes, c, errors.length > 0 ? [] : errors)) {
                 functions.push(func);
             }
         }

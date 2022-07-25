@@ -3,11 +3,9 @@ import { IntersectionType } from "../ast/IntersectionType"
 import { NumberType, overlaps } from "../ast/NumberType"
 import { ObjectType } from "../ast/ObjectType"
 import { Type } from "../ast/Type"
-import { TypeReference } from "../ast/TypeReference"
 import { UnionType } from "../ast/UnionType"
-import { VoidType } from "../ast/VoidType"
+// import { VoidType } from "../ast/VoidType"
 import { EvaluationContext } from "../EvaluationContext"
-import { removeSSAVersions } from "../phases/ssaForm"
 
 type Maybe = true | false | null
 //  a  \  b |  true   false   null
@@ -70,9 +68,9 @@ function same(a: Maybe, b: Maybe): Maybe {
     }
     a = c.getComparisonType(a);
     b = c.getComparisonType(b);
-    if (a instanceof VoidType || b instanceof VoidType) {
-        return false;
-    }
+    // if (a instanceof VoidType || b instanceof VoidType) {
+    //     return false;
+    // }
     if (a instanceof UnionType) {
         return same(isSubtype(a.left, b, c), isSubtype(a.right, b, c))
     }
@@ -111,29 +109,29 @@ function same(a: Maybe, b: Maybe): Maybe {
         }
         return null;
     }
-    // at this point, we should either be reference types or object types
-    if (a instanceof TypeReference && b instanceof TypeReference) {
-        if (a.name !== b.name) {
-            return null;
-        }
-        let aTypes = a.typeArguments || [];
-        let bTypes = b.typeArguments || [];
-        let result: boolean | null = true
-        for (let i = 0; i < bTypes.length; i++) {
-            let aType = aTypes[i];
-            let bType = bTypes[i];
-            let subcheck = isSubtype(aType, bType, c);
-            if (subcheck === false) {
-                result = false;
-                break;
-            }
-            else if (subcheck === null) {
-                result = null;
-            }
-        }
-        // different references, different types, no implements yet
-        return result;
-    }
+    // // at this point, we should either be reference types or object types
+    // if (a instanceof TypeReference && b instanceof TypeReference) {
+    //     if (a.name !== b.name) {
+    //         return null;
+    //     }
+    //     let aTypes = a.typeArguments || [];
+    //     let bTypes = b.typeArguments || [];
+    //     let result: boolean | null = true
+    //     for (let i = 0; i < bTypes.length; i++) {
+    //         let aType = aTypes[i];
+    //         let bType = bTypes[i];
+    //         let subcheck = isSubtype(aType, bType, c);
+    //         if (subcheck === false) {
+    //             result = false;
+    //             break;
+    //         }
+    //         else if (subcheck === null) {
+    //             result = null;
+    //         }
+    //     }
+    //     // different references, different types, no implements yet
+    //     return result;
+    // }
     if (a instanceof ObjectType && b instanceof ObjectType) {
         let allTrue = true;
         for (let { key: bKey, value: bType } of b.properties) {

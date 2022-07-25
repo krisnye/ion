@@ -119,10 +119,16 @@ Cross platform modeling language
     - [?] Chained Conditional Type, check property
   - [x] Check and re-order named function arguments semantically.
   - [x] UFCS conversion to static call.
-  - [ ] Make call argument checking work with UFCS.
-  - [ ] Define and add patching or 'with' semantics.
-    - [ ] Add a Void type
-    - [ ] Use the Void type for any un-provided arguments.
+  - [x] Make call argument checking work with UFCS.
+  - [-] Define and add patching for 'with' semantics.
+    - [x] Add Undefined Expression.
+    - [x] Add NullLiteral.
+    - [x] Use an Undefined Expression type for any un-provided arguments.
+    - [-] 'with' patching with fixed location arguments won't work, need special handling.
   - [x] Add ; operator that evaluates left and right and returns right
   - [ ] Add ! operator as syntactic sugar so a!b() becomes [a, value] = a.b() ; value
   - [ ] Start adding some useful basic semantic checks.
+  - [ ] Write Javascript Backend
+    - [x] Convert Native operator functions to Javascript.
+    - [ ] Finish Native Javascript for every operator type.
+    - [ ] Check and only replace if ALL possible callees have same operator implementation.

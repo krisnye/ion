@@ -1,47 +1,52 @@
 
-Set one or more values on an Object
+## Object
 
-    &person.with( name = "Kris", age = 50 )
-    &person.with()
+Set values on an Object
+
+    //  copy on write
+    person.name = "Kris"
+    //  copy on write
+    person.
         name = "Kris"
         age = 50
-        //  other values are implicitly undefined
 
-Set one value on a Map.
+## Map
 
-    &map.set("foo", "bar")
+Set value on a Map.
 
-Set multiple values on a Map.
-
-    map += { "foo" -> "Bar", 1 -> 2 }
+    //  copy on write
+    map["foo"] = "bar"
 
 Remove one value from a Map.
 
-    &map.remove("foo")
-
-Remove multiple values from a Map.
-
-    &map.remove(["foo", "bar", "baz])
+    map = map.remove("foo")
 
 Push one value onto array.
 
-    &array.push("foo")
+    [array, value] = array.push("foo")
+    value = array!push("foo")
+
+Push multiple values onto an array.
+
+    array += ["foo"]
 
 Pop one value from array.
 
     [array, value] = array.pop()
-    value = &array.pop()
+    value = array!pop()
 
 Splice values out of array.
 
-    &array.splice(index, remove, add)
+    array = array.splice(index, remove, add)
 
 Set one value on array.
 
-    &array.set(5, "five")
+    array = array.set(5, "five")
+    //  sugar? why not? might as well just do it.
+    array[5] = "five"
 
 Set multiple values on array.
 
-    &array.set(5, "five")
-    &array.set(6, "six")
-    &array.set(7, "seven")
+    array[5] = "five"
+    array[6] = "six"
+    array[7] = "seven"

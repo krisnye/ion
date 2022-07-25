@@ -1,9 +1,8 @@
+add = (x: Number, y: 0 .. 10) => x + y
+double = (x: Number) => x * 2
+value = 12
+value2 = value.add(10).double.double
 
-x = ( y = 4 ; y * 2 )
-
-// add = (x: Number, y: Number) => x + y
-
-// double = (x: Number) => x * 2
-
-// value = 12
-// value2 = value.add(5).double.double
+class Vector
+    x: Number = 0
+    y: Number
