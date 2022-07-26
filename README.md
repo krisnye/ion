@@ -129,6 +129,8 @@ Cross platform modeling language
   - [ ] Add ! operator as syntactic sugar so a!b() becomes [a, value] = a.b() ; value
   - [ ] Start adding some useful basic semantic checks.
   - [ ] Write Javascript Backend
-    - [x] Convert Native operator functions to Javascript.
-    - [ ] Finish Native Javascript for every operator type.
-    - [ ] Check and only replace if ALL possible callees have same operator implementation.
+    - [x] Native operators
+      - [x] Convert Native operator functions to Javascript.
+      - [x] Check and only replace if ALL possible callees have same operator implementation.
+      - [x] Finish Native Javascript for every operator type.
+    - [ ] Array Expressions.

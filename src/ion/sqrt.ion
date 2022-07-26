@@ -1,3 +1,13 @@
+_js = ""
+    (a) => ({
+        type: "CallExpression",
+        callee: {
+            type: "MemberExpression",
+            object: { type: "Identifier", name: "Math" },
+            property: { type: "Identifier", name: "sqrt" }
+        },
+        arguments: [ a ]
+    })
 
-@Native("(a) => ({ ...a, value: Math.sqrt(a.value) })")
+@Native(javascript=_js)
 sqrt(a: >= 0.0): Number => 0.0

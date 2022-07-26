@@ -1,3 +1,5 @@
 
-@Native("null")
+@Native()
+    javascript = ""
+        (a, b) => ({ type: "SequenceExpression", expressions: [a, b] })
 `;`(a, b): Boolean => 0

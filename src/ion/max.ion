@@ -1,6 +1,15 @@
-
-@Native("(a, b) => ({ ...a, value: Math.max(a.value, b.value) })")
+_js = ""
+    (a, b) => ({
+        type: "CallExpression",
+        callee: {
+            type: "MemberExpression",
+            object: { type: "Identifier", name: "Math" },
+            property: { type: "Identifier", name: "max" }
+        },
+        arguments: [ a, b ]
+    })
+@Native(javascript=_js)
 max(a: Integer, b: Integer) => 0
 
-@Native("(a, b) => ({ ...a, value: Math.max(a.value, b.value) })")
+@Native(javascript=_js)
 max(a: Number, b: Number) => 0

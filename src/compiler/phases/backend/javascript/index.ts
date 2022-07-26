@@ -8,7 +8,7 @@ import { toJavascript } from "./toJavascript";
 export const javascriptPhases: Phase[] = [
     // must replace native calls before removing compile time types.
     // addNativeCalls,
-    removeCompileTimeTypes,
+//    removeCompileTimeTypes,
     addImportsRenameLocals,
     toESTree,
     toJavascript,

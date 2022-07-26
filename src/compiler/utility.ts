@@ -33,6 +33,10 @@ export function isMetaName(name?: string) {
     return first === "@";
 }
 
+export function areAllElementsTheSame(array: any[]) {
+    return array.length === 0 || new Set(array).size === 1;
+}
+
 const logged = new Set<string>();
 export function logOnce(message: string) {
     if (!logged.has(message)) {

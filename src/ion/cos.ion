@@ -1,3 +1,13 @@
+_js = ""
+    (a) => ({
+        type: "CallExpression",
+        callee: {
+            type: "MemberExpression",
+            object: { type: "Identifier", name: "Math" },
+            property: { type: "Identifier", name: "cos" }
+        },
+        arguments: [ a ]
+    })
 
-@Native("(a) => ({ ...a, value: Math.cos(a.value) })")
+@Native(javascript=_js)
 cos(a: Number): 0.0 .. 1.0 => 0.0

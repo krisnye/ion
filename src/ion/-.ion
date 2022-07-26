@@ -1,18 +1,23 @@
+_js2 = ""
+    (left, right) => ({ type: "BinaryExpression", operator: "-", left, right })
 
-@Native("(a, b) => ({ ...a, value: a.value - b.value })")
+@Native(javascript=_js2)
 `-`(a: Integer, b: Integer): Integer => 0
 
-@Native("(a, b) => ({ ...a, value: a.value - b.value })")
+@Native(javascript=_js2)
 `-`(a: Number, b: Number): Number => 0.0
 
-@Native("(a, b) => ({ ...a, value: a.value - b.value })")
+@Native(javascript=_js2)
 `-`(a: Number, b: Integer): Number => 0.0
 
-@Native("(a, b) => ({ ...a, value: a.value - b.value })")
+@Native(javascript=_js2)
 `-`(a: Integer, b: Number): Number => 0.0
 
-@Native("(a) => ({ ...a, value: - a.value })")
+_js1 = ""
+    (argument) => ({ type: "UnaryExpression", operator: "-", argument })
+
+@Native(javascript=_js1)
 `-`(a: Number): Number => 0.0
 
-@Native("(a) => ({ ...a, value: - a.value })")
+@Native(javascript=_js1)
 `-`(a: Integer): Integer => 0

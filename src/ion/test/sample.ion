@@ -3,6 +3,12 @@ double = (x: Number) => x * 2
 value = 12
 value2 = value.add(10).double.double
 
+array = [1, 2]
+first = array[0]
+foo = min(10, 20)
+bar = sqrt(5)
+baz = tan(3.8)
+
 class Vector
     x: Number = 0
     y: Number

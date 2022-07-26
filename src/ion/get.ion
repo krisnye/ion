@@ -1,3 +1,5 @@
+_js = ""
+    (object, property) => ({ type: "MemberExpression", computed: true, object, property })
 
-@Native("")
+@Native(javascript=_js)
 get(a: Array, b: >= 0 & < a.length): Integer => 0

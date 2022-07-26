@@ -1,7 +1,7 @@
 import { EvaluationContext } from "../EvaluationContext";
 import { Expression } from "./Expression";
 import { Function } from "./Function";
-import { evalMemoized, isMetaName, logOnce } from "../utility";
+import { areAllElementsTheSame, evalMemoized, isMetaName, logOnce } from "../utility";
 import { Reference } from "./Reference";
 import { Container, ContainerProps } from "./Container";
 import { isCallable } from "./Callable";
@@ -19,6 +19,7 @@ import { Member } from "./Member";
 import { getMetaCall, getMetaFieldValue } from "./MetaContainer";
 import { coreTypes, Native_javascript } from "../coreTypes";
 import { StringLiteral } from "./StringLiteral";
+import { Node } from "../Node";
 
 export interface CallProps extends ContainerProps {
     callee: Expression;
@@ -130,32 +131,26 @@ export class Call extends Container {
 
     toESNode(c: EvaluationContext) {
         const nodes = this.nodes.map(n => n.toESNode(c));
-        if (this.callee instanceof Reference && this.callee.name === "+") {
-            let callee = c.getValue(this.callee);
-            //  TODO: Check all possible function calls
-            //  only replace IF all possible have the same runtime implementation.
-            if (callee instanceof FunctionDeclaration) {
-                let native = getMetaCall(callee, coreTypes.Native);
-                if (native) {
-                    let jsExpression = getMetaFieldValue(native, Native_javascript, c);
-                    if (jsExpression instanceof StringLiteral) {
-                        let jsFunction: any;
-                        try {
-                            jsFunction = evalMemoized(jsExpression.value);
-                        }
-                        catch (e) {
-                            throw new SemanticError(`Error calling javascript eval: `, jsExpression);
-                        }
-                        if (typeof jsFunction !== "function") {
-                            throw new SemanticError(`Expected Javascript function`);
-                        }
-                        if (jsFunction.length !== this.nodes.length) {
-                            throw new SemanticError(`Native.javascript function has different arguments length, expected ${this.nodes.length}`, this, jsExpression);
-                        }
-                        let newNode = jsFunction(...nodes);
-                        return newNode;
-                    }
+        if (this.callee instanceof Reference) {
+            let callees = c.getValues(this.callee);
+            let possibleCallees = getPossibleFunctionCalls(callees, this.nodes, this.nodes.map(node => node.type!), c);
+            let nativeJavascriptFunctionTexts = possibleCallees.map(p => getNativeJavascript(p, c));
+            if (typeof nativeJavascriptFunctionTexts[0] === "string" && areAllElementsTheSame(nativeJavascriptFunctionTexts)) {
+                let jsFunction: any;
+                try {
+                    jsFunction = evalMemoized(nativeJavascriptFunctionTexts[0]);
                 }
+                catch (e) {
+                    throw new SemanticError(`Error calling javascript eval: `, possibleCallees[0]);
+                }
+                if (typeof jsFunction !== "function") {
+                    throw new SemanticError(`Expected Javascript function`, possibleCallees[0]);
+                }
+                if (jsFunction.length !== this.nodes.length) {
+                    throw new SemanticError(`Native.javascript function has different arguments length, expected ${this.nodes.length}`, this, possibleCallees[0]);
+                }
+                let newNode = jsFunction(...nodes);
+                return newNode;
             }
         }
         return {
@@ -165,6 +160,19 @@ export class Call extends Container {
         }
     }
 
+}
+
+export function getNativeJavascript(callee: Node, c: EvaluationContext): string | null {
+    if (callee instanceof FunctionDeclaration) {
+        let native = getMetaCall(callee, coreTypes.Native);
+        if (native) {
+            let jsExpression = getMetaFieldValue(native, Native_javascript, c);
+            if (jsExpression instanceof StringLiteral) {
+                return jsExpression.value;
+            }
+        }
+    }
+    return null;
 }
 
 const uniformParamPrefix = "_param_";

@@ -1,3 +1,13 @@
+_js = ""
+    (a) => ({
+        type: "CallExpression",
+        callee: {
+            type: "MemberExpression",
+            object: { type: "Identifier", name: "Math" },
+            property: { type: "Identifier", name: "sin" }
+        },
+        arguments: [ a ]
+    })
 
-@Native("(a) => ({ ...a, value: Math.sin(a.value) })")
+@Native(javascript=_js)
 sin(a: Number): 0.0 .. 1.0 => 0.0

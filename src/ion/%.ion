@@ -1,12 +1,14 @@
+_js = ""
+    (left, right) => ({ type: "BinaryExpression", operator: "%", left, right })
 
-@Native("(a, b) => ({ ...a, value: a.value % b.value })")
+@Native(javascript=_js)
 `%`(a: Integer, b: != 0): Integer => 0
 
-@Native("(a, b) => ({ ...a, value: a.value % b.value })")
+@Native(javascript=_js)
 `%`(a: Number, b: Number): Number => 0.0
 
-@Native("(a, b) => ({ ...a, value: a.value % b.value })")
+@Native(javascript=_js)
 `%`(a: Integer, b: Number): Number => 0.0
 
-@Native("(a, b) => ({ ...a, value: a.value % b.value })")
+@Native(javascript=_js)
 `%`(a: Number, b: != 0): Number => 0.0

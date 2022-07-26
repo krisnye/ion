@@ -1,3 +1,5 @@
+_js = ""
+    (left, right) => ({ type: "BinaryExpression", operator: ">>", left, right })
 
-@Native("(a, b) => ({ ...a, value: a.value >> b.value })")
+@Native(javascript=_js)
 `>>`(a: Integer, b: Integer): Integer => 0

@@ -1,6 +1,15 @@
-
-@Native("(a) => ({ ...a, value: Math.abs(a.value) })")
+_js = ""
+    (a) => ({
+        type: "CallExpression",
+        callee: {
+            type: "MemberExpression",
+            object: { type: "Identifier", name: "Math" },
+            property: { type: "Identifier", name: "abs" }
+        },
+        arguments: [ a ]
+    })
+@Native(javascript=_js)
 abs(a: Integer) => 0
 
-@Native("(a, b) => ({ ...a, value: Math.abs(a.value) })")
+@Native(javascript=_js)
 abs(a: Number) => 0
