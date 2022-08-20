@@ -9,15 +9,20 @@ import { Call } from "../../ast/Call";
 import { EvaluationContext } from "../../EvaluationContext";
 import { Callable, isCallable } from "../../ast/Callable";
 import { Expression } from "../../ast/Expression";
-import { isOperator } from "../../parser/operators";
-import { getMetaCall, MetaContainer } from "../../ast/MetaContainer";
+import { getMetaCall } from "../../ast/MetaContainer";
 import { coreTypes } from "../../coreTypes";
 import { Undefined } from "../../ast/Undefined";
+import { memoize2 } from "../../utility";
+import { isSubtype } from "../../analysis/isSubtype";
+import { Node } from "../../Node";
+import { traverse } from "@glas/traverse";
 
 export function checkCalls(moduleName, module: Container, externals: Map<string, Container>): ReturnType<Phase> {
     let errors: Error[] = [];
     let multiFunctions = new Map<string,Array<FunctionDeclaration>>();
+    let saveContext!: EvaluationContext;
     let result = traverseWithScope(externals, module, (c) => {
+        saveContext = c;
         return {
             enter(node) {
                 if (node instanceof FunctionDeclaration) {
@@ -39,7 +44,63 @@ export function checkCalls(moduleName, module: Container, externals: Map<string,
     });
     // check that names match for all global function declarations.
     checkFunctionDeclarationParameterNames(multiFunctions, errors);
+    // now let's sort the multifunctions.
+    let changeEntries: [Node,Node][] = [];
+    for (let [name, funcs] of multiFunctions) {
+        changeEntries.push(...sortMultifunctions(saveContext, name, funcs, errors));
+    }
+    if (changeEntries.length > 0) {
+        let changes = new Map(changeEntries);
+        result = traverse(result, {
+            leave(node) {
+                return changes.get(node) ?? node;
+            }
+        })
+    }
+
     return [result, errors];
+}
+
+function sortMultifunctions(c: EvaluationContext, name: string, multiFunctions: Array<FunctionDeclaration>, errors: Error[]): Map<Node, Node> {
+    const compareFunctions = memoize2((a: FunctionDeclaration, b: FunctionDeclaration) => {
+        // perform an actual comparison.
+        let compare = a.parameters.length - b.parameters.length;
+        if (compare == 0) {
+            let allTrue = true;
+            for (let i = 0; i < a.parameters.length; i++) {
+                let paramA = a.parameters[i].declaredType;
+                let paramB = b.parameters[i].declaredType;
+                let aIsSubtypeB = isSubtype(paramA, paramB, c);
+                let bIsSubtypeA = isSubtype(paramB, paramA, c);
+                if (aIsSubtypeB === false || bIsSubtypeA === false) {
+                    //  they never overlap, so order doesn't really matter.
+                    //  let's just do a string compare.
+                    return a.toString().localeCompare(b.toString());
+                }
+                if (bIsSubtypeA && !aIsSubtypeB) {
+                    return +1;
+                }
+                if (aIsSubtypeB && !bIsSubtypeA) {
+                    return -1;
+                }
+                allTrue &&= !!aIsSubtypeB && !!bIsSubtypeA;
+            }
+            //  if we get here then they are ambiguous.
+            throw new SemanticError(allTrue ? `Cannot have identical multifunctions` : `Ambiguous multifunctions`, a.id, b.id);
+        }
+        return compare;
+    });
+
+    let changes = new Map<Node,Node>();
+
+    if (multiFunctions.length > 1) {
+        let sorted = multiFunctions.sort(compareFunctions);
+        sorted.forEach((func, order) => {
+            changes.set(func, func.patch({ order }));
+        })
+    }
+
+    return changes;
 }
 
 function reorderCallArguments(c: EvaluationContext, call: Call): Call {

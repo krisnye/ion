@@ -129,7 +129,6 @@ function destructure(temp: IdentifierFactory, nodes: Array<Node>, pattern: Node 
         );
     }
     else {
-        console.log({ impossible: true, pattern });
         throw new SemanticError(`(Should Be Impossible) Invalid destructuring pattern`, pattern!);
     }
 }
@@ -142,7 +141,6 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
         leave(node, ancestors, path) {
             let parent = ancestors[ancestors.length - 1];
             if (parent instanceof Conditional) {
-                // console.log({ parent, node });
                 if (!(node instanceof Block) && (node === parent.consequent || node === parent.alternate)) {
                     // convert conditional branches to always be Blocks.
                     return new Block({ location: node.location, nodes: [ node ]});
@@ -286,7 +284,6 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         let declaredType = left instanceof Variable ? left.declaredType : null;
                         let constant = left instanceof Variable ? left.constant : true;
                         if (!(id instanceof Identifier || id instanceof Reference)) {
-                            console.log({ id });
                             errors.push(new SemanticError(`Expected Identifier`, id));
                             return;
                         }

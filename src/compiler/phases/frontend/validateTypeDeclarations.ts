@@ -63,7 +63,6 @@ export function validateTypeDeclarations(moduleName, module, externals): ReturnT
                                 }
                             }
                         }
-                        // console.log("VALIDATE TYPE: " + node + "\n       ------> " + types);
                     }
                     // we are not mutating, only traversing so we'll check on enter and skip children.
                 }

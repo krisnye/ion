@@ -8,6 +8,7 @@ import { EvaluationContext } from "../EvaluationContext";
 import { isSubtype } from "../analysis/isSubtype";
 import { SemanticError } from "../SemanticError";
 import { Type } from "./Type";
+import { Function } from "./Function";
 
 export interface VariableProps extends ExpressionProps {
     id: Identifier;
@@ -15,6 +16,7 @@ export interface VariableProps extends ExpressionProps {
     meta: MetaCall[];
     declaredType?: Type | null;
     conditional?: boolean;
+    phi?: boolean;
 }
 
 export class Variable extends Expression implements Declaration {
@@ -25,8 +27,9 @@ export class Variable extends Expression implements Declaration {
     declaredType!: Type | null;
     isDeclaration: true = true;
     conditional!: boolean;
+    phi!: boolean;
 
-    constructor(props: VariableProps) { super({ conditional: false, ...props }); }
+    constructor(props: VariableProps) { super({ conditional: false, phi: false, ...props }); }
     patch(props: Partial<VariableProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {
@@ -89,6 +92,13 @@ export class Variable extends Expression implements Declaration {
     }
 
     toESNode(c: EvaluationContext) {
+        if (this.value instanceof Function) {
+            return {
+                ...this.value.toESNode(c),
+                type: "FunctionDeclaration",
+                id: this.id.toESNode(c),
+            };
+        }
         return {
             type: "VariableDeclaration",
             kind: "let",

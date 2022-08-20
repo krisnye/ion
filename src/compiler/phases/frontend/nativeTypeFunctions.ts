@@ -23,7 +23,6 @@ function BinaryExpression(location: SourceLocation, operator: string, left: Expr
         if (isNaN(value)) {
             return undefined;
         }
-        // console.log({ operator, left: left.toString(), right: right.toString(), code, value });
         if (left.integer) {
             value = Math.trunc(value);
         }

@@ -30,14 +30,18 @@ function setScopeValue(scope, name, value) {
  * @param root the ast
  */
 export default function createScopeMaps(root, externals?: Map<string,Container>): ScopeMaps {
+    let declarationsToSort = new Set<(Declaration)[]>();
     let globalScope: ScopeMap = {};
     if (externals != null) {
         for (let { nodes } of externals.values()) {
             if (Array.isArray(nodes)) {
                 for (let node of nodes) {
                     if (isDeclaration(node)) {
-                        globalScope[node.id.name] ??= [];
+                        let declarations = globalScope[node.id.name] ??= [];
                         globalScope[node.id.name].push(node);
+                        if (node.order != null) {
+                            declarationsToSort.add(declarations);
+                        }
                     }
                 }
             }
@@ -80,7 +84,12 @@ export default function createScopeMaps(root, externals?: Map<string,Container>)
                 scopes.pop();
             }
         }
-    })
+    });
+
+    for (let declarations of declarationsToSort) {
+        declarations.sort((a, b) => a.order! - b.order!);
+    }
+    declarationsToSort
 
     return map as NodeMap<ScopeMap>;
 }
@@ -100,9 +109,6 @@ export function traverseWithScope(
     function getDeclarations(ref: Reference | Node, name?: string): Declaration[] {
         if (name == null) {
             name = (ref as Reference).name;
-        }
-        if (externals == null) {
-            console.log(externals);
         }
         let original = lookup.getOriginal(ref);
         let scope = scopeMaps.get(original) ?? scopeMaps.get(null);

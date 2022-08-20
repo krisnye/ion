@@ -1,6 +1,6 @@
 import { Expression } from "./Expression";
 import { Identifier } from "./Identifier";
-import { isMetaContainer, MetaContainer } from "./MetaContainer";
+import { MetaContainer } from "./MetaContainer";
 
 export interface Declaration extends MetaContainer, Expression {
 
@@ -8,6 +8,7 @@ export interface Declaration extends MetaContainer, Expression {
     value: Expression | null;
     isGlobalScoped?: boolean;
     isDeclaration: true;
+    order?: number;
 
 }
 

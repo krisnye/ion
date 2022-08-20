@@ -120,7 +120,7 @@ export class Class extends Container implements Type, Declaration, Callable {
     getReturnType(source: Node, args: Type[] | undefined, c: EvaluationContext) {
         let parameters = this.getParameters(c);
         if (!args) {
-            args = parameters.map(p => p.type!);
+            args = parameters.map(p => p.type ?? p.declaredType!);
         }
         //  technically this sort of parameter checking ought to be present generally for all function calls.
         if (args.length != parameters.length) {

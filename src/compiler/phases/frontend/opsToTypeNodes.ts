@@ -195,7 +195,6 @@ function buildObjectType(values: Expression | (Expression | Pair)[] | null, loca
                 right = new NumberType({ location: right.location, min: right, max: right.patch({}) });
             }
             if (!(isType(right) || right instanceof Identifier)) {
-                console.log(right);
                 throw new SemanticError(`Expected Type`, right);
             }
             if (!(left instanceof Identifier || isType(left))) {

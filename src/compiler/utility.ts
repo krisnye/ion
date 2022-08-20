@@ -11,6 +11,21 @@ export function memoize<A,B>(fn: (a: A) => B): (a: A) => B {
     }
 }
 
+export function memoize2<A,B,C>(fn: (a: A, b: B) => C): (a: A, b: B) => C {
+    let cache1 = new Map<A,Map<B,C>>();
+    return (a: A, b: B) => {
+        let cache2 = cache1.get(a);
+        if (cache2 == null) {
+            cache1.set(a, cache2 = new Map());
+        }
+        let cachedValue = cache2.get(b);
+        if (cachedValue == null) {
+            cache2.set(b, cachedValue = fn(a, b));
+        }
+        return cachedValue;
+    }
+}
+
 export const evalMemoized = memoize(eval);
 
 function firstLetterOfLastName(name: string) {

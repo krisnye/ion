@@ -111,7 +111,7 @@ export class Function extends FunctionBase implements Callable {
         return {
             type: "FunctionExpression",
             id: this.id?.toESNode(c),
-            params: this.parameters.map(p => p.toESNode(c)),
+            params: this.parameters.map(p => p.toESParameter(c)),
             body: {
                 type: "BlockStatement",
                 body: [

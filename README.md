@@ -128,9 +128,28 @@ Cross platform modeling language
   - [x] Add ; operator that evaluates left and right and returns right
   - [ ] Add ! operator as syntactic sugar so a!b() becomes [a, value] = a.b() ; value
   - [ ] Start adding some useful basic semantic checks.
+    - [x] No statements after return.
   - [ ] Write Javascript Backend
     - [x] Native operators
       - [x] Convert Native operator functions to Javascript.
       - [x] Check and only replace if ALL possible callees have same operator implementation.
       - [x] Finish Native Javascript for every operator type.
-    - [ ] Array Expressions.
+    - [x] Array Expressions.
+    - [x] Conditional Expressions.
+    - [ ] While loops.
+    - [ ] For loops.
+    - [ ] Add Import statements.
+      - [ ] Problem finding variables within Types that are compile time only `a` in `get`
+    - [ ] Convert absolute names to local names.
+    - [x] Convert ssa names to original names.
+    - [ ] Calculate Type specificity as per multifunction_precedence.md rules
+    - [ ] Multifunctions.
+      - [ ] Sort multifunctions.
+      - [ ] Semantically check multifunctions.
+        - [ ] No possibility of ambiguous calls.
+      - [ ] Assign order indexes to each individual multifunction.
+      - [ ] Create a combined single multifunction that runtime dispatches to functions.
+    - [ ] Create javascript runtime Type instances.
+    - [ ] Create runtime type checking for type instances.
+    - [ ] Create runtime type checking for literal type expressions.
+

@@ -25,7 +25,6 @@ function checkValidDestructure(child, errors: Error[]) {
     else if (child instanceof Identifier) {
         return;
     }
-    console.log({ child });
     errors.push(new SemanticError(`Invalid destructuring value`, child));
 }
 export function destructuringAndUnaryNumberLiterals(moduleName, module): ReturnType<Phase> {

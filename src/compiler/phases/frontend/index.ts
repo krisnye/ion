@@ -16,6 +16,7 @@ import { insertConditionalAssignments } from "./insertConditionalAssignments";
 import { checkCalls } from "./checkCalls";
 import { semanticChecks } from "./semanticChecks";
 import { checkUFCS } from "./checkUFCS";
+import addExplicitReturns from "./addExplicitReturns";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -27,6 +28,7 @@ export const parsingPhases: Phase[] = [
     removeSoloBlocks,
     flattenSequencesAddMeta,
     moveMetaToFunctions,
+    addExplicitReturns,
     semanticChecks,
     // createMultiFunctions,
     resolveExternalReferences,
@@ -46,8 +48,8 @@ export const intermediatePhases: Phase[] = [
 //  evaluation must happen in an assembled phase.
 export const assemblyPhases: Phase[] = [
     //  before type inference, fix named function calls, check all args same name, reorder names
-    checkCalls,
     typeInference,
+    checkCalls,
     //  some UFCS functions may not have been checked yet, so we check them now.
     checkUFCS,
     identity,

@@ -178,6 +178,7 @@ class Converter {
                         let type = UnionType.join(...types);
                         let phi = new Variable({
                             meta: [],
+                            phi: true,
                             location: originalVariable.location,
                             id: originalVariable.id.patch({ name: this.getNextName() }),
                             type,

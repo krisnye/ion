@@ -50,5 +50,12 @@ export class ArrayExpression extends Container {
     toString() {
         return Container.toString(this.nodes, "[", "]");
     }
+
+    toESNode(c: EvaluationContext) {
+        return {
+            type: "ArrayExpression",
+            elements: this.nodes.map(node => node.toESNode(c))
+        };
+    }
     
 }
