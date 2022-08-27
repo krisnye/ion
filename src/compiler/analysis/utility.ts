@@ -1,4 +1,5 @@
 import { traverse } from "@glas/traverse";
+import { BinaryExpression } from "../ast/BinaryExpression";
 import { Call } from "../ast/Call";
 import { Expression } from "../ast/Expression";
 import { IntersectionType } from "../ast/IntersectionType";
@@ -22,15 +23,24 @@ export function *splitExpression(operator: string, e: Expression): IterableItera
     }
 }
 
-export function joinExpressions(operator: string, location: SourceLocation, expressions: Expression[]): Expression | undefined {
+export function joinExpressions(operator: string, location: SourceLocation, expressions: Expression[], useBinaryExpression = false): Expression | undefined {
     let right = expressions[expressions.length - 1];
     for (let i = expressions.length - 2; i >= 0; i--) {
         const left = expressions[i];
-        right = new Call({
-            location,
-            callee: new Reference({ location, name: operator }),
-            nodes: [left, right]
-        })
+        if (useBinaryExpression) {
+            right = new BinaryExpression({
+                location,
+                left,
+                operator,
+                right,
+            });
+        } else {
+            right = new Call({
+                location,
+                callee: new Reference({ location, name: operator }),
+                nodes: [left, right]
+            })
+        }
     }
     return right;
 }
@@ -133,7 +143,7 @@ export function expressionToType(e: Expression, dot: Expression, negate: boolean
 }
 
 type OperatorInfo = { toType(e: Expression) : Type, reflect: string | false, negate: string };
-const compareOperators: { [op: string]: OperatorInfo } = {
+export const compareOperators: { [op: string]: OperatorInfo } = {
     ">": {
         toType: (min: Expression) => new NumberType({ location: min.location, min, minExclusive: true }),
         reflect: "<",

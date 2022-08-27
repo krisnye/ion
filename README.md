@@ -144,12 +144,12 @@ Cross platform modeling language
     - [x] Convert ssa names to original names.
     - [ ] Calculate Type specificity as per multifunction_precedence.md rules
     - [ ] Multifunctions.
-      - [ ] Sort multifunctions.
-      - [ ] Semantically check multifunctions.
-        - [ ] No possibility of ambiguous calls.
-      - [ ] Assign order indexes to each individual multifunction.
+      - [x] Sort multifunctions.
+      - [x] Assign order indexes to each individual multifunction.
       - [ ] Create a combined single multifunction that runtime dispatches to functions.
+          - original functions need to stay where they were defined for scoping?
+          - create new combined functions in global namespace
+          - rename current functions.
     - [ ] Create javascript runtime Type instances.
     - [ ] Create runtime type checking for type instances.
     - [ ] Create runtime type checking for literal type expressions.
-

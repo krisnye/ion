@@ -25,6 +25,11 @@ function setScopeValue(scope, name, value) {
     current.push(value);
 }
 
+export function sortDeclarations(declarations: Declaration[]) {
+    declarations.sort((a, b) => a.order! - b.order!);
+    return declarations;
+}
+
 /**
  * Returns a Map which will contain a scope object with variable names returning Declarations.
  * @param root the ast
@@ -87,7 +92,7 @@ export default function createScopeMaps(root, externals?: Map<string,Container>)
     });
 
     for (let declarations of declarationsToSort) {
-        declarations.sort((a, b) => a.order! - b.order!);
+        sortDeclarations(declarations);
     }
     declarationsToSort
 

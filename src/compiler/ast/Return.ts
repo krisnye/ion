@@ -1,12 +1,11 @@
-import { Expression } from "./Expression";
-import { Node, NodeProps } from "../Node";
+import { Expression, ExpressionProps } from "./Expression";
 import { EvaluationContext } from "../EvaluationContext";
 
-export interface ReturnProps extends NodeProps {
+export interface ReturnProps extends ExpressionProps {
     value: Expression;
 }
 
-export class Return extends Node {
+export class Return extends Expression {
 
     value!: Expression;
 

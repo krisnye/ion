@@ -3,7 +3,6 @@ import { getInputFilesRecursive } from "./common";
 import ErrorContext from "./errors/ErrorContext";
 import { Node } from "./Node";
 import { javascriptPhases } from "./phases/backend/javascript";
-// import { globalNamespace } from "./pathFunctions";
 import { assemblyPhases, intermediatePhases, parsingPhases } from "./phases/frontend";
 import { Phase } from "./phases/Phase";
 import { Module } from "./ast/Module";
@@ -11,6 +10,8 @@ import { SemanticError } from "./SemanticError";
 import { SourceLocation } from "./SourceLocation";
 import { SourcePosition } from "./SourcePosition";
 import toposort from "./toposort";
+import { middlePhasesAssembly } from "./phases/middle";
+import { Expression } from "./ast/Expression";
 
 export type PhaseLogger = (names?: string | string[] | null, ast?: any, file?: string) => void
 
@@ -110,14 +111,20 @@ export class Compiler {
                         return [modules, errors];
                     }
                     // split all nodes back into modules
-                    let newNodes = new Map([...modules.keys()].map(name => [name, [] as Node[]]));
+                    let newFilenames = new Set<string>(newAssembly.nodes.map(node => node.location.filename));
+                    let newNodes = new Map([...newFilenames].map(name => [name, [] as Expression[]]));
                     for (let node of newAssembly.nodes) {
                         newNodes.get(node.location.filename)!.push(node);
                     }
                     for (let name of newNodes.keys()) {
                         if (!removedModules.has(name)) {
+                            let nodes = newNodes.get(name)!;
                             let module = modules.get(name)!;
-                            let newModule = module.patch({ nodes: newNodes.get(name)})
+                            if (module == null) {
+                                // create new module if missing.
+                                modules.set(name, module = new Module({ name, nodes, dependencies: [], location: nodes[0].location }));
+                            }
+                            let newModule = module.patch({ nodes })
                             modules.set(name, newModule);
                             // log each module individually.
                             this.log(logger, (phaseRepeatCount || runPhaseAgain) ? `${phase.name} (${phaseRepeatCount + 1})` : phase.name, newModule, name);
@@ -197,6 +204,11 @@ export class Compiler {
             externals = modules;
             if (errors) { return errors; }
             [modules, errors] = this.runPhases(sources, modules, externals, assemblyPhases, true, debugOptions);
+            if (errors) { return errors; }
+            externals = modules;
+
+            //  middle tier
+            [modules, errors] = this.runPhases(sources, modules, externals, middlePhasesAssembly, true, debugOptions);
             if (errors) { return errors; }
             externals = modules;
 

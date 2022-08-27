@@ -22,3 +22,5 @@
 foo(a: Number) => 10
 foo(a: 0 .. 10) => 30
 foo(a: Integer) => 20
+
+bar = foo(12)

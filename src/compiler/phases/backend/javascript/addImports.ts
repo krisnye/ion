@@ -9,6 +9,9 @@ export function addImports(moduleName, module, externals): ReturnType<Phase> {
     module = traverseWithScope(externals, module, (c) => {
         return {
             leave(node) {
+                if (debug) {
+                    // console.log(">>>>> " + node);
+                }
                 if (node instanceof Reference) {
                     let d: Declaration | null = c.getDeclaration(node);
                     let external = d?.location.filename !== moduleName;
@@ -23,7 +26,7 @@ export function addImports(moduleName, module, externals): ReturnType<Phase> {
         }
     })
     if (importPaths.size > 0) {
-        console.log("import paths", importPaths);
+        console.log(`${moduleName} import paths`, importPaths);
     }
     return [module, []];
 }

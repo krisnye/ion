@@ -8,7 +8,7 @@ import { Call } from "../../ast/Call";
 import { FunctionDeclaration } from "../../ast/FunctionDeclaration";
 import { clone } from "../../common";
 
-export function isInferFunction(node: Expression): node is Function {
+export function isInferFunction(node: Expression): boolean {
     if (node instanceof Function) {
         return node.parameters.some(p => p.declaredType == null);
     }

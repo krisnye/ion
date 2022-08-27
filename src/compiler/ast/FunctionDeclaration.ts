@@ -8,6 +8,7 @@ export interface FunctionDeclarationProps extends FunctionProps {
     body: Node;
     inferred?: boolean;
     order?: number;
+    multiFunctions?: string[];
 }
 
 export class FunctionDeclaration extends Function implements Declaration {
@@ -18,6 +19,8 @@ export class FunctionDeclaration extends Function implements Declaration {
     inferred!: boolean;
     isDeclaration: true = true;
     order?: number;
+    //  if present, these are the names of the individual functions that makeup this multifunction
+    multiFunctions?: string[];
 
     constructor(props: FunctionDeclarationProps) { super({ inferred: false, ...props }); }
     patch(props: Partial<FunctionDeclarationProps>) { return super.patch(props); }

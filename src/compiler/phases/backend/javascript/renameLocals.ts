@@ -7,7 +7,6 @@ import { Phase } from "../../Phase";
 import { replace } from "../../../traverse";
 
 export function renameLocals(moduleName, module, externals): ReturnType<Phase> {
-    let debug = moduleName === "test.sample";
     module = traverseWithScope(externals, module, (c) => {
         return {
             leave(node) {
