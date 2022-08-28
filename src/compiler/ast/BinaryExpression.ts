@@ -1,4 +1,5 @@
 import { Expression, ExpressionProps } from "../ast/Expression";
+import { EvaluationContext } from "../EvaluationContext";
 import { SourceLocation } from "../SourceLocation";
 import { Type } from "./Type";
 
@@ -46,6 +47,15 @@ export class BinaryExpression extends Expression {
         else {
             yield e
         }
+    }
+
+    toESNode(c: EvaluationContext) {
+        return {
+            type: "BinaryExpression",
+            left: this.left.toESNode(c),
+            operator: this.operator,
+            right: this.right.toESNode(c)
+        };
     }
 
 }

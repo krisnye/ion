@@ -3839,10 +3839,18 @@ let test.sample.bar = foo(12);</p>
               {
                 &quot;type&quot;: &quot;IfStatement&quot;,
                 &quot;test&quot;: {
-                  &quot;type&quot;: &quot;ExpressionStatement&quot;,
-                  &quot;expression&quot;: {
-                    &quot;type&quot;: &quot;Literal&quot;,
-                    &quot;value&quot;: &quot;BinaryExpression.toESNode() not implemented&quot;
+                  &quot;type&quot;: &quot;BinaryExpression&quot;,
+                  &quot;left&quot;: {
+                    &quot;type&quot;: &quot;Identifier&quot;,
+                    &quot;name&quot;: &quot;a&quot;
+                  },
+                  &quot;operator&quot;: &quot;is&quot;,
+                  &quot;right&quot;: {
+                    &quot;type&quot;: &quot;ExpressionStatement&quot;,
+                    &quot;expression&quot;: {
+                      &quot;type&quot;: &quot;Literal&quot;,
+                      &quot;value&quot;: &quot;NumberType.toESNode() not implemented&quot;
+                    }
                   }
                 },
                 &quot;consequent&quot;: {
@@ -3865,10 +3873,18 @@ let test.sample.bar = foo(12);</p>
               {
                 &quot;type&quot;: &quot;IfStatement&quot;,
                 &quot;test&quot;: {
-                  &quot;type&quot;: &quot;ExpressionStatement&quot;,
-                  &quot;expression&quot;: {
-                    &quot;type&quot;: &quot;Literal&quot;,
-                    &quot;value&quot;: &quot;BinaryExpression.toESNode() not implemented&quot;
+                  &quot;type&quot;: &quot;BinaryExpression&quot;,
+                  &quot;left&quot;: {
+                    &quot;type&quot;: &quot;Identifier&quot;,
+                    &quot;name&quot;: &quot;a&quot;
+                  },
+                  &quot;operator&quot;: &quot;is&quot;,
+                  &quot;right&quot;: {
+                    &quot;type&quot;: &quot;ExpressionStatement&quot;,
+                    &quot;expression&quot;: {
+                      &quot;type&quot;: &quot;Literal&quot;,
+                      &quot;value&quot;: &quot;NumberType.toESNode() not implemented&quot;
+                    }
                   }
                 },
                 &quot;consequent&quot;: {
@@ -3891,10 +3907,18 @@ let test.sample.bar = foo(12);</p>
               {
                 &quot;type&quot;: &quot;IfStatement&quot;,
                 &quot;test&quot;: {
-                  &quot;type&quot;: &quot;ExpressionStatement&quot;,
-                  &quot;expression&quot;: {
-                    &quot;type&quot;: &quot;Literal&quot;,
-                    &quot;value&quot;: &quot;BinaryExpression.toESNode() not implemented&quot;
+                  &quot;type&quot;: &quot;BinaryExpression&quot;,
+                  &quot;left&quot;: {
+                    &quot;type&quot;: &quot;Identifier&quot;,
+                    &quot;name&quot;: &quot;a&quot;
+                  },
+                  &quot;operator&quot;: &quot;is&quot;,
+                  &quot;right&quot;: {
+                    &quot;type&quot;: &quot;ExpressionStatement&quot;,
+                    &quot;expression&quot;: {
+                      &quot;type&quot;: &quot;Literal&quot;,
+                      &quot;value&quot;: &quot;NumberType.toESNode() not implemented&quot;
+                    }
                   }
                 },
                 &quot;consequent&quot;: {
@@ -3927,11 +3951,11 @@ let test.sample.bar = foo(12);</p>
                     <header><span>toJavascript</span></header>
                     <p>function foo(a) {
     {
-        if ('BinaryExpression.toESNode() not implemented';)
+        if (a is 'NumberType.toESNode() not implemented';)
             return foo_0(a);
-        if ('BinaryExpression.toESNode() not implemented';)
+        if (a is 'NumberType.toESNode() not implemented';)
             return foo_1(a);
-        if ('BinaryExpression.toESNode() not implemented';)
+        if (a is 'NumberType.toESNode() not implemented';)
             return foo_2(a);
     }
 }</p>
@@ -3941,11 +3965,11 @@ let test.sample.bar = foo(12);</p>
                     <header><span>identity</span></header>
                     <p>function foo(a) {
     {
-        if ('BinaryExpression.toESNode() not implemented';)
+        if (a is 'NumberType.toESNode() not implemented';)
             return foo_0(a);
-        if ('BinaryExpression.toESNode() not implemented';)
+        if (a is 'NumberType.toESNode() not implemented';)
             return foo_1(a);
-        if ('BinaryExpression.toESNode() not implemented';)
+        if (a is 'NumberType.toESNode() not implemented';)
             return foo_2(a);
     }
 }</p>
