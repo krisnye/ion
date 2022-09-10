@@ -45,21 +45,15 @@ function createJavascriptImports(importPaths: Set<string>, externals: Map<string
 }
 
 export function addImports(moduleName, module: Module, externals): ReturnType<Phase> {
-    let debug = moduleName === "test.sample";
     let importPaths = new Set<string>();
     module = traverseWithScope(externals, module, (c) => {
         return {
             leave(node) {
-                if (debug) {
-                    // console.log(">>>>> " + node);
-                }
                 if (node instanceof Reference) {
                     let d: Declaration | null = c.getDeclaration(node);
                     let external = d?.location.filename !== moduleName;
                     if (external) {
-                        if (debug) {
-                            importPaths.add(node.name);
-                        }
+                        importPaths.add(node.name);
                     }
                 }
                 return node;

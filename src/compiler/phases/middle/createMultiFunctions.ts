@@ -5,10 +5,12 @@ import { Block } from "../../ast/Block";
 import { Call } from "../../ast/Call";
 import { Conditional } from "../../ast/Conditional";
 import { Declaration } from "../../ast/Declaration";
+import { Function } from "../../ast/Function";
 import { FunctionDeclaration } from "../../ast/FunctionDeclaration";
 import { Identifier } from "../../ast/Identifier";
 import { Reference } from "../../ast/Reference";
 import { Return } from "../../ast/Return";
+import { Variable } from "../../ast/Variable";
 import { Node } from "../../Node";
 import { getAbsolutePath } from "../../pathFunctions";
 import { SourceLocation } from "../../SourceLocation";
@@ -52,7 +54,7 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
         );
 
         let multiFunctionId = new Identifier({ name, location });
-        let multiFunctionDeclaration: FunctionDeclaration;
+        let multiFunctionDeclaration: Declaration;
         if (functions.length === 1) {
             multiFunctionDeclaration = functions[0].patch({
                 id: multiFunctionId
@@ -62,7 +64,7 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
             let parameters = functions
                 .map(func => func.parameters)
                 .sort((a, b) => a.length - b.length)[0]
-                .map(p => p.patch({ type: null, declaredType: null }));
+                .map(p => p.patch({ location, type: null, declaredType: null }));
             
             let functionChecks = functions.map(func => {
                 let checks = func.parameters.map(
@@ -102,17 +104,22 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
                 }
             });
 
-            multiFunctionDeclaration = new FunctionDeclaration({
+            multiFunctionDeclaration = new Variable({
                 location,
                 id: multiFunctionId,
-                body: new Block({
+                value: new Function({
                     location,
-                    nodes: functionChecks
-                }),
-                parameters,
-                returnType: null,
-                meta: [],
-                multiFunctions: functions.map(getOrderedName)
+                    id: multiFunctionId,
+                    body: new Block({
+                        location,
+                        nodes: functionChecks
+                    }),
+                    parameters,
+                    returnType: null,
+                    meta: [],
+                    multiFunctions: functions.map(getOrderedName)
+                })
+    
             })
         }
 

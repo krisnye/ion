@@ -11,7 +11,7 @@ import { Type } from "./Type";
 import { Function } from "./Function";
 import { defaultExportName } from "../pathFunctions";
 
-type VariableKind = "variable" | "property";
+type VariableKind = "variable" | "property" | "parameter";
 
 export interface VariableProps extends ExpressionProps {
     id: Identifier;
@@ -20,11 +20,15 @@ export interface VariableProps extends ExpressionProps {
     declaredType?: Type | null;
     conditional?: boolean;
     phi?: boolean;
-    kind?: VariableKind
+    kind?: VariableKind;
 }
 
 export function isProperty(node): node is Variable & { kind: "property" } {
     return node instanceof Variable && node.kind === "property";
+}
+
+export function isParameter(node): node is Variable & { kind: "parameter" } {
+    return node instanceof Variable && node.kind === "parameter";
 }
 
 export class Variable extends Expression implements Declaration {
@@ -79,8 +83,19 @@ export class Variable extends Expression implements Declaration {
         return `${this.declaredType ? ` : ${this.declaredType}` : ``}${super.toTypeString()}`;
     }
 
+    getVariableKindName() {
+        switch(this.kind) {
+            case "parameter":
+            case "property":
+                return this.kind;
+            case "variable":
+            default:
+                return this.isType() ? `type` : this.constant ? `const` : `var`;
+        }
+    }
+
     toString() {
-        return `${toMetaString(this)}${isProperty(this) ? "property" : this.isType() ? `type` : this.constant ? `const` : `var`} ${this.id}${this.toTypeString()}${this.value != null ? ` = ${this.value}`: ``}`;
+        return `${toMetaString(this)}${this.getVariableKindName()} ${this.id}${this.toTypeString()}${this.value != null ? ` = ${this.value}`: ``}`;
     }
 
     toESParameter(c: EvaluationContext) {
@@ -116,7 +131,7 @@ export class Variable extends Expression implements Declaration {
         }
         return {
             type: "VariableDeclaration",
-            kind: "let",
+            kind: this.constant ? "const" : "let",
             declarations: [
                 {
                     type: "VariableDeclarator",

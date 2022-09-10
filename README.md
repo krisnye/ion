@@ -145,13 +145,14 @@ Cross platform modeling language
     - [ ] Calculate Type specificity as per multifunction_precedence.md rules
     - [x] Type check static members from Type export in a file.
     - [ ] Create static exports from every namespace and file.
-    - [ ] Multifunctions.
+    - [x] Multifunctions.
       - [x] Sort multifunctions.
       - [x] Assign order indexes to each individual multifunction.
-      - [ ] Create a combined single multifunction that runtime dispatches to functions.
-          - original functions need to stay where they were defined for scoping?
-          - create new combined functions in global namespace
-          - rename current functions.
-    - [ ] Create javascript runtime Type instances.
+      - [x] Foo multifunction is not importing it's sub functions.
+      - [x] Create a combined single multifunction that runtime dispatches to functions.
+        - [x] original functions need to stay where they were defined for scoping?
+        - [x] create new combined functions in global namespace
+        - [x] rename current functions.
+    - [x] Create javascript runtime Type instances.
     - [ ] Create runtime type checking for type instances.
     - [ ] Create runtime type checking for literal type expressions.

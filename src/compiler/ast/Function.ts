@@ -20,16 +20,27 @@ import { Variable } from "./Variable";
 import { Block } from "./Block";
 
 export interface FunctionProps extends FunctionBaseProps {
-    id?: Identifier
+    id?: Identifier;
     body: Node;
+    multiFunctions?: string[];
+}
+
+function toParameters(nodes: Variable[]) {
+    return nodes.map(node => {
+        if (node.kind !== "parameter") {
+            node = node.patch({ kind: "parameter" });
+        }
+        return node;
+    })
 }
 
 export class Function extends FunctionBase implements Callable {
 
     id?: Identifier
     body!: Expression;
+    multiFunctions?: string[];
 
-    constructor(props: FunctionProps) { super(props); }
+    constructor(props: FunctionProps) { super({ ...props, parameters: toParameters(props.parameters!)}); }
     patch(props: Partial<FunctionProps>) { return super.patch(props); }
 
     call(args: Node[]): Node {
