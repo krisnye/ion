@@ -17,6 +17,7 @@ import { getMetaCall, toMetaString } from "./MetaContainer";
 import { isType, Type } from "./Type";
 import { UnionType } from "./UnionType";
 import { Variable } from "./Variable";
+import { Block } from "./Block";
 
 export interface FunctionProps extends FunctionBaseProps {
     id?: Identifier
@@ -108,16 +109,15 @@ export class Function extends FunctionBase implements Callable {
     }
 
     toESNode(c: EvaluationContext) {
+        let body = this.body.toESNode(c);
+        if (!(this.body instanceof Block)) {
+            body = { type: "BlockStatement", body: [body] };
+        }
         return {
             type: "FunctionExpression",
             id: this.id?.toESNode(c),
             params: this.parameters.map(p => p.toESParameter(c)),
-            body: {
-                type: "BlockStatement",
-                body: [
-                    this.body.toESNode(c),
-                ]
-            }
+            body,
         }
     }
 

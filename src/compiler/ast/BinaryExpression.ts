@@ -1,7 +1,10 @@
 import { Expression, ExpressionProps } from "../ast/Expression";
 import { EvaluationContext } from "../EvaluationContext";
 import { SourceLocation } from "../SourceLocation";
+import { NumberType } from "./NumberType";
+import { Reference } from "./Reference";
 import { Type } from "./Type";
+import { TypeReference } from "./TypeReference";
 
 export interface BinaryExpressionProps extends ExpressionProps {
     left: typeof BinaryExpression.prototype.left;
@@ -50,6 +53,53 @@ export class BinaryExpression extends Expression {
     }
 
     toESNode(c: EvaluationContext) {
+        if (this.operator === "is") {
+            if (this.right instanceof Reference) {
+                switch (this.right.name) {
+                    case "String":
+                    case "Number":
+                    return {
+                        type: "BinaryExpression",
+                        left: {
+                            type: "UnaryExpression",
+                            operator: "typeof",
+                            argument: this.left.toESNode(c),
+                            prefix: true
+                        },
+                        operator: "===",
+                        right: {
+                            type: "Literal",
+                            value: this.right.name.toLowerCase(),
+                        }
+                    }
+                    case "Integer":
+                    return {
+                        type: "CallExpression",
+                        callee: {
+                            type: "MemberExpression",
+                            object: { type: "Identifier", name: "Number" },
+                            property: { type: "Identifier", name: "isInteger" }
+                        },
+                        arguments: [this.left.toESNode(c)],
+                    }
+                    default:
+                    return {
+                        type: "CallExpression",
+                        callee: {
+                            type: "MemberExpression",
+                            object: this.right.toESNode(c),
+                            property: { type: "Identifier", name: "is" }
+                        },
+                        arguments: [this.left.toESNode(c)],
+                    }
+                }
+            }
+            else {
+                if (this.right instanceof NumberType) {
+                    return this.right.toDotExpression(c, this.left).toESNode(c);
+                }
+            }
+        }
         return {
             type: "BinaryExpression",
             left: this.left.toESNode(c),

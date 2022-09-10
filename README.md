@@ -139,10 +139,12 @@ Cross platform modeling language
     - [ ] While loops.
     - [ ] For loops.
     - [ ] Add Import statements.
-      - [ ] Problem finding variables within Types that are compile time only `a` in `get`
+      - [x] Problem finding variables within Types that are compile time only `a` in `get`
     - [ ] Convert absolute names to local names.
     - [x] Convert ssa names to original names.
     - [ ] Calculate Type specificity as per multifunction_precedence.md rules
+    - [x] Type check static members from Type export in a file.
+    - [ ] Create static exports from every namespace and file.
     - [ ] Multifunctions.
       - [x] Sort multifunctions.
       - [x] Assign order indexes to each individual multifunction.

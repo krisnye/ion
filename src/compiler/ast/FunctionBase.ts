@@ -13,7 +13,7 @@ import { SemanticError } from "../SemanticError";
 export interface FunctionBaseProps extends ExpressionProps {
     parameters: Variable[];
     returnType: Type | null;
-    meta: MetaCall[];
+    meta?: MetaCall[];
 }
 
 export abstract class FunctionBase extends Expression implements MetaContainer, Scope {
@@ -22,7 +22,7 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
     returnType!: Type | null;
     meta!: MetaCall[];
 
-    constructor(props: FunctionBaseProps) { super(props); }
+    constructor(props: FunctionBaseProps) { super({ meta: [], ...props }); }
     patch(props: Partial<FunctionBaseProps>) { return super.patch(props); }
 
     get isScope() {

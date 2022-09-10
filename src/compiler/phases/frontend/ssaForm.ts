@@ -91,7 +91,7 @@ export function getVariableIfWithinLoop(c: EvaluationContext, ref: Reference, an
     return withinLoop ? variable : null;
 }
 
-export function removeSSAVersions<T>(node: T): T {
+export function removeSSAVersions<T extends Object>(node: T): T {
     return traverse(node, {
         leave(node) {
             if (node instanceof Reference || node instanceof Identifier) {

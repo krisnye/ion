@@ -17,6 +17,7 @@ import { checkCalls } from "./checkCalls";
 import { semanticChecks } from "./semanticChecks";
 import { checkUFCS } from "./checkUFCS";
 import addExplicitReturns from "./addExplicitReturns";
+import addExport from "./addExport";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -30,6 +31,7 @@ export const parsingPhases: Phase[] = [
     moveMetaToFunctions,
     addExplicitReturns,
     semanticChecks,
+    addExport,
     // createMultiFunctions,
     resolveExternalReferences,
     insertConditionalAssignments,

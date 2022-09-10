@@ -60,6 +60,8 @@ function same(a: Maybe, b: Maybe): Maybe {
  * Returns null if some instances of type 'a' could be instances of type 'b'
  */
  export function isSubtype(a: Type | null, b: Type | null, c: EvaluationContext): boolean | null {
+    let originalA = a;
+    let originalB = b;
     if (a === b || a?.toString() === b?.toString() || b == null || a instanceof AnyType) {
         return true
     }
@@ -82,6 +84,11 @@ function same(a: Maybe, b: Maybe): Maybe {
     }
     if (a instanceof IntersectionType) {
         return maxNoFalse(isSubtype(a.left, b, c), isSubtype(a.right, b, c))
+    }
+
+    if (!(typeof a.getBasicTypes === "function")) {
+        debugger;
+        let foo = c.getComparisonType(originalA!);
     }
 
     let baseA = a.getBasicTypes(c);

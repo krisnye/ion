@@ -19,8 +19,20 @@
 //     x: Number = 0
 //     y: Number
 
-foo(a: Number) => 10
-foo(a: 0 .. 10) => 30
-foo(a: Integer) => 20
+// SmallNumber = 0 .. 22
 
-bar = foo(12)
+// foo(a: Number) => 10
+// foo(a: SmallNumber) => 30
+// foo(a: Integer) => 20
+// foo(a: String) => 40
+
+// bar = foo(12)
+
+//  import from other modules?
+
+_private = 12
+
+myFoo = Foo
+
+bar = 1
+foo = 2

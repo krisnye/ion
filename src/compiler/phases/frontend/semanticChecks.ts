@@ -1,10 +1,14 @@
 import { Container } from "../../ast/Container";
 import { Expression } from "../../ast/Expression";
 import { Return } from "../../ast/Return";
+import { Variable } from "../../ast/Variable";
+import { defaultExportName } from "../../pathFunctions";
 import { Group } from "../../pst/Group";
 import { SemanticError } from "../../SemanticError";
 import { traverse } from "../../traverse";
 import { Phase } from "../Phase";
+
+export const reservedWords = new Set([defaultExportName]);
 
 export function semanticChecks(moduleName, module): ReturnType<Phase> {
     let errors: Error[] = [];
@@ -16,6 +20,11 @@ export function semanticChecks(moduleName, module): ReturnType<Phase> {
                     errors.push(new SemanticError(`Expected expression`, node.value!));
                 }
                 return node.value!;
+            }
+            if (node instanceof Variable) {
+                if (reservedWords.has(node.id.name)) {
+                    errors.push(new SemanticError(`Cannot use reserved word "${node.id.name}"`, node.id));
+                }
             }
             //  no expressions after return
             if (node instanceof Container) {

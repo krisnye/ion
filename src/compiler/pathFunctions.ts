@@ -1,12 +1,14 @@
 
+export const defaultExportName = "export";
+
 export const globalNamespace = "$"
 const pathSeparator = ".";
 // export function isAbsolutePath(path: string) {
 //     return path.startsWith(globalNamespace);
 // }
-export function getAbsolutePath(moduleName: string, exportName: string = getLastName(moduleName)) {
+export function getAbsolutePath(moduleName: string, exportName: string = getLastName(moduleName), internal = false) {
     let path = moduleName;
-    if (exportName != null && exportName != getLastName(moduleName)) {
+    if (exportName != null && exportName !== defaultExportName && (internal || exportName != getLastName(moduleName))) {
         path += `${pathSeparator}${exportName}`
     }
     return path;

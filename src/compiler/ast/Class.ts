@@ -20,6 +20,9 @@ import { coreTypes } from "../coreTypes";
 import { NumberType } from "./NumberType";
 import { SemanticError } from "../SemanticError";
 import { ESNode } from "./ESNode";
+import { Module } from "./Module";
+import { split } from "../pathFunctions";
+import { IntersectionType } from "./IntersectionType";
 
 export interface ClassProps extends ContainerProps {
     id: Identifier;
@@ -27,6 +30,7 @@ export interface ClassProps extends ContainerProps {
     nodes: Variable[];
     meta: MetaCall[];
     structure?: boolean;
+    staticMembers?: Reference[];
 }
 
 export class Class extends Container implements Type, Declaration, Callable {
@@ -37,9 +41,10 @@ export class Class extends Container implements Type, Declaration, Callable {
     meta!: MetaCall[];
     structure!: boolean;
     isDeclaration: true = true;
+    staticMembers!: Reference[];
 
     constructor(props: ClassProps) {
-        super({ structure: false,  ...props });
+        super({ structure: false, staticMembers: [],  ...props });
     }
     patch(props: Partial<ClassProps>) { return super.patch(props); }
 
@@ -177,16 +182,32 @@ export class Class extends Container implements Type, Declaration, Callable {
             parameters: allVariables,
             returnType: new TypeReference({ ...this.id, resolved: true }),
             resolved: true,
-        })
+        });
     }
 
     *getDependencies(c: EvaluationContext) {
         yield* super.getDependencies(c);
         yield* this.extends as Expression[];
+        // yield* this.staticMembers;
     }
 
     protected resolveType(c: EvaluationContext): Type | null {
-        return this.getFunctionType(c);
+        let type: Type = this.getFunctionType(c);
+        // let objectType = new ObjectType({
+        //     location: this.location,
+        //     properties: this.staticMembers.map(member => {
+        //         let shortName = split(member.name).pop()!;
+        //         return new Pair({
+        //             location: member.location,
+        //             key: new Identifier({ location: member.location, name: shortName }),
+        //             value: member.type!,
+        //         });
+        //     })
+        // });
+        // if (objectType.properties.length > 0) {
+        //     type = IntersectionType.join(type, objectType)!;
+        // }
+        return type;
     }
 
     toString() {

@@ -25,6 +25,9 @@ export class EvaluationContext {
     getComparisonType(type: Type): Type {
         let check = this.comparisonTypes.get(type);
         if (check == null) {
+            if (type.toString() === '`test.lerp.Color`') {
+                debugger;
+            }
             this.comparisonTypes.set(type, check = (type.toComparisonType?.(this) ?? type));
         }
         return check;

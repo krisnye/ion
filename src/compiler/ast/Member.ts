@@ -4,6 +4,7 @@ import { SemanticError } from "../SemanticError";
 import { Call } from "./Call";
 import { Expression, ExpressionProps } from "./Expression";
 import { Identifier } from "./Identifier";
+import { IntersectionType } from "./IntersectionType";
 import { ObjectType } from "./ObjectType";
 import { Reference } from "./Reference";
 import { isType, Type } from "./Type";
@@ -52,12 +53,10 @@ export class Member extends Expression {
     }
 
     protected resolve(c: EvaluationContext): Expression {
-        // if (this.toString() === "`test.sample.value`.double") {
-        //     debugger;
-        // }
         let objectType = c.getComparisonType(this.object.type!);
-        for (const option of UnionType.split(objectType)) {
+        for (let option of UnionType.split(objectType)) {
             let type: Type | null = null;
+            option = [...IntersectionType.split(option)].find(a => a instanceof ObjectType)!;
             if (option instanceof ObjectType) {
                 const key = this.getPropertyKey();
                 type = option.getPropertyType(key, c);
@@ -98,8 +97,9 @@ export class Member extends Expression {
     protected resolveType(c: EvaluationContext) {
         let objectType = c.getComparisonType(this.object.type!);
         let types = new Array<Type>();
-        for (const option of UnionType.split(objectType)) {
+        for (let option of UnionType.split(objectType)) {
             let type: Type | null = null;
+            option = [...IntersectionType.split(option)].find(a => a instanceof ObjectType)!;
             if (option instanceof ObjectType) {
                 const key = this.getPropertyKey();
                 type = option.getPropertyType(key, c);
@@ -114,6 +114,14 @@ export class Member extends Expression {
 
     toString() {
         return this.computed ? `${this.object}[${this.property}]` : `${this.object}.${this.property}`;
+    }
+
+    toESNode(c: EvaluationContext) {
+        return {
+            type: "MemberExpression",
+            object: this.object.toESNode(c),
+            property: this.property.toESNode(c)
+        }
     }
 
 }

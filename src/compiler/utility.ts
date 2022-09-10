@@ -1,4 +1,5 @@
 import { isValidId } from "./common";
+import { getLastName } from "./pathFunctions";
 
 export function memoize<A,B>(fn: (a: A) => B): (a: A) => B {
     let cache = new Map<A,B>();
@@ -32,12 +33,17 @@ function firstLetterOfLastName(name: string) {
     return name[name.lastIndexOf(".") + 1];
 }
 
+export function isPrivateName(name: string) { return getLastName(name).startsWith("_"); }
+
 export function isTypeName(name?: string) {
-    if (name == null || !isValidId(name)) {
+    if (name == null) {
         return false;
     }
     const first = firstLetterOfLastName(name);
-    return first !== "_" && first === first.toUpperCase();
+    if (!isValidId(first)) {
+        return false;
+    }
+    return !isPrivateName(first) && first === first.toUpperCase();
 }
 
 export function isMetaName(name?: string) {

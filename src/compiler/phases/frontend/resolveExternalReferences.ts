@@ -12,10 +12,11 @@ import { NumberType } from "../../ast/NumberType";
 import { TypeReference } from "../../ast/TypeReference";
 import { ArrayExpression } from "../../ast/ArrayExpression";
 import { NumberLiteral } from "../../ast/NumberLiteral";
+import { isProperty } from "../../ast/Variable";
 
 export function resolveExternalReferences(moduleName, module, externalModules: Map<string,Module>): ReturnType<Phase> {
     let errors: Error[] = [];
-    let replacements = new Map<Identifier, Reference>();
+    let replacements = new Map<string, string>();
     let scopes = createScopeMaps(module);
     let externalReferences = getExternalReferences(module, scopes);
     let dependencies = new Set<string>();
@@ -28,7 +29,7 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
                 replaceInternalReferencesToAbsolute(node, externalModules, replacements, errors, scopes);
             }
         },
-        leave(node) {
+        leave(node, ancestors) {
             if (node instanceof ArrayExpression) {
                 dependencies.add(coreTypes.Array);
             }
@@ -46,16 +47,25 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
                     }
                 }
 
-                let declarations = scopes.get(node)[node.name];
-                if (declarations != null) {
-                    let declaration = declarations[0];
-                    let rootId = replacements.get(declaration.id);
-                    if (rootId != null) {
-                        node = node.patch({ name: rootId.name });
+                // let declarations = scopes.get(node)[node.name];
+                // if (declarations != null) {
+                //     let declaration = declarations[0];
+                //     let rootId = replacements.get(declaration.id.name);
+                //     if (rootId != null) {
+                //         node = node.patch({ name: rootId });
+                //     }
+                // }
+            }
+            if (node instanceof Identifier || node instanceof Reference) {
+                let parent = ancestors[ancestors.length - 1];
+                if (!isProperty(parent) || node instanceof Reference) {
+                    let newName = replacements.get(node.name);
+                    if (newName && newName !== node.name) {
+                        node = node.patch({ name: newName });
                     }
                 }
             }
-            return replacements.get(node) ?? node;
+            return node;
         }
     });
     module = module.patch({ dependencies: [...dependencies] });
@@ -81,22 +91,22 @@ function getExternalReferences(module: any, scopes: NodeMap<ScopeMap>): Map<stri
     return externalReferences;
 }
 
-function replaceInternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements, errors, scopes: NodeMap<ScopeMap>) {
+function replaceInternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements: Map<string, string>, errors, scopes: NodeMap<ScopeMap>) {
     for (let node of module.nodes) {
         if (isDeclaration(node) && !node.isGlobalScoped) {
-            replacements.set(node.id, node.id.patch({ name: getAbsolutePath(module.name, node.id.name) }));
+            replacements.set(node.id.name, getAbsolutePath(module.name, node.id.name, true));
         }
     }
 }
 
-function replaceExternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements: Map<Identifier, Reference>, errors: Error[], externalReferences: Map<string, Set<Reference>>, externalModuleDependencies: Set<string>) {
+function replaceExternalReferencesToAbsolute(module: Module, externalModules: Map<string,Module>, replacements: Map<string, string>, errors: Error[], externalReferences: Map<string, Set<Reference>>, externalModuleDependencies: Set<string>) {
     for (let external of externalReferences.keys()) {
         let resolvedPath = resolve(join(module.name, external), externalModules);
         if (resolvedPath) {
             externalModuleDependencies.add(resolvedPath);
             let absolutePath = getAbsolutePath(resolvedPath);
             for (let ref of externalReferences.get(external)!.keys()) {
-                replacements.set(ref, ref.patch({ name: absolutePath }));
+                replacements.set(ref.name, absolutePath);
             }
         }
         else {

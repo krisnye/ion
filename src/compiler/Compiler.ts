@@ -99,8 +99,10 @@ export class Compiler {
                 for (let phaseRepeatCount = 0; phaseRepeatCount < 100; phaseRepeatCount++) {
                     let assembly = new Assembly({
                         location: new SourceLocation(globalName, new SourcePosition(0, 0), new SourcePosition(0, 0)),
-                        nodes: [...modules.values()].map((module: Module) => module.nodes).flat(),
-                    })
+                        nodes: [...modules.values()].map((module: Module) => {
+                            return module.nodes
+                        }).flat(),
+                    });
                     let [newAssembly, errors, runPhaseAgain] = this.runPhase(phase, globalName, assembly, externals, this.options);
                     errors = removeExpectedErrors(errors);
                     if (errors.length > 0) {
@@ -197,7 +199,10 @@ export class Compiler {
                     return [dep, module.name];
                 })];
             }).flat() as [any,any][]);
-            modules = new Map(sortedModuleNames.map(name => [name, modules.get(name)]));
+            modules = new Map(sortedModuleNames.map(name => {
+                let module = modules.get(name);
+                return [name, module];
+            }));
             externals = modules;
 
             [modules, errors] = this.runPhases(sources, modules, externals, intermediatePhases, false, debugOptions);
@@ -257,7 +262,7 @@ export class Compiler {
         }
     }
 
-    logFilter = new Set([ "test.sample", "foo" ])
+    logFilter = new Set([ "test.sample", "foo" ]);
     logModule(name: string) {
         // return true;
         return this.logFilter && this.logFilter.has(name);

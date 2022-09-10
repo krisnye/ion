@@ -21,12 +21,12 @@ export class ConditionalAssertion extends Expression {
     patch(props: Partial<ConditionalAssertionProps>) { return super.patch(props); }
 
     getConditional(c: EvaluationContext) {
-        return c.lookup.findAncestor(this, node => node instanceof Conditional) as Conditional;
+        return c.lookup.findAncestor<Conditional>(this, (node): node is Conditional => node instanceof Conditional);
     }
 
     *getDependencies(c: EvaluationContext) {
         yield this.value;
-        yield this.getConditional(c).test;
+        yield this.getConditional(c)!.test;
     }
 
     protected resolve(c: EvaluationContext): Expression {
@@ -35,7 +35,7 @@ export class ConditionalAssertion extends Expression {
     }
 
     protected resolveType(c: EvaluationContext) {
-        const { test } = this.getConditional(c);
+        const test = this.getConditional(c)!.test;
         let splitOps = ["||", "&&"];
         let joinOps = splitOps.slice(0);
         if (this.negate) {

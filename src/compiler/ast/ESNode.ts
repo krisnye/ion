@@ -1,10 +1,14 @@
-import { Node } from "../Node";
+import { EvaluationContext } from "../EvaluationContext";
 
 export class ESNode {
 
     constructor(props: any) {
         let { location, ...other } = props;
         Object.assign(this, other);
+    }
+
+    toESNode(c: EvaluationContext) {
+        return this;
     }
 
     toString() {

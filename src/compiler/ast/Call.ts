@@ -131,28 +131,28 @@ export class Call extends Container {
 
     toESNode(c: EvaluationContext) {
         const nodes = this.nodes.map(n => n.toESNode(c));
-        if (this.callee instanceof Reference) {
-            let callees = c.getValues(this.callee);
-            let possibleCallees = getPossibleFunctionCalls(callees, this.nodes, this.nodes.map(node => node.type!), c);
-            let nativeJavascriptFunctionTexts = possibleCallees.map(p => getNativeJavascript(p, c));
-            if (typeof nativeJavascriptFunctionTexts[0] === "string" && areAllElementsTheSame(nativeJavascriptFunctionTexts)) {
-                let jsFunction: any;
-                try {
-                    jsFunction = evalMemoized(nativeJavascriptFunctionTexts[0]);
-                }
-                catch (e) {
-                    throw new SemanticError(`Error calling javascript eval: `, possibleCallees[0]);
-                }
-                if (typeof jsFunction !== "function") {
-                    throw new SemanticError(`Expected Javascript function`, possibleCallees[0]);
-                }
-                if (jsFunction.length !== this.nodes.length) {
-                    throw new SemanticError(`Native.javascript function has different arguments length, expected ${this.nodes.length}`, this, possibleCallees[0]);
-                }
-                let newNode = jsFunction(...nodes);
-                return newNode;
-            }
-        }
+        // if (this.callee instanceof Reference) {
+        //     let callees = c.getValues(this.callee);
+        //     let possibleCallees = getPossibleFunctionCalls(callees, this.nodes, this.nodes.map(node => node.type!), c);
+        //     let nativeJavascriptFunctionTexts = possibleCallees.map(p => getNativeJavascript(p, c));
+        //     if (typeof nativeJavascriptFunctionTexts[0] === "string" && areAllElementsTheSame(nativeJavascriptFunctionTexts)) {
+        //         let jsFunction: any;
+        //         try {
+        //             jsFunction = evalMemoized(nativeJavascriptFunctionTexts[0]);
+        //         }
+        //         catch (e) {
+        //             throw new SemanticError(`Error calling javascript eval: `, possibleCallees[0]);
+        //         }
+        //         if (typeof jsFunction !== "function") {
+        //             throw new SemanticError(`Expected Javascript function`, possibleCallees[0]);
+        //         }
+        //         if (jsFunction.length !== this.nodes.length) {
+        //             throw new SemanticError(`Native.javascript function has different arguments length, expected ${this.nodes.length}`, this, possibleCallees[0]);
+        //         }
+        //         let newNode = jsFunction(...nodes);
+        //         return newNode;
+        //     }
+        // }
         return {
             type: "CallExpression",
             callee: this.callee.toESNode(c),

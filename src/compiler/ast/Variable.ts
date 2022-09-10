@@ -9,14 +9,22 @@ import { isSubtype } from "../analysis/isSubtype";
 import { SemanticError } from "../SemanticError";
 import { Type } from "./Type";
 import { Function } from "./Function";
+import { defaultExportName } from "../pathFunctions";
+
+type VariableKind = "variable" | "property";
 
 export interface VariableProps extends ExpressionProps {
     id: Identifier;
     value: Expression | null;
-    meta: MetaCall[];
+    meta?: MetaCall[];
     declaredType?: Type | null;
     conditional?: boolean;
     phi?: boolean;
+    kind?: VariableKind
+}
+
+export function isProperty(node): node is Variable & { kind: "property" } {
+    return node instanceof Variable && node.kind === "property";
 }
 
 export class Variable extends Expression implements Declaration {
@@ -28,8 +36,9 @@ export class Variable extends Expression implements Declaration {
     isDeclaration: true = true;
     conditional!: boolean;
     phi!: boolean;
+    kind!: VariableKind;
 
-    constructor(props: VariableProps) { super({ conditional: false, phi: false, ...props }); }
+    constructor(props: VariableProps) { super({ meta: [], kind: "Variable", conditional: false, phi: false, ...props }); }
     patch(props: Partial<VariableProps>) { return super.patch(props); }
 
     *getDependencies(c: EvaluationContext) {
@@ -71,7 +80,7 @@ export class Variable extends Expression implements Declaration {
     }
 
     toString() {
-        return `${toMetaString(this)}${this.isType() ? `type` : this.constant ? `const` : `var`} ${this.id}${this.toTypeString()}${this.value != null ? ` = ${this.value}`: ``}`;
+        return `${toMetaString(this)}${isProperty(this) ? "property" : this.isType() ? `type` : this.constant ? `const` : `var`} ${this.id}${this.toTypeString()}${this.value != null ? ` = ${this.value}`: ``}`;
     }
 
     toESParameter(c: EvaluationContext) {
@@ -92,6 +101,12 @@ export class Variable extends Expression implements Declaration {
     }
 
     toESNode(c: EvaluationContext) {
+        if (this.id.name === defaultExportName) {
+            return {
+                type: "ExportDefaultDeclaration",
+                declaration: this.value?.toESNode(c)
+            }
+        }
         if (this.value instanceof Function) {
             return {
                 ...this.value.toESNode(c),
