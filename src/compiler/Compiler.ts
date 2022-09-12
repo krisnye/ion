@@ -113,10 +113,10 @@ export class Compiler {
                         return [modules, errors];
                     }
                     // split all nodes back into modules
-                    let newFilenames = new Set<string>(newAssembly.nodes.map(node => node.location.filename));
+                    let newFilenames = new Set<string>(newAssembly.nodes.map(node => node.getFilename()));
                     let newNodes = new Map([...newFilenames].map(name => [name, [] as Expression[]]));
                     for (let node of newAssembly.nodes) {
-                        newNodes.get(node.location.filename)!.push(node);
+                        newNodes.get(node.getFilename())!.push(node);
                     }
                     for (let name of newNodes.keys()) {
                         if (!removedModules.has(name)) {

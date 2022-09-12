@@ -35,13 +35,25 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
     for (let [name, functions] of allFunctionDeclarations) {
         //  first sort functions
         sortDeclarations(functions);
-        //  rename child functions
+        //  rename child functions.
         for (let func of functions) {
             changes.set(
                 func,
-                func.patch({
+                new Variable({
+                    // change the filename to the new global multifunction file
+                    location: func.location,
                     id: func.id.patch({
                         name: getOrderedName(func)
+                    }),
+                    value: new Function({
+                        meta: func.meta,
+                        location: func.location,
+                        parameters: func.parameters,
+                        body: func.body,
+                        returnType: func.returnType,
+                        id: func.id.patch({
+                            name: getOrderedName(func)
+                        })
                     })
                 })
             )
@@ -117,7 +129,7 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
                     parameters,
                     returnType: null,
                     meta: [],
-                    multiFunctions: functions.map(getOrderedName)
+                    multiFunctions: functions.map(getOrderedName).map(name => new Reference({ location, name }))
                 })
     
             })

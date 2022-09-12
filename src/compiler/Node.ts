@@ -3,15 +3,21 @@ import { Immutable } from "./Immutable";
 import { SourceLocation } from "./SourceLocation";
 
 export interface NodeProps {
+    filename?: string;
     location: SourceLocation;
 }
 
-export class Node extends Immutable implements Required<NodeProps> {
+export class Node extends Immutable implements NodeProps {
 
+    filename?: string;
     location!: SourceLocation;
 
     constructor(props) {
         super(props);
+    }
+
+    getFilename() {
+        return this.filename ?? this.location.filename;
     }
 
     simplify(c?: EvaluationContext): Node {

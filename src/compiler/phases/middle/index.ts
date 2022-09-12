@@ -1,6 +1,6 @@
 import { Phase } from "../Phase";
 import { createMultiFunctions } from "./createMultiFunctions";
 
-export const middlePhasesAssembly: Phase[] = [
+export const middlePhasesAssembly: Phase[] = [    
     createMultiFunctions,
 ];

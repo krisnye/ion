@@ -3,23 +3,24 @@ import { Container } from "../../ast/Container";
 import { traverseWithScope } from "./createScopeMaps";
 import { FunctionDeclaration } from "../../ast/FunctionDeclaration";
 import { Call } from "../../ast/Call";
+import { isDeclaration } from "../../ast/Declaration";
 
 export function checkUFCS(moduleName, module: Container, externals: Map<string, Container>): ReturnType<Phase> {
     let errors: Error[] = [];
-    let multiFunctions = new Map<string,Array<FunctionDeclaration>>();
     let result = traverseWithScope(externals, module, (c) => {
         return {
-            enter(node) {
-                if (node instanceof Call && node.uniformFunctionCallSyntax != null) {
+            leave(node) {
+                if (node instanceof Call) {
                     let errors: Error[] = [];
                     let funcs = node.getResolvedPossibleFunctions(c, errors) ?? [];
-                    if (errors.length > 0) {
+                    let multiFunctionIndices = funcs.filter(isDeclaration).filter(d => d.order != null).map(d => d.order!).sort();
+                    if (multiFunctionIndices.length > 0) {
+                        node = node.patch({ multiFunctionIndices });
+                    }
+                    if (node.uniformFunctionCallSyntax != null && errors.length > 0) {
                         throw errors[0];
                     }
                 }
-            },
-            leave(node) {
-                // let's also reorder function parameters and provide default values at call site.
                 return node;
             }
         }

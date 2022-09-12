@@ -8,6 +8,7 @@ import { isScope } from "../../ast/Scope";
 import { Function } from "../../ast/Function";
 import { isSSAVersionName } from "../frontend/ssaForm";
 import { Declaration, isDeclaration } from "../../ast/Declaration";
+import { Variable } from "../../ast/Variable";
 
 export type NodeMap<T> = {
     get(node: Node | null): T
@@ -42,6 +43,12 @@ export default function createScopeMaps(root, externals?: Map<string,Container>)
             if (Array.isArray(nodes)) {
                 for (let node of nodes) {
                     if (isDeclaration(node)) {
+                        // HACK: skip Variables that reference themselves
+                        let check = node;
+                        if (check instanceof Variable && check.value instanceof Reference && check.id.name === check.value.name) {
+                            // console.log("******** ATTEMPT TO ADD SAME DECLARATION: " + check);
+                            continue;
+                        }
                         let declarations = globalScope[node.id.name] ??= [];
                         globalScope[node.id.name].push(node);
                         if (node.order != null) {
@@ -94,7 +101,6 @@ export default function createScopeMaps(root, externals?: Map<string,Container>)
     for (let declarations of declarationsToSort) {
         sortDeclarations(declarations);
     }
-    declarationsToSort
 
     return map as NodeMap<ScopeMap>;
 }

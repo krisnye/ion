@@ -4,7 +4,12 @@ export class Immutable extends Serializable {
 
     constructor(values) {
         super();
-        Object.assign(this, values);
+        try {            
+            Object.assign(this, values);
+        }
+        catch (e) {
+            console.log("error", { this: this, values });
+        }
     }
 
     patch(props): this {

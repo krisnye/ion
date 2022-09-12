@@ -3,6 +3,7 @@ import { Expression } from "./ast/Expression";
 import { Reference } from "./ast/Reference";
 import { Type } from "./ast/Type";
 import { Variable } from "./ast/Variable";
+import { Node } from "./Node";
 import { GetVariableFunction as GetDeclarationsFunction } from "./phases/frontend/createScopeMaps";
 import { Lookup } from "./traverse";
 
@@ -16,8 +17,10 @@ export class EvaluationContext {
     ) {
     }
 
-    getDeclaration(ref: Reference): Declaration {
-        let declarations = this.getDeclarations(ref);
+    getDeclaration(ref: Node, name: string): Declaration 
+    getDeclaration(ref: Reference): Declaration
+    getDeclaration(ref: Node | Reference, name?: string): Declaration {
+        let declarations = this.getDeclarations(ref, name);
         return declarations[0];
     }
 

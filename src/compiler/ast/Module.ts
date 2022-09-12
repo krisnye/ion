@@ -1,10 +1,5 @@
 import { Container, ContainerProps } from "../ast/Container";
 import { EvaluationContext } from "../EvaluationContext";
-import { split } from "../pathFunctions";
-import { isDeclaration } from "./Declaration";
-import { Identifier } from "./Identifier";
-import { ObjectType } from "./ObjectType";
-import { Pair } from "./Pair";
 import { Type } from "./Type";
 
 export interface ModuleProps extends ContainerProps {

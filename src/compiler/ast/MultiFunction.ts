@@ -15,16 +15,19 @@ export function getReturnType(source: Call, funcs: Function[], args: Expression[
     return UnionType.join(...returnTypes);
 }
 
-export function getPossibleFunctionCalls(funcs: (Expression | null)[], args: Expression[], argTypes: Type[], c: EvaluationContext, errors: Error[] = []): Expression[] {
-    let functions = new Array<Expression>();
+export function getPossibleFunctionCalls(funcs: (Expression | null)[], args: Expression[], argTypes: Type[], c: EvaluationContext, errors: Error[] = []): Function[] {
+    let functions = new Array<Function>();
     for (let func of funcs) {
         //  we only want to keep the first function errors.
         if (func instanceof Function) {
+            //  Really, if these functions are sorted
+            //  and we know that arguments will ALWAYS be of the correct type
+            //  then we can only return the first successful result.
             if (func.areArgumentsValid(args, argTypes, c, errors.length > 0 ? [] : errors)) {
                 functions.push(func);
             }
         }
-        else if (func != null) {
+        else if (func instanceof Function) {
             //  if not a function yet... it's possibly callable later
             functions.push(func);
         }

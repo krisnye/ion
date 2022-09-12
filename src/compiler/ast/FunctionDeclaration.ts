@@ -35,5 +35,7 @@ export class FunctionDeclaration extends Function implements Declaration {
     get value() {
         return this;
     }
+    set value(value) {
+    }
 
 }

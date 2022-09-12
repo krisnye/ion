@@ -13,5 +13,5 @@ export interface Declaration extends MetaContainer, Expression {
 }
 
 export function isDeclaration(node: any): node is Declaration {
-    return node.isDeclaration === true;
+    return node != null && node.isDeclaration === true;
 }

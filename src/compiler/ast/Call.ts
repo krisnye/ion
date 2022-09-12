@@ -24,6 +24,9 @@ import { Node } from "../Node";
 export interface CallProps extends ContainerProps {
     callee: Expression;
     uniformFunctionCallSyntax?: boolean;
+    //  if this is a multi function call, this lists the actual indices
+    //  of possible functions that this call matches.
+    multiFunctionIndices?: number[];
 }
 
 export type MetaCall = Call & { callee: Reference }
@@ -36,6 +39,7 @@ export class Call extends Container {
 
     callee!: Expression;
     uniformFunctionCallSyntax?: boolean;
+    multiFunctionIndices?: number[];
 
     constructor(props: CallProps) {
         super(props);
@@ -95,6 +99,7 @@ export class Call extends Container {
 
     protected resolve(c: EvaluationContext) {
         let callee = this.callee;
+        // let possibleFunctions = this.getResolvedPossibleFunctions(c);
         if (callee instanceof Call && callee.uniformFunctionCallSyntax) {
             return callee.patch({ nodes: [...callee.nodes, ...this.nodes], uniformFunctionCallSyntax: false });
         }

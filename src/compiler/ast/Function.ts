@@ -18,11 +18,12 @@ import { isType, Type } from "./Type";
 import { UnionType } from "./UnionType";
 import { Variable } from "./Variable";
 import { Block } from "./Block";
+import { Reference } from "./Reference";
 
 export interface FunctionProps extends FunctionBaseProps {
     id?: Identifier;
     body: Node;
-    multiFunctions?: string[];
+    multiFunctions?: Reference[];
 }
 
 function toParameters(nodes: Variable[]) {
@@ -38,7 +39,7 @@ export class Function extends FunctionBase implements Callable {
 
     id?: Identifier
     body!: Expression;
-    multiFunctions?: string[];
+    multiFunctions?: Reference[];
 
     constructor(props: FunctionProps) { super({ ...props, parameters: toParameters(props.parameters!)}); }
     patch(props: Partial<FunctionProps>) { return super.patch(props); }

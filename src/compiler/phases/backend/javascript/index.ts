@@ -2,16 +2,19 @@ import { removeSoloBlocks } from "../../frontend/removeSoloBlocks";
 import { identity } from "../../identity";
 import { Phase } from "../../Phase";
 import { addImports } from "./addImports";
+import { addNativeCalls } from "./addNativeCalls";
 import { renameExternals } from "./renameExternals";
 import { renameLocals } from "./renameLocals";
 import { toESTree } from "./toESTree";
 import { toJavascript } from "./toJavascript";
 import { toRuntimeTypes } from "./toRuntimeTypes";
+import updateExport from "./updateExport";
 
 export const javascriptPhases: Phase[] = [
     // must replace native calls before removing compile time types.
-    // addNativeCalls,
+    updateExport,
     renameLocals,
+    addNativeCalls,
     addImports,
     renameExternals,
     removeSoloBlocks,

@@ -136,11 +136,9 @@ Cross platform modeling language
       - [x] Finish Native Javascript for every operator type.
     - [x] Array Expressions.
     - [x] Conditional Expressions.
-    - [ ] While loops.
-    - [ ] For loops.
-    - [ ] Add Import statements.
+    - [x] Add Import statements.
       - [x] Problem finding variables within Types that are compile time only `a` in `get`
-    - [ ] Convert absolute names to local names.
+    - [x] Convert absolute names to local names.
     - [x] Convert ssa names to original names.
     - [ ] Calculate Type specificity as per multifunction_precedence.md rules
     - [x] Type check static members from Type export in a file.
@@ -153,6 +151,12 @@ Cross platform modeling language
         - [x] original functions need to stay where they were defined for scoping?
         - [x] create new combined functions in global namespace
         - [x] rename current functions.
+      - [-] Maybe we should just move the individual functions into the new global multifunction.
     - [x] Create javascript runtime Type instances.
-    - [ ] Create runtime type checking for type instances.
+    - [x] Create runtime type checking for type instances.
+    - [x] Convert Native Functions to Inline Javascript Operations
+    - [ ] Create runtime type checking for classes.
     - [ ] Create runtime type checking for literal type expressions.
+    - [-] While loops.
+    - [ ] For loops.
+

@@ -7,7 +7,7 @@ import { join, split } from "../../../pathFunctions";
 import { traverseWithScope } from "../../frontend/createScopeMaps";
 import { Phase } from "../../Phase";
 
-function createJavascriptImports(importPaths: Set<string>, externals: Map<string,any>): ESNode[] {
+function createJavascriptImports(moduleName: string, importPaths: Set<string>, externals: Map<string,any>): ESNode[] {
     function findFile(name: string): [string,string] {
         let steps = split(name);
         let exportName = steps[steps.length - 1];
@@ -28,6 +28,13 @@ function createJavascriptImports(importPaths: Set<string>, externals: Map<string
         filenameToImports.get(filename)!.add(exportName);
     }
 
+    // const DEBUG = moduleName === "test.sample";
+    // if (DEBUG) {
+    //     console.log("STUFF GOES HERE: ", moduleName, filenameToImports);
+    // }
+    let sourceModuleDepth = split(moduleName).length - 1;
+    let pathFromSourceModuleToRoot = sourceModuleDepth === 0 ? "./" : new Array(sourceModuleDepth).fill("../").join("");
+
     return [...filenameToImports.entries()].map(([filename, exportNames]) => {
         return new ESNode({
             type: "ImportDeclaration",
@@ -38,7 +45,7 @@ function createJavascriptImports(importPaths: Set<string>, externals: Map<string
             })),
             source: {
                 type: "Literal",
-                value: filename
+                value: pathFromSourceModuleToRoot + filename
             }
         });
     })
@@ -62,7 +69,7 @@ export function addImports(moduleName, module: Module, externals): ReturnType<Ph
     })
     if (importPaths.size > 0) {
         // OK, then let's add some import nodes.
-        let imports = createJavascriptImports(importPaths, externals);
+        let imports = createJavascriptImports(moduleName, importPaths, externals);
         module = module.patch({
             nodes: [...imports as Expression[], ...module.nodes]
         });

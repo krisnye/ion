@@ -1,13 +1,22 @@
-import { isDeclaration } from "../../ast/Declaration"
+import { Declaration, isDeclaration } from "../../ast/Declaration"
 import { Expression } from "../../ast/Expression"
 import { Identifier } from "../../ast/Identifier"
 import { Module } from "../../ast/Module"
 import { ObjectExpression } from "../../ast/ObjectExpression"
 import { Reference } from "../../ast/Reference"
 import { Variable } from "../../ast/Variable"
-import { defaultExportName, getLastName } from "../../pathFunctions"
+import { defaultExportName, getLastName, split } from "../../pathFunctions"
+import { SourceLocation } from "../../SourceLocation"
 import { isPrivateName } from "../../utility"
 import { Phase } from "../Phase"
+
+export function createExportObject(location: SourceLocation, declarations: Declaration[]) {
+    return new ObjectExpression({
+        location,
+        nodes: declarations.filter(d => d instanceof Variable && !isPrivateName(d.id.name))
+            .map(d => new Variable({ location: d.location, id: new Identifier(d.id), value: new Reference(d.id), kind: "property"}))
+    });
+}
 
 export default function addExport(moduleName, module: Module, externals): ReturnType<Phase> {
     let errors: Error[] = [];
@@ -18,12 +27,13 @@ export default function addExport(moduleName, module: Module, externals): Return
         exportValue = new Reference(sameNamedValue.id);
     }
     else {
-        exportValue = new ObjectExpression({
-            location: module.location,
-            nodes: declarations.filter(d => !isPrivateName(d.id.name) && d instanceof Variable)
-                .map(v => v.patch({ id: new Identifier(v.id), value: new Reference(v.id), kind: "property"}))
-        })
+        exportValue = createExportObject(module.location, declarations);
     }
+    // let DEBUG = moduleName === "test.sample";
+    // if (DEBUG) {
+    //     console.log("RUNNING THIS addExport");
+    // }
+    //  don't add a default export if the sameNamedValue is in the root namespace.
     module = module.patch({
         nodes: [
             ...module.nodes,

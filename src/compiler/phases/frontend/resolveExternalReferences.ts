@@ -12,7 +12,7 @@ import { NumberType } from "../../ast/NumberType";
 import { TypeReference } from "../../ast/TypeReference";
 import { ArrayExpression } from "../../ast/ArrayExpression";
 import { NumberLiteral } from "../../ast/NumberLiteral";
-import { isProperty } from "../../ast/Variable";
+import { isProperty, Variable } from "../../ast/Variable";
 
 export function resolveExternalReferences(moduleName, module, externalModules: Map<string,Module>): ReturnType<Phase> {
     let errors: Error[] = [];
@@ -46,15 +46,6 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
                         return new NumberType({ location: node.location, step: true }) as any
                     }
                 }
-
-                // let declarations = scopes.get(node)[node.name];
-                // if (declarations != null) {
-                //     let declaration = declarations[0];
-                //     let rootId = replacements.get(declaration.id.name);
-                //     if (rootId != null) {
-                //         node = node.patch({ name: rootId });
-                //     }
-                // }
             }
             if (node instanceof Identifier || node instanceof Reference) {
                 let parent = ancestors[ancestors.length - 1];
