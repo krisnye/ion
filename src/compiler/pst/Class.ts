@@ -1,15 +1,16 @@
 import { Node } from "../Node";
 import { Identifier } from "../ast/Identifier";
 import { Container, ContainerProps } from "../ast/Container";
+import { Declarator } from "../ast/Declarator";
 
 export interface PstClassProps extends ContainerProps {
-    id: Identifier;
+    id: Declarator;
     extends: Node | null;
 }
 
 class PstClass extends Container {
 
-    id!: Identifier;
+    id!: Declarator;
     extends!: Node | null;
 
     constructor(props: PstClassProps) { super(props); }

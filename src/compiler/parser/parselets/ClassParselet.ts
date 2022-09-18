@@ -6,8 +6,8 @@ import { SourceLocation } from "../../SourceLocation";
 import { SemanticError } from "../../SemanticError";
 import { Class } from "../../pst/Class";
 import { tokenTypes } from "../../tokenizer/TokenType";
-import { Variable } from "../../ast/Variable";
 import { Identifier } from "../../ast/Identifier";
+import { Declarator } from "../../ast/Declarator";
 
 export class ClassParselet extends PrefixParselet {
 
@@ -25,7 +25,7 @@ export class ClassParselet extends PrefixParselet {
         let location = block ? SourceLocation.merge(classToken.location, block.location) : classToken.location;
         return new Class({
             location,
-            id,
+            id: new Declarator(id),
             constant: true,
             extends: _extends,
             nodes: block?.nodes ?? [],

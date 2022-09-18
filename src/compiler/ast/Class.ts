@@ -1,8 +1,7 @@
-import { Identifier } from "../ast/Identifier";
 import { Container, ContainerProps } from "./Container";
 import { Variable } from "./Variable";
 import { Declaration } from "./Declaration";
-import { Call, MetaCall } from "./Call";
+import { MetaCall } from "./Call";
 import { toMetaString } from "./MetaContainer";
 import { Node } from "../Node";
 import { Callable } from "./Callable";
@@ -20,12 +19,10 @@ import { coreTypes } from "../coreTypes";
 import { NumberType } from "./NumberType";
 import { SemanticError } from "../SemanticError";
 import { ESNode } from "./ESNode";
-import { Module } from "./Module";
-import { split } from "../pathFunctions";
-import { IntersectionType } from "./IntersectionType";
+import { Declarator } from "./Declarator";
 
 export interface ClassProps extends ContainerProps {
-    id: Identifier;
+    id: Declarator;
     extends: Node[];
     nodes: Variable[];
     meta: MetaCall[];
@@ -35,7 +32,7 @@ export interface ClassProps extends ContainerProps {
 
 export class Class extends Container implements Type, Declaration, Callable {
 
-    id!: Identifier;
+    id!: Declarator;
     extends!: Node[];
     nodes!: Variable[];
     meta!: MetaCall[];

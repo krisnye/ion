@@ -6,6 +6,7 @@ import { Reference } from "../../../ast/Reference";
 import { join, split } from "../../../pathFunctions";
 import { traverseWithScope } from "../../frontend/createScopeMaps";
 import { Phase } from "../../Phase";
+import { toJavascriptIdentifier } from "./renameLocals";
 
 function createJavascriptImports(moduleName: string, importPaths: Set<string>, externals: Map<string,any>): ESNode[] {
     function findFile(name: string): [string,string] {
@@ -18,7 +19,7 @@ function createJavascriptImports(moduleName: string, importPaths: Set<string>, e
         else {
             filename = join(...steps.slice(0, -1));
         }
-        return [filename, exportName];
+        return [filename, toJavascriptIdentifier(exportName)];
     }
 
     let importPairs = [...importPaths].map(findFile);
@@ -35,7 +36,7 @@ function createJavascriptImports(moduleName: string, importPaths: Set<string>, e
     let sourceModuleDepth = split(moduleName).length - 1;
     let pathFromSourceModuleToRoot = sourceModuleDepth === 0 ? "./" : new Array(sourceModuleDepth).fill("../").join("");
 
-    return [...filenameToImports.entries()].map(([filename, exportNames]) => {
+    return [...filenameToImports.entries()].filter(([filename]) => filename.length > 0).map(([filename, exportNames]) => {
         return new ESNode({
             type: "ImportDeclaration",
             specifiers: [...exportNames].map(exportName => ({
@@ -45,7 +46,7 @@ function createJavascriptImports(moduleName: string, importPaths: Set<string>, e
             })),
             source: {
                 type: "Literal",
-                value: pathFromSourceModuleToRoot + filename
+                value: pathFromSourceModuleToRoot + split(filename).join("/") + ".js"
             }
         });
     })

@@ -1,10 +1,10 @@
+import { Declarator } from "./Declarator";
 import { Expression } from "./Expression";
-import { Identifier } from "./Identifier";
 import { MetaContainer } from "./MetaContainer";
 
 export interface Declaration extends MetaContainer, Expression {
 
-    id: Identifier;
+    id: Declarator;
     value: Expression | null;
     isGlobalScoped?: boolean;
     isDeclaration: true;

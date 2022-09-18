@@ -14,6 +14,7 @@ import { TypeofExpression } from "../../ast/TypeofExpression";
 import { UnionType } from "../../ast/UnionType";
 import { Loop } from "../../ast/Loop";
 import { Function } from "../../ast/Function";
+import { Declarator } from "../../ast/Declarator";
 
 const ssaVersionSeparator = ":";
 
@@ -159,7 +160,7 @@ class Converter {
                         location,
                         declaredType,
                         type,
-                        id: new Identifier({ location: id.location, name: this.getNextName() }),
+                        id: new Declarator({ location: id.location, name: this.getNextName() }),
                         value
                     }));
                 }

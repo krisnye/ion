@@ -318,6 +318,15 @@ export class NumberType extends BaseType {
         return result
     }
 
+    // toESNode(c: EvaluationContext) {
+    //     return {
+    //         type: "BinaryExpression",
+    //         left: this.left.toESNode(c),
+    //         operator: "||",
+    //         right: this.right.toESNode(c)
+    //     };
+    // }
+
 }
 
 function mergeStep(a: number, b: number) {

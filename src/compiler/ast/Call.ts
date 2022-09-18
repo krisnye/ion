@@ -20,6 +20,7 @@ import { getMetaCall, getMetaFieldValue } from "./MetaContainer";
 import { coreTypes, Native_javascript } from "../coreTypes";
 import { StringLiteral } from "./StringLiteral";
 import { Node } from "../Node";
+import { Declarator } from "./Declarator";
 
 export interface CallProps extends ContainerProps {
     callee: Expression;
@@ -87,7 +88,7 @@ export class Call extends Container {
                     )
                 });
                 // logOnce("!!!!! we should infer: " + createFunction + " ??? " + this.callee);
-                let id = this.callee instanceof Reference ? new Identifier(this.callee) : undefined;
+                let id = this.callee instanceof Reference ? new Declarator(this.callee) : undefined;
                 return new FunctionDeclaration({ id, ...createFunction as any });
             }
         }

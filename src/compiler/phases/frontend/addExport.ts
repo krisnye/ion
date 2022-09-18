@@ -1,11 +1,11 @@
 import { Declaration, isDeclaration } from "../../ast/Declaration"
+import { Declarator } from "../../ast/Declarator"
 import { Expression } from "../../ast/Expression"
-import { Identifier } from "../../ast/Identifier"
 import { Module } from "../../ast/Module"
 import { ObjectExpression } from "../../ast/ObjectExpression"
 import { Reference } from "../../ast/Reference"
 import { Variable } from "../../ast/Variable"
-import { defaultExportName, getLastName, split } from "../../pathFunctions"
+import { defaultExportName, getLastName } from "../../pathFunctions"
 import { SourceLocation } from "../../SourceLocation"
 import { isPrivateName } from "../../utility"
 import { Phase } from "../Phase"
@@ -14,7 +14,7 @@ export function createExportObject(location: SourceLocation, declarations: Decla
     return new ObjectExpression({
         location,
         nodes: declarations.filter(d => d instanceof Variable && !isPrivateName(d.id.name))
-            .map(d => new Variable({ location: d.location, id: new Identifier(d.id), value: new Reference(d.id), kind: "property"}))
+            .map(d => new Variable({ location: d.location, id: new Declarator(d.id), value: new Reference(d.id), kind: "property"}))
     });
 }
 
@@ -40,7 +40,7 @@ export default function addExport(moduleName, module: Module, externals): Return
             new Variable({
                 location: module.location,
                 constant: true,
-                id: new Identifier({ location: module.location, name: defaultExportName }),
+                id: new Declarator({ location: module.location, name: defaultExportName }),
                 value: exportValue
             })
         ]

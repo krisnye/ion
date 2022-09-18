@@ -10,11 +10,12 @@ import { SemanticError } from "../SemanticError";
 import { Type } from "./Type";
 import { Function } from "./Function";
 import { defaultExportName } from "../pathFunctions";
+import { Declarator } from "./Declarator";
 
 type VariableKind = "variable" | "property" | "parameter";
 
 export interface VariableProps extends ExpressionProps {
-    id: Identifier;
+    id: Declarator;
     value: Expression | null;
     meta?: MetaCall[];
     declaredType?: Type | null;
@@ -33,7 +34,7 @@ export function isParameter(node): node is Variable & { kind: "parameter" } {
 
 export class Variable extends Expression implements Declaration {
 
-    id!: Identifier;
+    id!: Declarator;
     value!: Expression | null;
     meta!: MetaCall[];
     declaredType!: Type | null;

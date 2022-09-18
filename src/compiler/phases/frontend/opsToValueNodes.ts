@@ -33,6 +33,7 @@ import { ForItem } from "../../ast/ForItem";
 import { Conditional } from "../../ast/Conditional";
 import { FunctionDeclarationHackOperatorSource } from "./destructuringAndUnaryNumberLiterals";
 import { FunctionDeclaration } from "../../ast/FunctionDeclaration";
+import { Declarator } from "../../ast/Declarator";
 
 function toParametersOrMeta(value: Node | null) {
     let parameters = new Array<Variable | MetaCall>();
@@ -52,7 +53,7 @@ function toVariableOrMetaCall(value: Node) {
     if (value instanceof Identifier || value instanceof Reference) {
         return new Variable({
             location: value.location,
-            id: new Identifier(value),
+            id: new Declarator(value),
             type: null,
             value: null,
             meta: [],
@@ -92,7 +93,7 @@ function destructure(temp: IdentifierFactory, nodes: Array<Node>, pattern: Node 
         }
         else {
             // make temp variable IF the right is not a reference.
-            let tempVar = new Identifier(temp(right.location));
+            let tempVar = new Declarator(temp(right.location));
             memberIndex = pattern.open.value == "[" ? 0 : null;
             nodes.push(new Variable({
                 location: right.location,
@@ -124,7 +125,7 @@ function destructure(temp: IdentifierFactory, nodes: Array<Node>, pattern: Node 
         let id = pattern;
         nodes.push(
             variableOrAssignment
-            ? new Variable({ location, id: new Identifier(id), type: null, value, constant: true, meta: [] })
+            ? new Variable({ location, id: new Declarator(id), type: null, value, constant: true, meta: [] })
             : new Assignment({ location, id: new Reference(id), value })
         );
     }
@@ -162,7 +163,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                 let dnodes = new Array<Node>();
                 let _leftId: IdentifierProps;
                 if (id instanceof Reference) {
-                    _leftId = new Identifier(id);
+                    _leftId = new Declarator(id);
                 }
                 else {
                     _leftId = temp(id.location);
@@ -173,7 +174,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                     left: new ForItem({
                         location: node.id.location,
                         meta: [],
-                        id: new Identifier(_leftId),
+                        id: new Declarator(_leftId),
                         // TEMPORARY HACK. FIXME
                         type: new TypeReference({ location: value.location, name: coreTypes.Number }),
                         value: null
@@ -251,7 +252,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                         if (left instanceof Identifier || left instanceof Reference) {
                             return new Variable({
                                 location,
-                                id: new Identifier(left),
+                                id: new Declarator(left),
                                 declaredType: right as Type,
                                 value: null,
                                 constant: false,
@@ -293,12 +294,11 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                                 return new FunctionDeclaration({
                                     ...right as Function,
                                     location,
-                                    id: new Identifier(id)
+                                    id: new Declarator(id)
                                 });
-                                // return new Variable({ location, id: new Identifier(id), declaredType, value: right, constant, meta: [] });
                             }
     
-                            return new Variable({ location, id: new Identifier(id), declaredType, value: right, constant, meta: [] });
+                            return new Variable({ location, id: new Declarator(id), declaredType, value: right, constant, meta: [] });
                         }
                         else {
                             return new Assignment({ location, id: new Reference(id), value: right });

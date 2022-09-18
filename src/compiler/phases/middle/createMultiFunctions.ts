@@ -1,3 +1,4 @@
+import { allowedNodeEnvironmentFlags } from "process";
 import { TypeOperators } from "../../analysis/TypeOperators";
 import { joinExpressions } from "../../analysis/utility";
 import { BinaryExpression } from "../../ast/BinaryExpression";
@@ -5,6 +6,7 @@ import { Block } from "../../ast/Block";
 import { Call } from "../../ast/Call";
 import { Conditional } from "../../ast/Conditional";
 import { Declaration } from "../../ast/Declaration";
+import { Declarator } from "../../ast/Declarator";
 import { Function } from "../../ast/Function";
 import { FunctionDeclaration } from "../../ast/FunctionDeclaration";
 import { Identifier } from "../../ast/Identifier";
@@ -12,7 +14,7 @@ import { Reference } from "../../ast/Reference";
 import { Return } from "../../ast/Return";
 import { Variable } from "../../ast/Variable";
 import { Node } from "../../Node";
-import { getAbsolutePath } from "../../pathFunctions";
+import { getAbsolutePath, getLastName } from "../../pathFunctions";
 import { SourceLocation } from "../../SourceLocation";
 import { SourcePosition } from "../../SourcePosition";
 import { sortDeclarations } from "../frontend/createScopeMaps";
@@ -30,7 +32,7 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
             functionDeclarations.push(node);
         }
     }
-    let newNodes = new Array<Node>();
+    let newNodes = new Array<Declaration>();
     let changes = new Map<Node,Node>();
     for (let [name, functions] of allFunctionDeclarations) {
         //  first sort functions
@@ -65,7 +67,7 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
             new SourcePosition(1, 1),
         );
 
-        let multiFunctionId = new Identifier({ name, location });
+        let multiFunctionId = new Declarator({ name, location });
         let multiFunctionDeclaration: Declaration;
         if (functions.length === 1) {
             multiFunctionDeclaration = functions[0].patch({
@@ -139,10 +141,20 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
 
     }
 
+    let nodes = [...(module.nodes as Declaration[]).map(node => {
+        return (changes.get(node) ?? node) as Declaration;
+    }).filter(node => {
+        return node.id.name !== moduleName;
+    }), ...newNodes];
+
+    //  now remove duplicate identifiers as the first if present is just an extraneous export.
+    //  this won't happen after re-factoring, right now it's a hack because we create a default export
+    //  and now in root multi function modules we create a new multifunction with same name.
+//    nodes = [...new Map(nodes.map(node => [node.id.name, node])).values()];
+    nodes = nodes.filter(node => !(node instanceof Variable && node.value instanceof Reference && node.id.name === node.value.name));
+
     module = module.patch({
-        nodes: [...module.nodes.map(node => {
-            return changes.get(node) ?? node;
-        }), ...newNodes]
+        nodes
     });
 
     return [module, []];

@@ -83,4 +83,12 @@ export class UnionType extends CompoundType {
         return `${this.left} | ${this.right}`;
     }
 
+    toESNode(c: EvaluationContext) {
+        return {
+            type: "BinaryExpression",
+            left: this.left.toESNode(c),
+            operator: "||",
+            right: this.right.toESNode(c)
+        };
+    }
 }

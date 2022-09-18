@@ -7,7 +7,7 @@
 
 ## Target Platform
 
-- Web Assembly
+- Javascript and Web Assembly Hybrid
 
 ## Design Goals
 

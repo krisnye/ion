@@ -126,7 +126,7 @@ export class Compiler {
                                 // create new module if missing.
                                 modules.set(name, module = new Module({ name, nodes, dependencies: [], location: nodes[0].location }));
                             }
-                            let newModule = module.patch({ nodes })
+                            let newModule = module.patch({ nodes });
                             modules.set(name, newModule);
                             // log each module individually.
                             this.log(logger, (phaseRepeatCount || runPhaseAgain) ? `${phase.name} (${phaseRepeatCount + 1})` : phase.name, newModule, name);
@@ -262,7 +262,7 @@ export class Compiler {
         }
     }
 
-    logFilter = new Set([ "test.sample", "foo" ]);
+    logFilter = new Set([ "test.sample", "foo", "-" ]);
     logModule(name: string) {
         // return true;
         return this.logFilter && this.logFilter.has(name);

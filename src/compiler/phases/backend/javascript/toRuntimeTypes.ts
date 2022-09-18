@@ -1,5 +1,6 @@
 import { AnyType } from "../../../ast/AnyType";
 import { Block } from "../../../ast/Block";
+import { Declarator } from "../../../ast/Declarator";
 import { Function } from "../../../ast/Function";
 import { Identifier } from "../../../ast/Identifier";
 import { ObjectExpression } from "../../../ast/ObjectExpression";
@@ -19,7 +20,7 @@ export function toRuntimeType(type: Type, c: EvaluationContext) {
         nodes: [
             new Variable({
                 location,
-                id: new Identifier({ location, name: "is" }),
+                id: new Declarator({ location, name: "is" }),
                 value: new Function({
                     location,
                     body: new Block({ location, nodes: [
@@ -28,7 +29,7 @@ export function toRuntimeType(type: Type, c: EvaluationContext) {
                             value: type.toDotExpression(c, new Reference({ location, name: "_" })),
                         })
                     ]}),
-                    parameters: [new Variable({ location, id: new Identifier({ location, name: "_"}), value: null, type: new AnyType({ location }) })],
+                    parameters: [new Variable({ location, id: new Declarator({ location, name: "_"}), value: null, type: new AnyType({ location }) })],
                     returnType: null,
                 })
             })

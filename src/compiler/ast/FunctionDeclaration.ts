@@ -1,10 +1,10 @@
 import { Node } from "../Node";
 import { Declaration } from "./Declaration";
+import { Declarator } from "./Declarator";
 import { Function, FunctionProps } from "./Function";
-import { Identifier } from "./Identifier";
 
 export interface FunctionDeclarationProps extends FunctionProps {
-    id: Identifier
+    id: Declarator
     body: Node;
     inferred?: boolean;
     order?: number;
@@ -12,7 +12,7 @@ export interface FunctionDeclarationProps extends FunctionProps {
 
 export class FunctionDeclaration extends Function implements Declaration {
 
-    id!: Identifier;
+    id!: Declarator;
     // function declarations are scoped globally to allow overloading multimethods from anywhere
     isGlobalScoped = true;
     inferred!: boolean;
