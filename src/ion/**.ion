@@ -1,14 +1,14 @@
-_js = ""
-    (left, right) => ({ type: "BinaryExpression", operator: "**", left, right })
+javascript = ""
+    (a, b) => a ** b
 
-@Native(javascript=_js)
+@Native(javascript)
 `**`(a: Integer, b: Integer): Integer => 0
 
-@Native(javascript=_js)
+@Native(javascript)
 `**`(a: Number, b: Number): Number => 0.0
 
-@Native(javascript=_js)
+@Native(javascript)
 `**`(a: Integer, b: Number): Number => 0.0
 
-@Native(javascript=_js)
+@Native(javascript)
 `**`(a: Number, b: Integer): Number => 0.0

@@ -1,7 +1,8 @@
 import { EvaluationContext } from "../EvaluationContext";
 import { Call } from "./Call";
+import { Container } from "./Container";
 import { Expression } from "./Expression";
-import { Function } from "./Function";
+import { Function, FunctionProps } from "./Function";
 import { Type } from "./Type";
 import { UnionType } from "./UnionType";
 
@@ -36,4 +37,21 @@ export function getPossibleFunctionCalls(funcs: (Expression | null)[], args: Exp
     //     throw funcErrors[0];
     // }
     return functions;
+}
+
+export interface MultiFunctionProps extends FunctionProps {
+    functions: Function[]
+}
+
+export class MultiFunction extends Expression {
+
+    functions!: Function[];
+
+    constructor(props: MultiFunctionProps) { super({ ...props }); }
+    patch(props: Partial<MultiFunctionProps>) { return super.patch(props); }
+
+    toString() {
+        return Container.toString(this.functions, "<", ">");
+    }
+
 }

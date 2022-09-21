@@ -3,7 +3,8 @@ import { Node } from "../Node";
 import { EvaluationContext } from "../EvaluationContext";
 import { SourceLocation } from "../SourceLocation";
 import { logOnce } from "../utility";
-import { ESNode } from "./ESNode";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
 
 export interface ExpressionProps {
     location: SourceLocation;
@@ -22,8 +23,8 @@ export class Expression extends Node implements Required<ExpressionProps> {
         super({ type: null, resolved: false, ...props });
     }
 
-    toInterpreterInstance(c: EvaluationContext): any {
-        throw new Error(`${this.constructor.name}.toInterpreterInstance not implemented.`);
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        throw new Error(`${this.constructor.name}.toInterpreterValue not implemented: ${this}`);
     }
 
     *getDependencies(c: EvaluationContext): Generator<Expression> {

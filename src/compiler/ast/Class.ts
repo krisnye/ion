@@ -5,7 +5,7 @@ import { MetaCall } from "./Call";
 import { toMetaString } from "./MetaContainer";
 import { Node } from "../Node";
 import { Callable } from "./Callable";
-import { BasicType, Type } from "./Type";
+import { BasicType, isType, Type } from "./Type";
 import { TypeReference } from "./TypeReference";
 import { EvaluationContext } from "../EvaluationContext";
 import { FunctionType } from "./FunctionType";
@@ -20,6 +20,10 @@ import { NumberType } from "./NumberType";
 import { SemanticError } from "../SemanticError";
 import { ESNode } from "./ESNode";
 import { Declarator } from "./Declarator";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { Function } from "./Function";
 
 export interface ClassProps extends ContainerProps {
     id: Declarator;
@@ -44,6 +48,27 @@ export class Class extends Container implements Type, Declaration, Callable {
         super({ structure: false, staticMembers: [],  ...props });
     }
     patch(props: Partial<ClassProps>) { return super.patch(props); }
+
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        return this;
+    }
+
+    isInstance(c: InterpreterContext, value: InterpreterValue): boolean {
+        if (value instanceof InterpreterInstance) {
+            if (this.id.name === value.type) {
+                return true;
+            }
+            return this.extends.some(base => (base.toInterpreterValue(c) as Type).isInstance(c, value));
+        }
+        else if (value instanceof Function) {
+            return false;
+        }
+        else if (isType(value)) {
+            return this.id.name === coreTypes.Type;
+        }
+
+        return false;
+    }
 
     call(args: Node[]): Node {
         throw new Error();

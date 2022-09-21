@@ -1,4 +1,3 @@
-import { allowedNodeEnvironmentFlags } from "process";
 import { TypeOperators } from "../../analysis/TypeOperators";
 import { joinExpressions } from "../../analysis/utility";
 import { BinaryExpression } from "../../ast/BinaryExpression";
@@ -9,12 +8,11 @@ import { Declaration } from "../../ast/Declaration";
 import { Declarator } from "../../ast/Declarator";
 import { Function } from "../../ast/Function";
 import { FunctionDeclaration } from "../../ast/FunctionDeclaration";
-import { Identifier } from "../../ast/Identifier";
 import { Reference } from "../../ast/Reference";
 import { Return } from "../../ast/Return";
 import { Variable } from "../../ast/Variable";
 import { Node } from "../../Node";
-import { getAbsolutePath, getLastName } from "../../pathFunctions";
+import { getAbsolutePath } from "../../pathFunctions";
 import { SourceLocation } from "../../SourceLocation";
 import { SourcePosition } from "../../SourcePosition";
 import { sortDeclarations } from "../frontend/createScopeMaps";
@@ -96,7 +94,7 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
                     value: new Call({
                         location,
                         // need to use the actual file name.
-                        callee: new Reference({ location, name: getAbsolutePath(func.location.filename, getOrderedName(func)) }),
+                        callee: new Reference({ location, name: getOrderedName(func) }),
                         nodes: func.parameters.map(p => new Reference(p.id))
                     })
                 });

@@ -110,12 +110,7 @@ export type GetVariableFunction = {
     (node: Node, name?: string): Declaration[];
 }
 
-export function traverseWithScope(
-    externals: Map<string,Container>,
-    node: Node,
-    callback: (c: EvaluationContext) => Visitor,
-): any {
-    let lookup = new Lookup();
+export function createEvaluationContext(node: Node, externals = new Map<string,Container>(), lookup = new Lookup()) {
     let scopeMaps = createScopeMaps(node, externals);
     function getDeclarations(ref: Reference | Node, name?: string): Declaration[] {
         if (name == null) {
@@ -125,7 +120,16 @@ export function traverseWithScope(
         let scope = scopeMaps.get(original) ?? scopeMaps.get(null);
         return scope[name] ?? [];
     }
-    let c = new EvaluationContext(getDeclarations, lookup);
+    return new EvaluationContext(getDeclarations, lookup);
+}
+
+export function traverseWithScope(
+    externals: Map<string,Container>,
+    node: Node,
+    callback: (c: EvaluationContext) => Visitor,
+): any {
+    let lookup = new Lookup();
+    let c = createEvaluationContext(node, externals, lookup);
     let visitor = callback(c);
     return traverse(node, {...visitor, lookup });
 }

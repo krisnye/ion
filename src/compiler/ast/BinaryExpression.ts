@@ -1,10 +1,12 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { Expression, ExpressionProps } from "../ast/Expression";
 import { EvaluationContext } from "../EvaluationContext";
 import { SourceLocation } from "../SourceLocation";
 import { NumberType } from "./NumberType";
 import { Reference } from "./Reference";
 import { Type } from "./Type";
-import { TypeReference } from "./TypeReference";
 
 export interface BinaryExpressionProps extends ExpressionProps {
     left: typeof BinaryExpression.prototype.left;
@@ -22,6 +24,22 @@ export class BinaryExpression extends Expression {
 
     constructor(props: BinaryExpressionProps) { super(props); }
     patch(props: Partial<BinaryExpressionProps>) { return super.patch(props); }
+
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        switch (this.operator) {
+            case "&&":
+                return new InterpreterInstance(c.isTrue(this.left.toInterpreterValue(c)!) && c.isTrue(this.right.toInterpreterValue(c)!));
+            case "||":
+                return new InterpreterInstance(c.isTrue(this.left.toInterpreterValue(c)!) || c.isTrue(this.right.toInterpreterValue(c)!));
+            case "is":
+                let left = this.left.toInterpreterValue(c)!;
+                let right = this.right.toInterpreterValue(c) as Type;
+                return new InterpreterInstance(right.isInstance(c, left));
+            default:
+                throw new Error("Operator not implemented yet: " + this.operator);
+        }
+        throw new Error(`${this.constructor.name}.toInterpreterValue not implemented: ${this}`);
+    }
 
     toString() {
         return `(${this.left} ${this.operator} ${this.right})`;

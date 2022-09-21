@@ -16,11 +16,13 @@ import { Identifier } from "./Identifier";
 import { Type } from "./Type";
 import { ObjectType } from "./ObjectType";
 import { Member } from "./Member";
-import { getMetaCall, getMetaFieldValue } from "./MetaContainer";
+import { getMetaCall, getMetaFieldValue, isMetaContainer } from "./MetaContainer";
 import { coreTypes, Native_javascript } from "../coreTypes";
 import { StringLiteral } from "./StringLiteral";
 import { Node } from "../Node";
 import { Declarator } from "./Declarator";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
 
 export interface CallProps extends ContainerProps {
     callee: Expression;
@@ -46,6 +48,11 @@ export class Call extends Container {
         super(props);
     }
     patch(props: Partial<CallProps>) { return super.patch(props); }
+
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        let func = this.callee.toInterpreterValue(c) as Function;
+        return c.call(func, this.nodes.map(node => node.toInterpreterValue(c)!));
+    }
 
     *getDependencies(c: EvaluationContext) {
         yield* super.getDependencies(c);
@@ -169,7 +176,7 @@ export class Call extends Container {
 }
 
 export function getNativeJavascript(callee: Node, c: EvaluationContext): string | null {
-    if (callee instanceof FunctionDeclaration) {
+    if (isMetaContainer(callee)) {
         let native = getMetaCall(callee, coreTypes.Native);
         if (native) {
             let jsExpression = getMetaFieldValue(native, Native_javascript, c);

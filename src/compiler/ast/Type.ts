@@ -1,3 +1,5 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { EvaluationContext } from "../EvaluationContext";
 import { BinaryExpression } from "./BinaryExpression";
 import { Expression } from "./Expression";
@@ -27,6 +29,7 @@ export interface Type extends Expression {
     // may end up being used for code generation.
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression;
     toComparisonType?(c: EvaluationContext): Type;
+    isInstance(c: InterpreterContext, value: InterpreterValue): boolean;
  
 }
 

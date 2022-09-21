@@ -19,6 +19,9 @@ import { UnionType } from "./UnionType";
 import { Variable } from "./Variable";
 import { Block } from "./Block";
 import { Reference } from "./Reference";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
 
 export interface FunctionProps extends FunctionBaseProps {
     id?: Identifier;
@@ -114,6 +117,10 @@ export class Function extends FunctionBase implements Callable {
             resolved: true,
         });
         return this.patch({ returnType, type, resolved: true });
+    }
+
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        return this;
     }
 
     toString() {

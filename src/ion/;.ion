@@ -1,5 +1,3 @@
 
-@Native()
-    javascript = ""
-        (a, b) => ({ type: "SequenceExpression", expressions: [a, b] })
+@Native(javascript="(a, b) => a , b")
 `;`(a, b): Boolean => 0

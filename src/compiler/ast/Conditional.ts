@@ -1,12 +1,14 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { EvaluationContext } from "../EvaluationContext";
-import { Block } from "./Block";
 import { Expression, ExpressionProps } from "./Expression";
 
 export interface ConditionalProps extends ExpressionProps {
     test: Expression;
     consequent: Expression;
-    alternate: Expression | null;    
+    alternate: Expression | null;
 }
+
 export class Conditional extends Expression {
 
     test!: Expression;
@@ -15,6 +17,15 @@ export class Conditional extends Expression {
 
     constructor(props: ConditionalProps) { super(props); }
     patch(props: Partial<ConditionalProps>) { return super.patch(props); }
+
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        let test = this.test.toInterpreterValue(c)!;
+        if (c.isTrue(test)) {
+            return this.consequent.toInterpreterValue(c);
+        } else if (this.alternate) {
+            return this.alternate.toInterpreterValue(c);
+        }
+    }
 
     toString() {
         if (this.alternate != null) {

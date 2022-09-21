@@ -11,6 +11,8 @@ import { Type } from "./Type";
 import { Function } from "./Function";
 import { defaultExportName } from "../pathFunctions";
 import { Declarator } from "./Declarator";
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 
 type VariableKind = "variable" | "property" | "parameter";
 
@@ -45,6 +47,14 @@ export class Variable extends Expression implements Declaration {
 
     constructor(props: VariableProps) { super({ meta: [], kind: "Variable", conditional: false, phi: false, ...props }); }
     patch(props: Partial<VariableProps>) { return super.patch(props); }
+
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        let value = this.value?.toInterpreterValue(c);
+        if (value) {
+            c.setValue(this.id.name, value);
+        }
+        return value;
+    }
 
     *getDependencies(c: EvaluationContext) {
         if (this.declaredType instanceof Expression) {

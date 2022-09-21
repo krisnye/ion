@@ -1,3 +1,6 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { AnyType } from "./AnyType";
@@ -45,6 +48,10 @@ export class ArrayExpression extends Container {
                 ]
             })
         });
+    }
+
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        return new InterpreterInstance(this.nodes.map(node => node.toInterpreterValue(c)!));
     }
 
     toString() {

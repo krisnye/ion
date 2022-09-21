@@ -1,3 +1,6 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { EvaluationContext } from "../EvaluationContext";
 import { Expression, ExpressionProps } from "./Expression";
 import { Identifier } from "./Identifier";
@@ -29,9 +32,8 @@ export class Reference extends Expression  {
         return declarations[0].type!;
     }
 
-    toInterpreterInstance(c: EvaluationContext) {
-        let value = c.getValue(this);
-        return value.toInterpreterInstance(c);
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        return c.getValue(this.name);
     }
     
     toString() {

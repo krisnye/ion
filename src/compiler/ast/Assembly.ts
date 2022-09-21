@@ -12,4 +12,8 @@ export class Assembly extends Container {
         return `assembly ${ super.toString() }`;
     }
 
+    get isScope() {
+        return true;
+    }
+
 }

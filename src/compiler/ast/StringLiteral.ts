@@ -1,3 +1,6 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Literal, LiteralProps } from "./Literal";
@@ -12,8 +15,8 @@ export class StringLiteral extends Literal {
     constructor(props: StringLiteralProps) { super(props); }
     patch(props: Partial<StringLiteralProps>) { return super.patch(props); }
 
-    toInterpreterInstance(c: EvaluationContext) {
-        return { "" : coreTypes.String, value: this.value };
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        return new InterpreterInstance(this.value);
     }
 
     resolveType(c: EvaluationContext) {

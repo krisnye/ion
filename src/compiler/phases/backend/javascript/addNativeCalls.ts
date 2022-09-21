@@ -15,7 +15,8 @@ import { memoize } from "../../../utility";
 import { traverseWithScope } from "../../frontend/createScopeMaps";
 import { Phase } from "../../Phase";
 
-const evalJavascript = memoize(eval);
+
+export const evalJavascript = memoize(eval);
 const javascriptField = "javascript";
 
 //  export a function that maybeReplacesCalls.

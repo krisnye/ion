@@ -4,7 +4,6 @@ import { parsing } from "./parsing";
 import { destructuringAndUnaryNumberLiterals } from "./destructuringAndUnaryNumberLiterals";
 import { opsToValueNodes as opsToValueNodes } from "./opsToValueNodes";
 import { flattenSequencesAddMeta } from "./flattenSequencesAddMeta";
-import { identity } from "../identity";
 import { resolveExternalReferences } from "./resolveExternalReferences";
 import { typeInference } from "./typeInference";
 import { opsToTypeNodes } from "./opsToTypeNodes";
@@ -54,5 +53,4 @@ export const assemblyPhases: Phase[] = [
     checkCalls,
     //  some UFCS functions may not have been checked yet, so we check them now.
     checkUFCS,
-    identity,
 ];

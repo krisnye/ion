@@ -1,3 +1,5 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { TypeOperators } from "../analysis/TypeOperators";
 import { EvaluationContext } from "../EvaluationContext";
 import { BinaryExpression } from "./BinaryExpression";
@@ -13,6 +15,10 @@ export class FunctionType extends FunctionBase implements Type {
 
     constructor(props: FunctionTypeProps) { super(props); }
     patch(props: Partial<FunctionTypeProps>) { return super.patch(props); }
+
+    isInstance(c: InterpreterContext, value: InterpreterValue): boolean {
+        throw new Error(`${this.constructor.name}.isInstance not implemented: ${this}`);
+    }
 
     merge(b: Type, union: boolean): Type | null {
         return null;

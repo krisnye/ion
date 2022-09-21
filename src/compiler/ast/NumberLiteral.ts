@@ -1,3 +1,6 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Serializable } from "../Serializable";
@@ -31,8 +34,8 @@ export class NumberLiteral extends Literal {
         return new NumberLiteral({ location, value, integer });
     }
 
-    toInterpreterInstance(c: EvaluationContext) {
-        return { "" : this.integer ? coreTypes.Integer : coreTypes.Number, value: this.value };
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        return new InterpreterInstance(this.value);
     }
 
     protected resolveType(c: EvaluationContext): Type {

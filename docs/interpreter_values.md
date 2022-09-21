@@ -20,12 +20,9 @@
 
     [ Instance1, Instance2, Instance3 ]
 
-## Integers
+## Numbers
 
     ... -2, -2, 0, 1, 2 ...
-
-## Floats
-
     - infinity ... + infinity
 
 ## Strings

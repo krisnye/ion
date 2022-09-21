@@ -1,5 +1,3 @@
-_js = ""
-    (left, right) => ({ type: "BinaryExpression", operator: "<=", left, right })
 
-@Native(javascript=_js)
+@Native(javascript="(a, b) => a <= b")
 `<=`(a: Number, b: Number): Boolean => 0

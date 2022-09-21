@@ -10,6 +10,9 @@ import { NumberLiteral } from "./NumberLiteral";
 import { Reference } from "./Reference";
 import { BasicType, Type } from "./Type";
 import { leastCommonMultiple } from "../analysis/math";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
 
 type LiteralNumberType = NumberType & { min: NumberLiteral | null, max: NumberLiteral | null}
 
@@ -69,6 +72,42 @@ export class NumberType extends BaseType {
             props.max = props.max.patch({ resolved: true });
         }
         super({ minExclusive: false, maxExclusive: false, ...props });
+    }
+
+    isInstance(c: InterpreterContext, value: InterpreterValue): boolean {
+        if (value instanceof InterpreterInstance && value.type === coreTypes.Number) {
+            let v = value.value;
+            if (this.min != null) {
+                if (this.minExclusive) {
+                    if (v <= this.min) {
+                        return false;
+                    }
+                }
+                else {
+                    if (v < this.min) {
+                        return false;
+                    }
+                }
+            }
+            if (this.max != null) {
+                if (this.maxExclusive) {
+                    if (v >= this.max) {
+                        return false;
+                    }
+                }
+                else {
+                    if (v > this.max) {
+                        return false;
+                    }
+                }
+            }
+            // check if integer
+            if (this.integer) {
+                return Number.isInteger(v);
+            }
+            return true;
+        }
+        return false;
     }
 
     getBasicTypes() {

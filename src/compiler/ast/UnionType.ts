@@ -1,11 +1,12 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { TypeOperators } from "../analysis/TypeOperators";
 import { EvaluationContext } from "../EvaluationContext";
-import { SemanticError } from "../SemanticError";
 import { SourceLocation } from "../SourceLocation";
 import { BinaryExpression } from "./BinaryExpression";
 import { CompoundType, CompoundTypeProps } from "./CompoundType";
 import { Expression } from "./Expression";
-import { BasicType, isType, Type } from "./Type";
+import { Type } from "./Type";
 
 export interface UnionTypeProps extends CompoundTypeProps {
 }
@@ -15,6 +16,10 @@ export class UnionType extends CompoundType {
     constructor(props: UnionTypeProps) { super(props); }
     patch(props: Partial<UnionTypeProps>) {
         return super.patch(props);
+    }
+
+    isInstance(c: InterpreterContext, value: InterpreterValue): boolean {
+        return this.left.isInstance(c, value) || this.right.isInstance(c, value);
     }
 
     getBasicTypes(c: EvaluationContext) {

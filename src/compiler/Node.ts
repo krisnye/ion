@@ -1,3 +1,5 @@
+import { InterpreterContext } from "../interpreter/InterpreterContext";
+import { InterpreterValue } from "../interpreter/InterpreterValue";
 import { EvaluationContext } from "./EvaluationContext";
 import { Immutable } from "./Immutable";
 import { SourceLocation } from "./SourceLocation";
@@ -24,15 +26,15 @@ export class Node extends Immutable implements NodeProps {
         return this;
     }
 
-    toInterpreterInstance(c: EvaluationContext): any {
-        throw new Error(`${this.constructor.name}.toInterpreterInstance not implemented.`);
-    }
-
     toJSON(): any {
         return {
             ...super.toJSON(),
             location: void 0,
         };
+    }
+
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        throw new Error(`${this.constructor.name}.toInterpreterValue not implemented.`);
     }
 
     toESNode(c: EvaluationContext): any {

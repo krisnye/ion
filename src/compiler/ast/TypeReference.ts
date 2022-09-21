@@ -1,3 +1,5 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { SemanticError } from "../SemanticError";
@@ -18,6 +20,11 @@ export class TypeReference extends Reference implements Type  {
         super({ typeArguments: [], ...props });
     }
     patch(props: Partial<TypeReferenceProps>) { return super.patch(props); }
+
+    isInstance(c: InterpreterContext, value: InterpreterValue): boolean {
+        let type = this.toInterpreterValue(c) as Type;
+        return type.isInstance(c, value);
+    }
 
     merge(b: Type) {
         return null;

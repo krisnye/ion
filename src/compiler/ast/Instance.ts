@@ -2,6 +2,9 @@ import { EvaluationContext } from "../EvaluationContext";
 import { Reference } from "./Reference";
 import { Container, ContainerProps } from "./Container";
 import { Variable } from "./Variable";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 
 export interface InstanceProps extends ContainerProps {
     class: Reference;
@@ -24,8 +27,8 @@ export class Instance extends Container {
         return null;
     }
 
-    toInterpreterInstance(c: EvaluationContext) {
-        return { "" : this.class.name, ...Object.fromEntries(this.nodes.map((node: Variable) => [node.id.name, node.value])) };
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        return new InterpreterInstance(Object.fromEntries(this.nodes.map((node: Variable) => [node.id.name, node.value?.toInterpreterValue(c)])), this.class.name);
     }
 
     toString() {

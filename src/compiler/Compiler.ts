@@ -38,6 +38,8 @@ function isTestFailFile(name: string) {
     return isTestFile(name) && /\bfail\b/.test(name);
 }
 
+const globalName = "global";
+
 export class Compiler {
 
     options: CompilerOptions;
@@ -70,6 +72,17 @@ export class Compiler {
         }
     }
 
+    createAssembly(modules: Map<string,any>) {
+        modules = new Map(modules.entries());
+        let assembly = new Assembly({
+            location: new SourceLocation(globalName, new SourcePosition(0, 0), new SourcePosition(0, 0)),
+            nodes: [...modules.values()].map((module: Module) => {
+                return module.nodes
+            }).flat(),
+        });
+        return assembly;
+    }
+
     runPhases(sources: Map<string,string>, modules: Map<string,any>, externals: Map<string,any>, phases: Phase[], group: boolean, options?: DebugOptions): [Map<string,any>, Error[] | null] {
         // don't modify modules directly, make a copy
         modules = new Map(modules.entries());
@@ -94,15 +107,9 @@ export class Compiler {
         if (group) {
             for (let phase of phases) {
                 // merge all the modules into a new module
-                let globalName = "global";
                 // combine all module entries
                 for (let phaseRepeatCount = 0; phaseRepeatCount < 100; phaseRepeatCount++) {
-                    let assembly = new Assembly({
-                        location: new SourceLocation(globalName, new SourcePosition(0, 0), new SourcePosition(0, 0)),
-                        nodes: [...modules.values()].map((module: Module) => {
-                            return module.nodes
-                        }).flat(),
-                    });
+                    let assembly = this.createAssembly(modules);
                     let [newAssembly, errors, runPhaseAgain] = this.runPhase(phase, globalName, assembly, externals, this.options);
                     errors = removeExpectedErrors(errors);
                     if (errors.length > 0) {
@@ -171,25 +178,35 @@ export class Compiler {
         return [modules, null];
     }
 
+    compileToAstAssembly(input: Map<string,string>): Assembly {
+        let result = this.compile(input);
+        if (Array.isArray(result)) {
+            throw result[0];
+        }
+        return this.createAssembly(result);
+    }
+
     compile(
         input: Map<string,string>,
         debugOptions?: DebugOptions,
     ) : Map<string,any> | Error[] {
         let sources = new Map(input.entries());
         let modules: Map<string,any> = input;
-        let logger = debugOptions?.logger ?? (() => {});
+        let emptyLogger = () => {};
+        let logger = debugOptions?.logger ?? emptyLogger;
         let finalPhase = debugOptions?.finalPhase;
+        let silentOptions = { ...debugOptions, logger: emptyLogger };
 
         try {
             // log the initial source
             for (let [name,module] of modules.entries()) {
-                this.log(logger, "Source", module, name);
+                // this.log(logger, "Source", module, name);
             }
 
             //  do solo phases
             let externals = modules;
             let errors: Error[] | null = null;
-            [modules, errors] = this.runPhases(sources, modules, externals, parsingPhases, false, debugOptions);
+            [modules, errors] = this.runPhases(sources, modules, externals, parsingPhases, false, silentOptions);
             if (errors) { return errors; }
             if (finalPhase != null) { return modules; }
 
@@ -205,10 +222,10 @@ export class Compiler {
             }));
             externals = modules;
 
-            [modules, errors] = this.runPhases(sources, modules, externals, intermediatePhases, false, debugOptions);
+            [modules, errors] = this.runPhases(sources, modules, externals, intermediatePhases, false, silentOptions);
             externals = modules;
             if (errors) { return errors; }
-            [modules, errors] = this.runPhases(sources, modules, externals, assemblyPhases, true, debugOptions);
+            [modules, errors] = this.runPhases(sources, modules, externals, assemblyPhases, true, silentOptions);
             if (errors) { return errors; }
             externals = modules;
 
@@ -217,11 +234,11 @@ export class Compiler {
             if (errors) { return errors; }
             externals = modules;
 
-            //  This final output should NOT be using the final outputs at input
-            //  the "externals" needs to be the output from the previous phases.
-            [modules, errors] = this.runPhases(sources, modules, externals, javascriptPhases, false, debugOptions);
-            if (errors) { return errors; }
-            //  we DO NOT reset the externals now from the back end phases.
+            // //  This final output should NOT be using the final outputs at input
+            // //  the "externals" needs to be the output from the previous phases.
+            // [modules, errors] = this.runPhases(sources, modules, externals, javascriptPhases, false, debugOptions);
+            // if (errors) { return errors; }
+            // //  we DO NOT reset the externals now from the back end phases.
 
             // // finally check that any expected fail files failed to compile.
             // if (this.options.test) {
@@ -264,8 +281,8 @@ export class Compiler {
 
     logFilter = new Set([ "test.sample", "foo", "-" ]);
     logModule(name: string) {
-        // return true;
-        return this.logFilter && this.logFilter.has(name);
+        return true;
+        // return this.logFilter && this.logFilter.has(name);
     }
     log(logger: PhaseLogger, phase: string, module: any, name: string) {
         if (!this.logModule(name)) {

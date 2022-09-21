@@ -1,3 +1,5 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { BinaryExpression } from "./BinaryExpression";
@@ -17,6 +19,14 @@ export abstract class BaseType extends Expression implements Type {
 
     merge(b: Type, union: boolean): Type | null {
         return null;
+    }
+
+    isInstance(c: InterpreterContext, value: InterpreterValue): boolean {
+        throw new Error(`${this.constructor.name}.isInstance not implemented: ${this}`);
+    }
+
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        return this;
     }
 
     protected resolveType(c: EvaluationContext): Type | null {
