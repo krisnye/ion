@@ -1,0 +1,4 @@
+
+class @UnitTest
+    arguments: Array
+    expected: Any

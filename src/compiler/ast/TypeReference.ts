@@ -3,6 +3,7 @@ import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { SemanticError } from "../SemanticError";
+import { AnyType } from "./AnyType";
 import { BinaryExpression } from "./BinaryExpression";
 import { Expression } from "./Expression";
 import { Reference, ReferenceProps } from "./Reference";

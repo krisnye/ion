@@ -33,7 +33,7 @@ export function getMetaCall(container: MetaContainer, globalPath: string): MetaC
     return calls[0] as MetaCall ?? null;
 }
 
-function getMetaCalls(container: MetaContainer, globalPath: string) {
+export function getMetaCalls(container: MetaContainer, globalPath: string) {
     let calls = new Array<Call>();
     for (let meta of container.meta) {
         // handle both right now

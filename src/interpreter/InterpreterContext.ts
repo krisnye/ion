@@ -15,6 +15,7 @@ export class InterpreterContext {
     localStack: Map<string, InterpreterValue>[] = [];
     scopeNode: Node;
     public returnValue: InterpreterValue | null = null;
+    public break = false;
 
     constructor(context: EvaluationContext, scopeNode: Node) {
         this.context = context;

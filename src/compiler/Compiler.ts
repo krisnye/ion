@@ -195,7 +195,7 @@ export class Compiler {
         let emptyLogger = () => {};
         let logger = debugOptions?.logger ?? emptyLogger;
         let finalPhase = debugOptions?.finalPhase;
-        let silentOptions = { ...debugOptions, logger: emptyLogger };
+        let silentOptions = { ...debugOptions } //, logger: emptyLogger };
 
         try {
             // log the initial source
@@ -279,10 +279,9 @@ export class Compiler {
         }
     }
 
-    logFilter = new Set([ "test.sample", "foo", "-" ]);
+    logFilter = new Set([ "test.sample" ]);
     logModule(name: string) {
-        return true;
-        // return this.logFilter && this.logFilter.has(name);
+        return this.logFilter && this.logFilter.has(name);
     }
     log(logger: PhaseLogger, phase: string, module: any, name: string) {
         if (!this.logModule(name)) {

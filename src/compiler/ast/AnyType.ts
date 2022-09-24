@@ -1,4 +1,6 @@
 import { timeStamp } from "console";
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { TypeOperators } from "../analysis/TypeOperators";
 import { EvaluationContext } from "../EvaluationContext";
 import { BaseType, BaseTypeProps } from "./BaseType";
@@ -14,6 +16,10 @@ export class AnyType extends BaseType {
     constructor(props: AnyTypeProps) { super(props); }
     patch(props: Partial<AnyTypeProps>) {
         return super.patch(props);
+    }
+
+    isInstance(c: InterpreterContext, value: InterpreterValue): boolean {
+        return true;
     }
 
     merge(b: Type, union: boolean) {

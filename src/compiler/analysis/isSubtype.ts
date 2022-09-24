@@ -4,6 +4,7 @@ import { NumberType, overlaps } from "../ast/NumberType"
 import { ObjectType } from "../ast/ObjectType"
 import { Type } from "../ast/Type"
 import { UnionType } from "../ast/UnionType"
+import { coreTypes } from "../coreTypes"
 // import { VoidType } from "../ast/VoidType"
 import { EvaluationContext } from "../EvaluationContext"
 
@@ -62,7 +63,7 @@ function same(a: Maybe, b: Maybe): Maybe {
  export function isSubtype(a: Type | null, b: Type | null, c: EvaluationContext): boolean | null {
     let originalA = a;
     let originalB = b;
-    if (a === b || a?.toString() === b?.toString() || b == null || a instanceof AnyType) {
+    if (a === b || a?.toString() === b?.toString() || b == null || b instanceof AnyType || b.toString() === coreTypes.Any) {
         return true
     }
     if (a == null) {
@@ -70,9 +71,6 @@ function same(a: Maybe, b: Maybe): Maybe {
     }
     a = c.getComparisonType(a);
     b = c.getComparisonType(b);
-    // if (a instanceof VoidType || b instanceof VoidType) {
-    //     return false;
-    // }
     if (a instanceof UnionType) {
         return same(isSubtype(a.left, b, c), isSubtype(a.right, b, c))
     }
@@ -84,11 +82,6 @@ function same(a: Maybe, b: Maybe): Maybe {
     }
     if (a instanceof IntersectionType) {
         return maxNoFalse(isSubtype(a.left, b, c), isSubtype(a.right, b, c))
-    }
-
-    if (!(typeof a.getBasicTypes === "function")) {
-        debugger;
-        let foo = c.getComparisonType(originalA!);
     }
 
     let baseA = a.getBasicTypes(c);
@@ -116,29 +109,6 @@ function same(a: Maybe, b: Maybe): Maybe {
         }
         return null;
     }
-    // // at this point, we should either be reference types or object types
-    // if (a instanceof TypeReference && b instanceof TypeReference) {
-    //     if (a.name !== b.name) {
-    //         return null;
-    //     }
-    //     let aTypes = a.typeArguments || [];
-    //     let bTypes = b.typeArguments || [];
-    //     let result: boolean | null = true
-    //     for (let i = 0; i < bTypes.length; i++) {
-    //         let aType = aTypes[i];
-    //         let bType = bTypes[i];
-    //         let subcheck = isSubtype(aType, bType, c);
-    //         if (subcheck === false) {
-    //             result = false;
-    //             break;
-    //         }
-    //         else if (subcheck === null) {
-    //             result = null;
-    //         }
-    //     }
-    //     // different references, different types, no implements yet
-    //     return result;
-    // }
     if (a instanceof ObjectType && b instanceof ObjectType) {
         let allTrue = true;
         for (let { key: bKey, value: bType } of b.properties) {

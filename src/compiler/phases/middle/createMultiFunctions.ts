@@ -159,5 +159,5 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
 }
 
 function getOrderedName(d: Declaration) {
-    return `${d.id.name}_${d.order}`;
+    return d.order == null ? d.id.name : `${d.id.name}_${d.order}`;
 }

@@ -44,7 +44,7 @@ export class ArrayExpression extends Container {
                         location,
                         key: new Identifier({ location, name: "length" }),
                         value: new NumberType({ location, min: length, max: length })
-                    }),
+                    })
                 ]
             })
         });

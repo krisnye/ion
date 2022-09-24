@@ -1,5 +1,7 @@
 import { Assembly } from "../compiler/ast/Assembly";
+import { Declaration, isDeclaration } from "../compiler/ast/Declaration";
 import { Function } from "../compiler/ast/Function";
+import { getMetaCalls, MetaContainer } from "../compiler/ast/MetaContainer";
 import { createEvaluationContext } from "../compiler/phases/frontend/createScopeMaps";
 import { InterpreterContext } from "./InterpreterContext";
 import { InterpreterValue } from "./InterpreterValue";
@@ -15,6 +17,14 @@ export class Interpreter {
             createEvaluationContext(assembly),
             this.assembly.nodes[0],
         );
+    }
+
+    getAllDeclarations(): Declaration[] {
+        return this.assembly.nodes.filter(isDeclaration);
+    }
+
+    getMetaCalls(container: MetaContainer, path: string) {
+        return getMetaCalls(container, path);
     }
 
     getValue(name: string) {

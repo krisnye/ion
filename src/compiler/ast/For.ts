@@ -1,3 +1,6 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { Block } from "../ast/Block";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
@@ -22,6 +25,24 @@ export class For extends Loop implements Scope {
     constructor(props: ForProps) { super(props); }
     patch(props: Partial<ForProps>) { return super.patch(props); }
     
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        let rightValue = this.right.toInterpreterValue(c) as InterpreterInstance;
+        if (!rightValue.isArray) {
+            throw new Error(`Expected Array: ${rightValue}`);
+        }
+        let rightArray = rightValue.value as InterpreterInstance[];
+        for (let i = 0; i < rightArray.length; i++) {
+            let item = rightArray[i];
+            // set the left item into scope
+            c.setValue(this.left.id.name, item);
+            this.body.toInterpreterValue(c);
+            if (c.returnValue || c.break) {
+                c.break = false;
+                return;
+            }
+        }
+    }
+
     protected areAllDependenciesResolved(c: EvaluationContext) {
         return false;
     }

@@ -17,4 +17,4 @@ javascript = ""
 `+`(a: String, b: String): String => ""
 
 @Native("(a, b) => ({ ...a, value: a.map((e, i) => e + a[i]) })")
-`+`(a: Number[], b: Number[]): Number[] => []
+`+`(a: Number[], b: Number[]): Number[] => [0]

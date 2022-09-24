@@ -24,6 +24,7 @@ import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
 import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
 import { Function } from "./Function";
+import { AnyType } from "./AnyType";
 
 export interface ClassProps extends ContainerProps {
     id: Declarator;

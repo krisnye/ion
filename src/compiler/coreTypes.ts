@@ -6,6 +6,7 @@ export const coreTypes = {
     Integer: getAbsolutePath("Integer"),
     String: getAbsolutePath("String"),
     Native: getAbsolutePath("@Native"),
+    UnitTest: getAbsolutePath("@UnitTest"),
     Type: getAbsolutePath("Type"),
     Any: getAbsolutePath("Any"),
     Infer: getAbsolutePath("Infer"),
