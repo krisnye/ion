@@ -86,7 +86,11 @@ function sortMultifunctions(c: EvaluationContext, name: string, multiFunctions: 
                 allTrue &&= !!aIsSubtypeB && !!bIsSubtypeA;
             }
             //  if we get here then they are ambiguous.
-            throw new SemanticError(allTrue ? `Cannot have identical multifunctions` : `Ambiguous multifunctions`, a.id, b.id);
+            if (allTrue) {
+                throw new SemanticError(`Cannot have identical multifunctions`, a.id, b.id);
+            }
+            //  string compare
+            compare = a.toString().localeCompare(b.toString());
         }
         return compare;
     });

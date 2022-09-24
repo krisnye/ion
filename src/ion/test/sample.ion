@@ -9,28 +9,6 @@
 // value = 12
 // value2 = value.add(10).double.double
 
-// array = [1, 2]
-// first = array[0]
-// foo = min(10, 20)
-// bar = sqrt(5)
-// baz = tan(3.8)
-
-// class Vector
-//     x: Number = 0
-//     y: Number
-
-_private = 1 + 1
-
-SmallNumber = 0 .. 22
-
-foo(a: Number) => 10
-foo(a: SmallNumber) => 30
-foo(a: Integer) => 20
-foo(a: String) => 40
-
-loop(a: Integer) =>
-    a
-
 //  we're now interpreting this function.
 
 @UnitTest([1, 2], 6)

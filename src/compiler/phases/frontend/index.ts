@@ -17,6 +17,7 @@ import { semanticChecks } from "./semanticChecks";
 import { checkUFCS } from "./checkUFCS";
 import addExplicitReturns from "./addExplicitReturns";
 import addExport from "./addExport";
+import { fixClassNames } from "./fixClassNames";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -53,4 +54,5 @@ export const assemblyPhases: Phase[] = [
     checkCalls,
     //  some UFCS functions may not have been checked yet, so we check them now.
     checkUFCS,
+    fixClassNames,
 ];

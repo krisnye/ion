@@ -1,5 +1,7 @@
 
+@UnitTest([], 21)
 loop() =>
     total: Number = 0.0
     for value in [9.0, 7.0, 5.0]
         total += value
+    total

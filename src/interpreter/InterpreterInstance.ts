@@ -67,6 +67,13 @@ export class InterpreterInstance {
     }
 
     toString() {
-        return JSON.stringify(this);
+        if (primitives[this.type]) {
+            return this.value.toString();
+        }
+        return `${this.type}(${Object.entries(this.value).map(([name,value]) => `${name}=${value}`)})`;
     }
+}
+
+const primitives = {
+    String: true, Number: true, Boolean: true
 }

@@ -1,3 +1,6 @@
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { EvaluationContext } from "../EvaluationContext";
 import { getResolvePaths, join } from "../pathFunctions";
 import { SemanticError } from "../SemanticError";
@@ -25,6 +28,17 @@ export class Member extends Expression {
 
     get computed() {
         return this.property instanceof Expression;
+    }
+
+    toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
+        let object = this.object.toInterpreterValue(c);
+        if (!(object instanceof InterpreterInstance)) {
+            throw new Error("Expected InterpreterInstance: " + object);
+        }
+        if (!(this.property instanceof Identifier)) {
+            throw new Error("Expected Identifier: " + this.property);
+        }
+        return object.value[this.property.name];
     }
 
     getPropertyKey(): Identifier | Type {

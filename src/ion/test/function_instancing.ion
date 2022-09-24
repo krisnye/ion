@@ -1,5 +1,19 @@
 
 add = (a, b) => a + b
 
+@UnitTest([1, 2], 3)
 combine(a: Integer, b: Integer) => add(a, b)
+@UnitTest([1.5, 2.5], 4)
 combine(a: Number, b: Number) => add(a, b)
+@UnitTest(["a", "b"], "ab")
+combine(a: String, b: String) => add(a, b)
+
+class Vector
+    x: Number
+    y: Number
+
+`+`(a: Vector, b: Vector) => Vector(a.x + b.x, a.y + b.y)
+
+//  TODO: Make this unit test work.
+@UnitTest([Vector(1,2),Vector(10,20)], Vector(11,22))
+combine(a: Vector, b: Vector) => add(a, b)

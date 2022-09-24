@@ -1,4 +1,5 @@
 import { getNativeJavascript } from "../compiler/ast/Call";
+import { Class } from "../compiler/ast/Class";
 import { Expression } from "../compiler/ast/Expression";
 import { Function } from "../compiler/ast/Function";
 import { getMetaCall } from "../compiler/ast/MetaContainer";
@@ -49,7 +50,7 @@ export class InterpreterContext {
         this.locals.set(name, value);
     }
 
-    call(func: Function, args: InterpreterValue[], checkArguments = false): InterpreterValue {
+    call(func: Function | Class, args: InterpreterValue[], checkArguments = false): InterpreterValue {
         let javascript = getNativeJavascript(func, this.context);
         if (javascript) {
             let nativeArgs = args.map(arg => (arg as InterpreterInstance).value);
@@ -60,25 +61,32 @@ export class InterpreterContext {
         if (func.parameters.length !== args.length) {
             throw new Error("Wrong arguments length");
         }
-        this.pushLocals();
-        for (let i = 0; i < func.parameters.length; i++) {
-            const parameter = func.parameters[i];
-            // check if parameter fits
-            if (checkArguments && !parameter.type!.isInstance(this, args[i])) {
-                throw new Error(`Argument ${i}: ${args[i]} is not of expected type: ${parameter}`);
+        if (func instanceof Function) {
+            this.pushLocals();
+            for (let i = 0; i < func.parameters.length; i++) {
+                const parameter = func.parameters[i];
+                // check if parameter fits
+                // console.log({ parameter, parameterType: parameter.type });
+                if (checkArguments && !parameter.type!.isInstance(this, args[i])) {
+                    throw new Error(`Argument ${i}: ${args[i]} is not of expected type: ${parameter}`);
+                }
+    
+                this.setValue(parameter.id.name, args[i]);
             }
-
-            this.setValue(parameter.id.name, args[i]);
+            func.body.toInterpreterValue(this);
+            this.popLocals();
+            if (this.returnValue == null) {
+                throw new Error("Expected context.returnValue");
+            }
+            let returnValue = this.returnValue;
+            // always reset the return value.
+            this.returnValue = null;
+            return returnValue;
         }
-        func.body.toInterpreterValue(this);
-        this.popLocals();
-        if (this.returnValue == null) {
-            throw new Error("Expected context.returnValue");
+        else {
+            let propertyEntries = args.map((value, index) => [func.parameters[index].id.name, value]);
+            return new InterpreterInstance(Object.fromEntries(propertyEntries), func.id.name);
         }
-        let returnValue = this.returnValue;
-        // always reset the return value.
-        this.returnValue = null;
-        return returnValue;
     }
 
 }

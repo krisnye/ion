@@ -82,10 +82,6 @@ export abstract class FunctionBase extends Expression implements MetaContainer, 
             }
             if (paramType != null) {
                 let result = isSubtype(argType, paramType, c);
-                if (argType?.toString() === "Array & ((0) : (1), (1) : (2), (Integer) : (1) | (2), length : (2))"
-                || paramType?.toString() === "Array & ((Integer) : Any)") {
-                    debugger;
-                }
                 if (result !== true) {
                     errors.push(new SemanticError(`Argument of type ${argType} ${result === false ? `is not` : `may not be`} expected type ${paramType}`, arg));
                 }
