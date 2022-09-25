@@ -1,15 +1,3 @@
-_js = ""
-    (a) => ({
-        type: "CallExpression",
-        callee: {
-            type: "MemberExpression",
-            object: { type: "Identifier", name: "Math" },
-            property: { type: "Identifier", name: "abs" }
-        },
-        arguments: [ a ]
-    })
-@Native(javascript=_js)
-abs(a: Integer) => 0
 
-@Native(javascript=_js)
+@Native(javascript="(a) => Math.cos(a)")
 abs(a: Number) => 0

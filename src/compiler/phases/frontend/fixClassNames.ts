@@ -16,7 +16,6 @@ export function fixClassNames(moduleName, module: Container, externals: Map<stri
                     let name = node.id.name;
                     let path = split(name);
                     if (path[path.length - 2] === path[path.length - 1]) {
-                        console.log(name);
                         let newname = join(...path.slice(0, -1));
                         node = node.patch({
                             id: node.id.patch({ name: newname })

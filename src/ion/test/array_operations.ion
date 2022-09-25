@@ -1,0 +1,6 @@
+
+@UnitTest([[1, 2], 3], [3, 6])
+arrayTimesNumber = (a: Number[], b: Number) => a * b
+
+@UnitTest([3, [1, 2]], [3, 6])
+numberTimesArray = (a: Number, b: Number[]) => a * b

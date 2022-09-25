@@ -38,7 +38,8 @@ export class Member extends Expression {
         if (!(this.property instanceof Identifier)) {
             throw new Error("Expected Identifier: " + this.property);
         }
-        return object.value[this.property.name];
+        let result = object.get(this.property.name);
+        return result;
     }
 
     getPropertyKey(): Identifier | Type {

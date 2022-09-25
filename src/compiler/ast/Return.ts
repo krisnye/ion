@@ -12,7 +12,10 @@ export class Return extends Expression {
     value!: Expression;
 
     constructor(props: ReturnProps) { super(props); }
-    patch(props: Partial<ReturnProps>) { return super.patch(props); }
+
+    patch(props: Partial<ReturnProps>) {
+        return super.patch(props);
+    }
 
     toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
         c.returnValue = this.value.toInterpreterValue(c)!;

@@ -64,7 +64,7 @@ export function checkCalls(moduleName, module: Container, externals: Map<string,
 function sortMultifunctions(c: EvaluationContext, name: string, multiFunctions: Array<FunctionDeclaration>, errors: Error[]): Map<Node, Node> {
     const compareFunctions = memoize2((a: FunctionDeclaration, b: FunctionDeclaration) => {
         // perform an actual comparison.
-        let compare = a.parameters.length - b.parameters.length;
+        let compare = b.parameters.length - a.parameters.length;
         if (compare == 0) {
             let allTrue = true;
             for (let i = 0; i < a.parameters.length; i++) {

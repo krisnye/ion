@@ -1,0 +1,3 @@
+
+@Native("(message) => { console.log('\\x1b[36m' + message + '\\x1b[0m'); return message; }")
+log(message: String) => ""

@@ -22,15 +22,23 @@ export default function addExplicitReturns(moduleName, module, externals): Retur
                     errors.push(new SemanticError("Functions must return a value", node));
                 }
                 node = traverse(node, {
-                    leave(node) {
-                        return expressions.has(node) && !(node instanceof Return)
-                            ? new Return({ location: node.location, value: node })
-                            : node;
+                    leave(innerNode) {
+                        if (expressions.has(innerNode) && !(innerNode instanceof Return)) {
+                            return new Return({ location: innerNode.location, value: innerNode })
+                        }
                     }
                 })
             }
             return node;
         }
     })
+    //  I don't know how nested Returns are ending up in here, but let's remove them.
+    module = traverse(module, {
+        leave(node) {
+            if (node instanceof Return && node.value instanceof Return) {
+                return node.value;
+            }
+        }
+    });
     return [module, errors];
 }

@@ -30,11 +30,16 @@ export class ArrayExpression extends Container {
             left: new TypeReference({ location, name: coreTypes.Array }),
             right: new ObjectType({ location,
                 properties: [
-                    ...this.nodes.map((node, index) => new Pair({
-                        location: node.location,
-                        key: NumberType.fromConstant(index, node.location, true),
-                        value: node.type!
-                    })),
+                    ...this.nodes.map((node, index) => {
+                        if (node.type instanceof Identifier) {
+                            console.log("WHAT THE FUCK?", this)
+                        }
+                        return new Pair({
+                            location: node.location,
+                            key: NumberType.fromConstant(index, node.location, true),
+                            value: node.type!
+                        })
+                    }),
                     new Pair({
                         location,
                         key: new NumberType({ location, step: 1 }),

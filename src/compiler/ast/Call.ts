@@ -50,8 +50,8 @@ export class Call extends Container {
     patch(props: Partial<CallProps>) { return super.patch(props); }
 
     toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
-        let func = this.callee.toInterpreterValue(c) as Function;
-        return c.call(func, this.nodes.map(node => node.toInterpreterValue(c)!));
+        let func = c.toInterpreterValue(this.callee) as Function;
+        return c.call(func, this.nodes.map(node => c.toInterpreterValue(node)!));
     }
 
     *getDependencies(c: EvaluationContext) {

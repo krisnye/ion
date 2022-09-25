@@ -50,16 +50,28 @@ export class InterpreterContext {
         this.locals.set(name, value);
     }
 
+    toInterpreterValue(node) {
+        let value: InterpreterValue | void;
+        if (node instanceof Expression) {
+            value = node.toInterpreterValue(this);
+        }
+        value = InterpreterInstance.wrap(value);
+        return value;
+    }
+
     call(func: Function | Class, args: InterpreterValue[], checkArguments = false): InterpreterValue {
         let javascript = getNativeJavascript(func, this.context);
         if (javascript) {
-            let nativeArgs = args.map(arg => (arg as InterpreterInstance).value);
+            let nativeArgs = args.map(InterpreterInstance.unwrap);
             let result = evalJavascript(javascript)(...nativeArgs);
-            return new InterpreterInstance(result);
+            if (!(result instanceof InterpreterInstance)) {
+                result = new InterpreterInstance(result);
+            }
+            return result;
         }
 
         if (func.parameters.length !== args.length) {
-            throw new Error("Wrong arguments length");
+            throw new Error(`Wrong arguments length, function: ${func.id}, expected: ${func.parameters.length}, actual: ${args.length}`);
         }
         if (func instanceof Function) {
             this.pushLocals();
@@ -76,7 +88,8 @@ export class InterpreterContext {
             func.body.toInterpreterValue(this);
             this.popLocals();
             if (this.returnValue == null) {
-                throw new Error("Expected context.returnValue");
+                console.log(args);
+                throw new Error(`Expected context.returnValue from function ${func}`);
             }
             let returnValue = this.returnValue;
             // always reset the return value.

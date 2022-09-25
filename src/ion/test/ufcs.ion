@@ -1,0 +1,5 @@
+@UnitTest([10], 20)
+double = (x: Number) => x * 2
+
+@UnitTest([10], 40)
+quadruple = (a: Number) => a.double.double

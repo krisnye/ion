@@ -158,5 +158,8 @@ Cross platform modeling language
     - [ ] Create runtime type checking for classes.
     - [ ] Create runtime type checking for literal type expressions.
     - [-] While loops.
-    - [ ] For loops.
+    - [x] For loops.
+      - [ ] Index on for loop.
+    - [ ] Semantic Error on no return value within any function branch.
+    - [ ] Refactor declaration and assignment to both be the same operator `=`
 

@@ -14,6 +14,5 @@ class Vector
 
 `+`(a: Vector, b: Vector) => Vector(a.x + b.x, a.y + b.y)
 
-//  TODO: Make this unit test work.
 @UnitTest([Vector(1,2),Vector(10,20)], Vector(11,22))
 combine(a: Vector, b: Vector) => add(a, b)

@@ -13,7 +13,8 @@ javascript = ""
 @Native(javascript)
 `*`(a: Number, b: Integer): Number => 0.0
 
-@Native(javascript)
+@Native("(a, b) => a.map(aa => aa * b)")
 `*`(a: Number[], b: Number): Number[] => [0]
 
+@Native("(a, b) => b.map(bb => a * bb)")
 `*`(a: Number, b: Number[]) => b * a

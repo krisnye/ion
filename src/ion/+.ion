@@ -16,5 +16,17 @@ javascript = ""
 @Native(javascript)
 `+`(a: String, b: String): String => ""
 
-@Native("(a, b) => ({ ...a, value: a.map((e, i) => e + a[i]) })")
+@Native(javascript)
+`+`(a: String, b: Number): String => ""
+
+@Native(javascript)
+`+`(a: Number, b: String): String => ""
+
+@Native(javascript)
+`+`(a: String, b: Array): String => ""
+
+@Native(javascript)
+`+`(a: Array, b: String): String => ""
+
+@Native("(a, b) => a.map((e, i) => e + b[i])")
 `+`(a: Number[], b: Number[]): Number[] => [0]

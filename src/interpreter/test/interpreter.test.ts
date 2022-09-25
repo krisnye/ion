@@ -19,12 +19,9 @@ function unitTest(interpreter: Interpreter, func: Function, name = func.id?.name
     for (let unitTestMetaCall of unitTestMetaCalls) {
         let args = (unitTestMetaCall.nodes[0] as ArrayExpression).nodes.map(node => node.toInterpreterValue(interpreter.context)) as InterpreterInstance[];
         let expected = unitTestMetaCall.nodes[1].toInterpreterValue(interpreter.context) as InterpreterInstance;
-        if(name + args.join(",") === `combine_0{"type":"String","value":"a"},{"type":"String","value":"b"}`) {
-            debugger;
-        }
         let result = interpreter.call(func, args) as InterpreterInstance;
         if (expected.toString() !== result.toString()) {
-            console.log(`${Colors.FgRed}Unit test failed: ${Colors.Reset}${name}(${args.join(",")}) == ${result.value}, expected: ${expected}`);
+            console.log(`${Colors.FgRed}Unit test failed: ${Colors.Reset}${name}(${args.join(",")}) == ${result}, expected: ${expected}`);
         }
         else {
             console.log(`${Colors.FgGreen}Unit test passed: ${Colors.Reset}${name}(${args.join(",")}) == ${expected}`);

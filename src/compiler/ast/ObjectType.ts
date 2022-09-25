@@ -11,6 +11,10 @@ import { isSubtype } from "../analysis/isSubtype";
 import { SemanticError } from "../SemanticError";
 import { IntersectionType } from "./IntersectionType";
 import { UnionType } from "./UnionType";
+import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { InterpreterValue } from "../../interpreter/InterpreterValue";
+import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
+import { TypeReference } from "./TypeReference";
 
 export type SimpleObjectType = ObjectType & { types: [] };
 
@@ -26,10 +30,43 @@ export class ObjectType extends BaseType {
 
     constructor(props: ObjectTypeProps) {
         super(props);
+        this.properties = this.properties.map(pair => {
+            if (pair.value instanceof Identifier) {
+                pair = pair.patch({ value: new TypeReference(pair.value) });
+            }
+            return pair;
+        })
         this.quickLookup = new Map(this.properties.map(p => [p.key.toString(), p]) ?? []);
     }
     patch(props: Partial<ObjectTypeProps>) {
         return super.patch(props);
+    }
+
+    isInstance(c: InterpreterContext, value: InterpreterValue): boolean {
+        if (value instanceof InterpreterInstance) {
+            for (const {key,value : type} of this.properties) {
+                if (key instanceof Identifier) {
+                    let propertyValue = value.get(key.name);
+                    if (!type.isInstance(c, propertyValue)) {
+                        return false;
+                    }
+                }
+                else {
+                    //  if this is a type, then we must check every key of that type
+                    //  and verify that the value is of the corresponding type
+                    for (let valueKey of value.getKeys()) {
+                        if (key.isInstance(c, new InterpreterInstance(valueKey as any))) {
+                            let propertyValue = value.get(valueKey);
+                            if (!type.isInstance(c, propertyValue)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     getBasicTypes() {

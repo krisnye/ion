@@ -1,3 +1,4 @@
+import { Expression } from "../compiler/ast/Expression";
 import { coreTypes } from "../compiler/coreTypes";
 import { InterpreterValue } from "./InterpreterValue";
 
@@ -5,15 +6,19 @@ export class InterpreterInstance {
     public readonly value: object | string | number | InterpreterInstance[];
     public readonly type: string;
 
-    constructor(value: InterpreterValue[], type?: string)
-    constructor(value: string, type?: string)
-    constructor(value: boolean, type?: string)
-    constructor(value: number, type?: string)
-    constructor(value: object, type: string)
-    constructor(
+    public constructor(value: InterpreterValue[], type?: string)
+    public constructor(value: string, type?: string)
+    public constructor(value: boolean, type?: string)
+    public constructor(value: number, type?: string)
+    public constructor(value: object, type: string)
+    public constructor(
         value: object | string | boolean | number | InterpreterInstance[],
         type?: string,
     ) {
+        value = InterpreterInstance.unwrap(value);
+        if (Array.isArray(value)) {
+            value = value.map(InterpreterInstance.unwrap);
+        }
         if (type == null) {
             switch (typeof value) {
                 case "boolean":
@@ -32,8 +37,24 @@ export class InterpreterInstance {
                     }
             }
         }
-        this.type = type!;
+        if (type == null) {
+            throw new Error(`type is required: ${value}`);
+        }
+        this.type = type;
         this.value = value as any;
+    }
+
+    *getKeys(): Generator<string | number> {
+        if (this.isArray()) {
+            for (let i = 0; i < (this.value as any[]).length; i++) {
+                yield i;
+            }
+        }
+        else {
+            for (let name in this.value as any) {
+                yield name;
+            }
+        }
     }
 
     isArray() {
@@ -62,6 +83,11 @@ export class InterpreterInstance {
         throw new Error(`isTrue expects a 0 | 1: ${this}`);
     }
 
+    get(key): InterpreterInstance {
+        key = InterpreterInstance.unwrap(key);
+        return InterpreterInstance.wrap(this.value[key]);
+    }
+
     patch(value) {
         return new InterpreterInstance(value, this.type);
     }
@@ -70,8 +96,26 @@ export class InterpreterInstance {
         if (primitives[this.type]) {
             return this.value.toString();
         }
+        if (this.isArray()) {
+            return `[${Object.values(this.value).join(`, `)}]`;
+        }
         return `${this.type}(${Object.entries(this.value).map(([name,value]) => `${name}=${value}`)})`;
     }
+
+    static wrap(value) {
+        if (value === undefined || value instanceof InterpreterInstance || value instanceof Expression) {
+            return value;
+        }
+        return new InterpreterInstance(value);
+    }
+
+    static unwrap(value) {
+        if (value instanceof InterpreterInstance) {
+            return value.value;
+        }
+        return value;
+    }
+
 }
 
 const primitives = {

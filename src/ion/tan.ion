@@ -1,13 +1,3 @@
-_js = ""
-    (a) => ({
-        type: "CallExpression",
-        callee: {
-            type: "MemberExpression",
-            object: { type: "Identifier", name: "Math" },
-            property: { type: "Identifier", name: "tan" }
-        },
-        arguments: [ a ]
-    })
 
-@Native(javascript=_js)
+@Native(javascript="(a) => Math.tan(a)")
 tan(a: Number): Number => 0.0

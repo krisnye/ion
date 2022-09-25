@@ -75,7 +75,7 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
         else {
             let parameters = functions
                 .map(func => func.parameters)
-                .sort((a, b) => a.length - b.length)[0]
+                .sort((a, b) => b.length - a.length)[0]
                 .map(p => p.patch({ location, type: null, declaredType: null }));
             
             let functionChecks = functions.map(func => {

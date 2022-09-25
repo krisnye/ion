@@ -1,9 +1,15 @@
 
+@UnitTest([[42]], 42)
+@UnitTest([[10, 2]], 10)
 array_check = (array: Integer[]) =>
     if array.length > 0
         //  this should imply that 0 is fine since we know 0 < array.length
         array[0]
+    else
+        -1
 
+@UnitTest([[0, 2], 3], -1)
+@UnitTest([[0, 2], 1], 2)
 index_check = (array: Number[], index: Integer) =>
     if index >= 0 && index < array.length
         array[index]

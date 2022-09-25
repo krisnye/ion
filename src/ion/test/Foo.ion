@@ -1,6 +1,0 @@
-
-class Foo
-    x: Number
-    y: Number
-
-someConstant = 1

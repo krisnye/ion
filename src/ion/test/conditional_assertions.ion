@@ -1,6 +1,9 @@
 
 //  This should correctly be typed as < 0 | >= 10
-functionLessThanZeroOrGreaterEqual10(a: Number) =>
+//  TODO: Why is this not working.
+@UnitTest([9], -1)
+@UnitTest([10], 10)
+functionLessThanZeroOrGreaterEqual10 = (a: Number) =>
     if a < 10
         a -= 10
         a

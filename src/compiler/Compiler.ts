@@ -279,7 +279,7 @@ export class Compiler {
         }
     }
 
-    logFilter = new Set([ "test.sample", "String" ]);
+    logFilter = new Set([ "test.sample", "test.lerp" ]);
     logModule(name: string) {
         return this.logFilter && this.logFilter.has(name);
     }
