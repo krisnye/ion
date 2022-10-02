@@ -13,7 +13,7 @@ import { ObjectType } from "./ObjectType";
 import { Pair } from "./Pair";
 import { BinaryExpression } from "./BinaryExpression";
 import { Reference } from "./Reference";
-import { TypeOperators } from "../analysis/TypeOperators";
+import { LogicalOperators } from "../analysis/LogicalOperators";
 import { Expression } from "./Expression";
 import { coreTypes } from "../coreTypes";
 import { NumberType } from "./NumberType";
@@ -115,17 +115,17 @@ export class Class extends Container implements Type, Declaration, Callable {
 
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
         const { location } = this;
-        return BinaryExpression.join(TypeOperators.and,
+        return BinaryExpression.join(LogicalOperators.and,
             new BinaryExpression({
                 location,
                 left: dot,
-                operator: TypeOperators.is,
+                operator: LogicalOperators.is,
                 right: new Reference(this.id)
             }),
             ...this.extends.map(ref => new BinaryExpression({
                 location,
                 left: dot,
-                operator: TypeOperators.is,
+                operator: LogicalOperators.is,
                 right: ref as Expression
             }))
         )

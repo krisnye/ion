@@ -2,6 +2,7 @@ import { AnyType } from "../ast/AnyType"
 import { IntersectionType } from "../ast/IntersectionType"
 import { NumberType, overlaps } from "../ast/NumberType"
 import { ObjectType } from "../ast/ObjectType"
+import { Reference } from "../ast/Reference"
 import { Type } from "../ast/Type"
 import { UnionType } from "../ast/UnionType"
 import { coreTypes } from "../coreTypes"
@@ -63,7 +64,7 @@ function same(a: Maybe, b: Maybe): Maybe {
  export function isSubtype(a: Type | null, b: Type | null, c: EvaluationContext): boolean | null {
     let originalA = a;
     let originalB = b;
-    if (a === b || a?.toString() === b?.toString() || b == null || b instanceof AnyType || b.toString() === coreTypes.Any) {
+    if (a === b || a?.toString() === b?.toString() || b == null || b instanceof AnyType || (b instanceof Reference && (b.name === coreTypes.Any))) {
         return true
     }
     if (a == null) {

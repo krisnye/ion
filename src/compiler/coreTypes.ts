@@ -1,3 +1,4 @@
+import { NumberType } from "./ast/NumberType";
 import { getAbsolutePath } from "./pathFunctions";
 
 export const coreTypes = {

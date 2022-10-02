@@ -23,6 +23,7 @@ import { Node } from "../Node";
 import { Declarator } from "./Declarator";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { isLogicalOperator, LogicalOperators } from "../analysis/LogicalOperators";
 
 export interface CallProps extends ContainerProps {
     callee: Expression;
@@ -52,6 +53,10 @@ export class Call extends Container {
     toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
         let func = c.toInterpreterValue(this.callee) as Function;
         return c.call(func, this.nodes.map(node => c.toInterpreterValue(node)!));
+    }
+
+    isLogicalOperation(): this is Call & { callee: Reference } {
+        return this.callee instanceof Reference && isLogicalOperator(this.callee.name);
     }
 
     *getDependencies(c: EvaluationContext) {

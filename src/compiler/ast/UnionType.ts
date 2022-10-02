@@ -1,6 +1,6 @@
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
-import { TypeOperators } from "../analysis/TypeOperators";
+import { LogicalOperators } from "../analysis/LogicalOperators";
 import { EvaluationContext } from "../EvaluationContext";
 import { SourceLocation } from "../SourceLocation";
 import { BinaryExpression } from "./BinaryExpression";
@@ -27,7 +27,7 @@ export class UnionType extends CompoundType {
     }
 
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
-        return BinaryExpression.join(TypeOperators.or,
+        return BinaryExpression.join(LogicalOperators.or,
             this.left.toDotExpression(c, dot),
             this.right.toDotExpression(c, dot)
         )

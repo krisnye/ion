@@ -4,7 +4,7 @@ import { Pair } from "./Pair";
 import { BinaryExpression } from "./BinaryExpression";
 import { EvaluationContext } from "../EvaluationContext";
 import { Expression, ExpressionProps } from "./Expression";
-import { TypeOperators } from "../analysis/TypeOperators";
+import { LogicalOperators } from "../analysis/LogicalOperators";
 import { Member } from "./Member";
 import { BaseType } from "./BaseType";
 import { isSubtype } from "../analysis/isSubtype";
@@ -120,7 +120,7 @@ export class ObjectType extends BaseType {
     }
 
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
-        return BinaryExpression.join(TypeOperators.and,
+        return BinaryExpression.join(LogicalOperators.and,
             ...this.getPairs().map(pair => new BinaryExpression({
                 location: pair.location,
                 left: new Member({
@@ -128,7 +128,7 @@ export class ObjectType extends BaseType {
                     object: dot,
                     property: pair.key
                 }),
-                operator: TypeOperators.is,
+                operator: LogicalOperators.is,
                 right: pair.value
             }))
         );

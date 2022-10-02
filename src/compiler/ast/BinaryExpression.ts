@@ -1,6 +1,7 @@
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
 import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
+import { LogicalOperators } from "../analysis/LogicalOperators";
 import { Expression, ExpressionProps } from "../ast/Expression";
 import { EvaluationContext } from "../EvaluationContext";
 import { SourceLocation } from "../SourceLocation";
@@ -27,18 +28,21 @@ export class BinaryExpression extends Expression {
 
     toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
         switch (this.operator) {
-            case "&&":
+            case LogicalOperators.and:
                 return new InterpreterInstance(c.isTrue(this.left.toInterpreterValue(c)!) && c.isTrue(this.right.toInterpreterValue(c)!));
-            case "||":
+            case LogicalOperators.or:
                 return new InterpreterInstance(c.isTrue(this.left.toInterpreterValue(c)!) || c.isTrue(this.right.toInterpreterValue(c)!));
-            case "is":
+            case LogicalOperators.is:
                 let left = this.left.toInterpreterValue(c)!;
                 let right = this.right.toInterpreterValue(c) as Type;
                 return new InterpreterInstance(right.isInstance(c, left));
+            case LogicalOperators.equals:
+                return new InterpreterInstance(this.left.toInterpreterValue(c)!.toString() === this.right.toInterpreterValue(c)!.toString());
+            case LogicalOperators.notEquals:
+                return new InterpreterInstance(this.left.toInterpreterValue(c)!.toString() !== this.right.toInterpreterValue(c)!.toString());
             default:
                 throw new Error("Operator not implemented yet: " + this.operator);
         }
-        throw new Error(`${this.constructor.name}.toInterpreterValue not implemented: ${this}`);
     }
 
     toString() {

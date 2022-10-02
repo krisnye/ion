@@ -18,6 +18,7 @@ import { checkUFCS } from "./checkUFCS";
 import addExplicitReturns from "./addExplicitReturns";
 import addExport from "./addExport";
 import { fixClassNames } from "./fixClassNames";
+import { replaceLogicalOperations } from "./replaceLogicalOperations";
 
 export const parsingPhases: Phase[] = [
     tokenization,
@@ -33,6 +34,7 @@ export const parsingPhases: Phase[] = [
     semanticChecks,
     addExport,
     // createMultiFunctions,
+    replaceLogicalOperations,
     resolveExternalReferences,
     insertConditionalAssignments,
     ssaForm,
@@ -55,4 +57,5 @@ export const assemblyPhases: Phase[] = [
     //  some UFCS functions may not have been checked yet, so we check them now.
     checkUFCS,
     fixClassNames,
+    // replaceLogicalOperations,
 ];

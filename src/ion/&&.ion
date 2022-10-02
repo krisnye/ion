@@ -1,3 +1,0 @@
-
-@Native(javascript="(a, b) => a && b")
-`&&`(a: Boolean, b: Boolean): Boolean => 0

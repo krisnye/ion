@@ -1,5 +1,6 @@
 import { expressionToType, joinExpressions, splitExpression, splitFilterJoinMultiple } from "../analysis/utility";
 import { EvaluationContext } from "../EvaluationContext";
+import { isLogicalBinaryExpression } from "../phases/frontend/insertConditionalAssignments";
 import { Call } from "./Call";
 import { Conditional } from "./Conditional";
 import { Expression, ExpressionProps } from "./Expression";
@@ -10,23 +11,34 @@ import { Type } from "./Type";
 export interface ConditionalAssertionProps extends ExpressionProps {
     value: Reference;
     negate: boolean;
+    isChained?: boolean;
 }
 
 export class ConditionalAssertion extends Expression {
 
     value!: Reference;
     negate!: boolean;
+    isChained?: boolean;
 
     constructor(props: ConditionalAssertionProps) { super(props); }
     patch(props: Partial<ConditionalAssertionProps>) { return super.patch(props); }
 
-    getConditional(c: EvaluationContext) {
-        return c.lookup.findAncestor<Conditional>(this, (node): node is Conditional => node instanceof Conditional);
+    getKnownTrueExpression(c: EvaluationContext): Expression {
+        if (this.isChained) {
+            let parentExpression = c.lookup.findAncestor(this, isLogicalBinaryExpression);
+            let { left, right } = parentExpression;
+            return left;
+        }
+        let cond = c.lookup.findAncestor<Conditional>(this, (node): node is Conditional => {
+            return node instanceof Conditional;
+        })!;
+        return cond.test;
     }
 
     *getDependencies(c: EvaluationContext) {
         yield this.value;
-        yield this.getConditional(c)!.test;
+        //  I'm not sure we need to know the type on this before inferring
+        yield this.getKnownTrueExpression(c);
     }
 
     protected resolve(c: EvaluationContext): Expression {
@@ -35,13 +47,16 @@ export class ConditionalAssertion extends Expression {
     }
 
     protected resolveType(c: EvaluationContext) {
-        const test = this.getConditional(c)!.test;
+        const test = this.getKnownTrueExpression(c);
         let splitOps = ["||", "&&"];
         let joinOps = splitOps.slice(0);
         if (this.negate) {
             joinOps.reverse();
         }
         let { type } = this.value;
+        if (this.isChained) {
+            debugger;
+        }
         let assertedType = splitFilterJoinMultiple(true, test, splitOps, joinOps, e => expressionToType(e, this.value, this.negate)) as Type | null;
         if (assertedType) {
             if (assertedType instanceof Call) {

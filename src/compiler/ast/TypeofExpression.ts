@@ -1,5 +1,5 @@
 import { timeStamp } from "console";
-import { TypeOperators } from "../analysis/TypeOperators";
+import { LogicalOperators } from "../analysis/LogicalOperators";
 import { EvaluationContext } from "../EvaluationContext";
 import { BaseType, BaseTypeProps } from "./BaseType";
 import { BinaryExpression } from "./BinaryExpression";

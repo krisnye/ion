@@ -5,6 +5,14 @@ import { Class } from "../../ast/Class";
 import { join, split } from "../../pathFunctions";
 import { Variable } from "../../ast/Variable";
 import { replace } from "../../traverse";
+import { Call } from "../../ast/Call";
+import { LogicalOperators } from "../../analysis/LogicalOperators";
+import { Reference } from "../../ast/Reference";
+import { BinaryExpression } from "../../ast/BinaryExpression";
+
+const replaceOperatorsWithExpressions: Set<String> = new Set(
+    [LogicalOperators.and, LogicalOperators.or, LogicalOperators.is]
+)
 
 export function fixClassNames(moduleName, module: Container, externals: Map<string, Container>): ReturnType<Phase> {
     let errors: Error[] = [];

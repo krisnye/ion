@@ -1,0 +1,8 @@
+
+class Foo
+    x: Number
+class Bar
+    y: Number
+
+chained_and = (a: Foo | Bar) =>
+    a is Foo && a.x > 0

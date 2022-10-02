@@ -1,4 +1,4 @@
-import { TypeOperators } from "../../analysis/TypeOperators";
+import { LogicalOperators } from "../../analysis/LogicalOperators";
 import { joinExpressions } from "../../analysis/utility";
 import { BinaryExpression } from "../../ast/BinaryExpression";
 import { Block } from "../../ast/Block";
@@ -85,7 +85,7 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
                         let left = new Reference(param.id);
                         let right = param.declaredType ?? param.type!;
                         return new BinaryExpression({
-                            location, left, operator: TypeOperators.is, right,
+                            location, left, operator: LogicalOperators.is, right,
                         });
                     }
                 );
@@ -98,7 +98,7 @@ export function createMultiFunctions(moduleName, module, externals): ReturnType<
                         nodes: func.parameters.map(p => new Reference(p.id))
                     })
                 });
-                let test = joinExpressions(TypeOperators.and, location, checks, true);
+                let test = joinExpressions(LogicalOperators.and, location, checks, true);
                 if (test) {
                     return new Conditional({
                         location,

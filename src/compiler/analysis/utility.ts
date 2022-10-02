@@ -1,5 +1,6 @@
 import { traverse } from "@glas/traverse";
 import { BinaryExpression } from "../ast/BinaryExpression";
+import { Block } from "../ast/Block";
 import { Call } from "../ast/Call";
 import { Expression } from "../ast/Expression";
 import { IntersectionType } from "../ast/IntersectionType";
@@ -10,10 +11,15 @@ import { Pair } from "../ast/Pair";
 import { Reference } from "../ast/Reference";
 import { Type } from "../ast/Type";
 import { UnionType } from "../ast/UnionType";
+import { Node } from "../Node";
 import { SourceLocation } from "../SourceLocation";
 
 export function *splitExpression(operator: string, e: Expression): IterableIterator<Expression> {
-    if (e instanceof Call && e.callee instanceof Reference && e.callee.name === operator) {
+    if (e instanceof BinaryExpression && e.operator === operator) {
+        yield e.left;
+        yield e.right;
+    }
+    else if (e instanceof Call && e.callee instanceof Reference && e.callee.name === operator) {
         for (let arg of e.nodes) {
             yield* splitExpression(operator, arg);
         }
@@ -45,6 +51,13 @@ export function joinExpressions(operator: string, location: SourceLocation, expr
     return right;
 }
 
+function getLastBlockNode(maybeBlock: Expression): Expression {
+    if (maybeBlock instanceof Block) {
+        return getLastBlockNode(maybeBlock.nodes[maybeBlock.nodes.length - 1]);
+    }
+    return maybeBlock;
+}
+
 export function splitFilterJoinMultiple(type: boolean, root: Expression, splitOperators: string[], joinOperators: string[], filter: (e: Expression) => Expression | null) {
     let splitOperator = splitOperators[0];
     let joinOperator = joinOperators[0];
@@ -53,7 +66,7 @@ export function splitFilterJoinMultiple(type: boolean, root: Expression, splitOp
     let useFilter = remainingSplitOperators.length === 0
         ? filter
         : (e => splitFilterJoinMultiple(type, e, remainingSplitOperators, remainingJoinOperators, filter));
-    let expressions = [...splitExpression(splitOperator, root)].map(useFilter).filter(Boolean) as Expression[]
+    let expressions = [...splitExpression(splitOperator, root)].map(useFilter).map(node => getLastBlockNode(node!)).filter(Boolean) as Expression[]
     if (type) {
         if (joinOperator === "&&") {
             return IntersectionType.join(...expressions as Type[]);
@@ -89,9 +102,15 @@ export function hasDot(root: Expression, dot: Expression) {
 }
 
 export function expressionToType(e: Expression, dot: Expression, negate: boolean): Expression | null {
-    if (isComparisonOperation(e)) {
-        let operator = e.callee.name;
-        let [left, right] = e.nodes;
+    //  if this is a Block, it could have been created just to hold a conditional assertion
+    //  replace it with the last node in the block.
+    if (e instanceof Block) {
+        e = e.nodes[e.nodes.length - 1];
+    }
+    const compareOperation = getComparisonOperationProperties(e);
+    if (compareOperation) {
+        let { left, operator, right } = compareOperation;
+
         let leftHasDot = hasDot(left, dot);
         let rightHasDot = hasDot(right, dot);
         if (rightHasDot && !leftHasDot) {
@@ -184,6 +203,14 @@ export const compareOperators: { [op: string]: OperatorInfo } = {
     },
 }
 
-function isComparisonOperation(e: Expression): e is Call & { callee: Reference } {
-    return e instanceof Call && e.nodes.length === 2 && e.callee instanceof Reference && compareOperators[e.callee.name] != null;
+function getComparisonOperationProperties(e: Expression): { left: Expression, operator: string, right: Expression } | null {
+    if (e instanceof BinaryExpression && compareOperators[e.operator] != null) {
+        return e;
+    }
+    if (e instanceof Call && e.nodes.length === 2 && e.callee instanceof Reference && compareOperators[e.callee.name] != null) {
+        return { left: e.nodes[0], right: e.nodes[1], operator: e.callee.name };
+    }
+    return null;    
 }
+
+

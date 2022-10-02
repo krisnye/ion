@@ -1,7 +1,7 @@
 import { timeStamp } from "console";
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
-import { TypeOperators } from "../analysis/TypeOperators";
+import { LogicalOperators } from "../analysis/LogicalOperators";
 import { EvaluationContext } from "../EvaluationContext";
 import { BaseType, BaseTypeProps } from "./BaseType";
 import { BinaryExpression } from "./BinaryExpression";
@@ -34,7 +34,7 @@ export class AnyType extends BaseType {
         return new BinaryExpression({
             location: this.location,
             left: dot,
-            operator: TypeOperators.equals,
+            operator: LogicalOperators.equals,
             right: dot
         });
     }

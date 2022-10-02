@@ -1,4 +1,4 @@
-import { TypeOperators } from "../analysis/TypeOperators";
+import { LogicalOperators } from "../analysis/LogicalOperators";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node } from "../Node";
@@ -137,11 +137,11 @@ export class NumberType extends BaseType {
     toDotExpression(c: EvaluationContext, dot: Expression): BinaryExpression {
         const { location } = this;
         return BinaryExpression.join(
-            TypeOperators.and,
+            LogicalOperators.and,
             new BinaryExpression({
                 location,
                 left: dot,
-                operator: TypeOperators.is,
+                operator: LogicalOperators.is,
                 right: new Reference({ location, name: this.step ? coreTypes.Integer : coreTypes.Number})
             }),
             this.min == null

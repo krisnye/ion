@@ -3,6 +3,7 @@ import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { EvaluationContext } from "../EvaluationContext";
 import { Container, ContainerProps } from "./Container";
 import { Expression } from "./Expression";
+import { Type } from "./Type";
 
 export interface BlockProps extends ContainerProps {
 
@@ -22,11 +23,27 @@ export class Block extends Container {
         }
     }
 
+    *getDependencies(c: EvaluationContext) {
+        // blocks are only typed as their last node.
+        let last = this.nodes[this.nodes.length - 1];
+        if (last) {
+            yield last;
+        }
+    }
+
+    protected resolveType(c: EvaluationContext): Type | null {
+        return this.nodes[this.nodes.length - 1].type!;
+    }
+
     toESNode(c: EvaluationContext) {
         return {
             type: "BlockStatement",
             body: this.nodes.map(node => node.toESNode(c))
         }
+    }
+
+    toString() {
+        return super.toString() + this.toTypeString();
     }
     
 }

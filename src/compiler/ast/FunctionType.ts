@@ -1,6 +1,6 @@
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
-import { TypeOperators } from "../analysis/TypeOperators";
+import { LogicalOperators } from "../analysis/LogicalOperators";
 import { EvaluationContext } from "../EvaluationContext";
 import { BinaryExpression } from "./BinaryExpression";
 import { Expression } from "./Expression";
@@ -33,7 +33,7 @@ export class FunctionType extends FunctionBase implements Type {
         return new BinaryExpression({
             location,
             left: dot,
-            operator: TypeOperators.is,
+            operator: LogicalOperators.is,
             right: this
         });
     }

@@ -159,7 +159,10 @@ Cross platform modeling language
     - [ ] Create runtime type checking for literal type expressions.
     - [-] While loops.
     - [x] For loops.
-      - [ ] Index on for loop.
-    - [ ] Semantic Error on no return value within any function branch.
-    - [ ] Refactor declaration and assignment to both be the same operator `=`
+      - [-] Index on for loop.
+    - [-] Semantic Error on no return value within any function branch.
+    - [-] Refactor declaration and assignment to both be the same operator `=`.
+    - [-] Consider removing implicit return and requiring explicit return.
+    - [x] Check that && and || work correctly with early termination of assignment side-effects.
+    - [ ] Check that && and || allow inferred types with `is` checks like `if/else`.
 

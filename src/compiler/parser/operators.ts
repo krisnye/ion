@@ -61,6 +61,7 @@ export const infixPrecedence: { [op: string]: number | undefined } = {
     "<=": 9,   //  not overridable
     ">": 9,    //  not overridable
     ">=": 9,   //  not overridable
+    "is": 9,    //  not overridable
     "==": 8,   //  not overridable
     "!=": 8,   //  not overridable
     "..": 8,   //  not overridable

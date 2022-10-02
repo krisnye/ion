@@ -1,0 +1,15 @@
+
+@UnitTest([-1], 5)
+@UnitTest([1], 10)
+boolean_and = (a: Number) =>
+    x = 10
+    y = a < 0 && (x = 5)
+    return x
+
+@UnitTest([-1], 10)
+@UnitTest([1], 5)
+boolean_or = (a: Number) =>
+    x = 10
+    y = a < 0 || (x = 5)
+    return x
+

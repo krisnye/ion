@@ -9,8 +9,6 @@
 // value = 12
 // value2 = value.add(10).double.double
 
-//  we're now interpreting this function.
-
 @UnitTest([1, 2], 6)
 @UnitTest([2, 4], 9)
 sample = (a: >= 0, b: Integer) =>

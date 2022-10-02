@@ -66,7 +66,7 @@ export const tokenTypes = {
     OutlineString: new TokenType("OutlineString", /^""/),
     String: new TokenType("String", /^"([^"\\]|\\.)*"/, { value: JSON.parse }),
     // Operator has to come after Number/Integer so an adjacent - or + binds to literal.
-    Operator: new TokenType("Operator", /^(\bvoid\b|\btypeof\b|[\=\+\-\*\&\^\%\!\~\/\.\:\;\?\,\<\>\|\&:]+)/i),
+    Operator: new TokenType("Operator", /^(\bvoid\b|\btypeof\b|\bis\b|[\=\+\-\*\&\^\%\!\~\/\.\:\;\?\,\<\>\|\&:]+)/i),
     //  Id has to come after Operator because of operator 'void'
     In: new TokenType("In", /^in\b/),
     If: new TokenType("If", /^if\b/),

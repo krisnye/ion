@@ -16,9 +16,6 @@ export class InterpreterInstance {
         type?: string,
     ) {
         value = InterpreterInstance.unwrap(value);
-        if (Array.isArray(value)) {
-            value = value.map(InterpreterInstance.unwrap);
-        }
         if (type == null) {
             switch (typeof value) {
                 case "boolean":
@@ -74,13 +71,13 @@ export class InterpreterInstance {
     }
 
     isTrue() {
-        if (this.value === 1) {
-            return true;
-        }
         if (this.value === 0) {
             return false;
         }
-        throw new Error(`isTrue expects a 0 | 1: ${this}`);
+        // if (this.value === 1) {
+        return true;
+        // }
+        // throw new Error(`isTrue expects a 0 | 1: ${this}`);
     }
 
     get(key): InterpreterInstance {
