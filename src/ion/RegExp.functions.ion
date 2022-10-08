@@ -1,11 +1,11 @@
 
-@UnitTest(["alpha", /[hlp]+/], [1, "lph"])
+@UnitTest(["alpha", /[hlp]+/], Range(1, 4))
 @UnitTest(["alpha", /b/], null)
 @Native()
     javascript = ""
         (a, pattern, index) => {
             pattern.lastIndex = index;
             let result = pattern.exec(a);
-            return result ? [result.index, result[0]] : null;
+            return result ? { "": "Range", start: result.index, finish: result.index + result[0].length } : null;
         }
-find(a: String, pattern: RegExp, index: >= 0 = 0): [>= 0, String] | Null => [0, ""]
+find(a: String, pattern: RegExp, index: >= 0 = 0): Range | Null => null

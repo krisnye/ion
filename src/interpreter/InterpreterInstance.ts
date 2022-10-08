@@ -38,6 +38,13 @@ export class InterpreterInstance {
                     else if (value instanceof RegExp) {
                         type = coreTypes.RegExp;
                     }
+                    else {
+                        if (typeof value[""] === "string") {
+                            type = value[""];
+                            value = { ...value };
+                            delete value[""];
+                        }
+                    }
                     break;
             }
         }
