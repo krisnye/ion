@@ -1,6 +1,7 @@
 import { isValidId } from "../common";
 import { EvaluationContext } from "../EvaluationContext";
 import { Node, NodeProps } from "../Node";
+import { SemanticHighlight, SemanticTokenType } from "../SemanticHighlight";
 
 export interface IdentifierProps extends NodeProps {
     name: string;
@@ -23,5 +24,10 @@ export class Identifier extends Node {
             name: this.name,
         }        
     }
+
+    *getSemanticHighlights(source: string[]): IterableIterator<SemanticHighlight> {
+        // yield this.location.createSemanticHighlight(source, isValidId(this.name) ? SemanticTokenType.variable : SemanticTokenType.operator);
+    }
+
 
 }

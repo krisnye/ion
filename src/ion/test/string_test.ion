@@ -1,0 +1,8 @@
+
+@UnitTest(["aba"], "foo1")
+@UnitTest(["abacd"], "long")
+severalTest = (a: String) =>
+    if a.length > 4
+        return "long"
+    else
+        return "foo" + a.indexOf("b")

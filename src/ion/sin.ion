@@ -1,3 +1,4 @@
 
+@UnitTest([0], 0)
 @Native(javascript="(a) => Math.sin(a)")
 sin(a: Number): 0.0 .. 1.0 => 0.0

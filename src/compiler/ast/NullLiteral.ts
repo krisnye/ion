@@ -1,3 +1,4 @@
+import { InterpreterContext, InterpreterInstance, InterpreterValue } from "../../interpreter";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
 import { Serializable } from "../Serializable";
@@ -20,6 +21,10 @@ export class NullLiteral extends Literal {
 
     protected resolveType(c: EvaluationContext): Type {
         return new TypeReference({ location: this.location, name: coreTypes.Null });
+    }
+
+    toInterpreterValue(c: InterpreterContext): void | InterpreterValue {
+        return new InterpreterInstance(null);
     }
 
     toString() {

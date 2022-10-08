@@ -2,6 +2,7 @@ import { InterpreterContext } from "../interpreter/InterpreterContext";
 import { InterpreterValue } from "../interpreter/InterpreterValue";
 import { EvaluationContext } from "./EvaluationContext";
 import { Immutable } from "./Immutable";
+import { SemanticHighlight } from "./SemanticHighlight";
 import { SourceLocation } from "./SourceLocation";
 
 export interface NodeProps {
@@ -45,6 +46,9 @@ export class Node extends Immutable implements NodeProps {
                 value: `${this.constructor.name}.toESNode() not implemented`
             }
         }
+    }
+
+    *getSemanticHighlights(source: string[]): IterableIterator<SemanticHighlight> {
     }
 
 }

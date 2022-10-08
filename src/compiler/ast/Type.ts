@@ -14,8 +14,9 @@ export enum BasicType {
     Map         = 1 << 5,
     Function    = 1 << 6,
     Type        = 1 << 7,
-    Null        = 1 << 8,
-    Undefined   = 1 << 9,
+    RegExp      = 1 << 8,
+    Null        = 1 << 9,
+    Undefined   = 1 << 10,
     All         = 0xFF,
 }
 

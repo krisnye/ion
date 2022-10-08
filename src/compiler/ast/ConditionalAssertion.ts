@@ -54,9 +54,6 @@ export class ConditionalAssertion extends Expression {
             joinOps.reverse();
         }
         let { type } = this.value;
-        if (this.isChained) {
-            debugger;
-        }
         let assertedType = splitFilterJoinMultiple(true, test, splitOps, joinOps, e => expressionToType(e, this.value, this.negate)) as Type | null;
         if (assertedType) {
             if (assertedType instanceof Call) {

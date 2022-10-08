@@ -13,6 +13,7 @@ import { TypeReference } from "../../ast/TypeReference";
 import { ArrayExpression } from "../../ast/ArrayExpression";
 import { NumberLiteral } from "../../ast/NumberLiteral";
 import { isProperty, Variable } from "../../ast/Variable";
+import { RegExpLiteral } from "../../ast/RegExpLiteral";
 
 export function resolveExternalReferences(moduleName, module, externalModules: Map<string,Module>): ReturnType<Phase> {
     let errors: Error[] = [];
@@ -35,6 +36,9 @@ export function resolveExternalReferences(moduleName, module, externalModules: M
             }
             if (node instanceof NumberLiteral) {
                 dependencies.add(node.integer ? coreTypes.Integer : coreTypes.Number);
+            }
+            if (node instanceof RegExpLiteral) {
+                dependencies.add(coreTypes.RegExp);
             }
             if (node instanceof Reference) {
                 if (node instanceof TypeReference) {

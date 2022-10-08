@@ -9,10 +9,13 @@
 // value = 12
 // value2 = value.add(10).double.double
 
-@UnitTest([1, 2], 6)
-@UnitTest([2, 4], 9)
-sample = (a: >= 0, b: Integer) =>
-    total = a + b
-    for value in [ 0, 1, 2 ]
-        total += value
-    total
+foo = /foo/
+
+// @UnitTest([1, 2], 6)
+// @UnitTest([2, 4], 9)
+// sample = (a: >= 0, b: Integer) =>
+//     total = a + b
+//     for value in [ 0, 1, 2 ]
+//         total += value
+//     total
+

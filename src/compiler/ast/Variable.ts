@@ -13,6 +13,7 @@ import { defaultExportName } from "../pathFunctions";
 import { Declarator } from "./Declarator";
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
+import { SemanticHighlight, SemanticTokenType } from "../SemanticHighlight";
 
 type VariableKind = "variable" | "property" | "parameter";
 
@@ -151,6 +152,20 @@ export class Variable extends Expression implements Declaration {
                 }
             ]
         };
+    }
+
+    *getSemanticHighlights(source: string[]): IterableIterator<SemanticHighlight> {
+        switch (this.kind) {
+            case "parameter":
+                yield this.id.location.createSemanticHighlight(source, SemanticTokenType.parameter);
+                break;
+            case "property":
+                yield this.id.location.createSemanticHighlight(source, SemanticTokenType.property);
+                break;
+            case "variable":
+                yield this.id.location.createSemanticHighlight(source, SemanticTokenType.variable);
+                break;
+        }
     }
 
 }

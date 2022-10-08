@@ -20,3 +20,9 @@ let time = finish - start;
 
 console.log(`Time: ${time}`);
 assert(true);
+
+let single = compiler.parseSingleFile("foo", "x = 12");
+assert(Array.isArray(single.nodes));
+
+let semanticHighlights = compiler.getSemanticHighlights("foo", "x = 12");
+console.log(semanticHighlights);

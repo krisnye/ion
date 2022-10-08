@@ -22,11 +22,14 @@ import { Reference } from "./Reference";
 import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
+import { Token } from "../Token";
 
 export interface FunctionProps extends FunctionBaseProps {
     id?: Identifier;
     body: Node;
     multiFunctions?: Reference[];
+    openToken?: Token;
+    closeToken?: Token;
 }
 
 function toParameters(nodes: Variable[]) {
@@ -43,6 +46,8 @@ export class Function extends FunctionBase implements Callable {
     id?: Identifier
     body!: Expression;
     multiFunctions?: Reference[];
+    openToken?: Token;
+    closeToken?: Token;
 
     constructor(props: FunctionProps) { super({ ...props, parameters: toParameters(props.parameters!)}); }
     patch(props: Partial<FunctionProps>) { return super.patch(props); }

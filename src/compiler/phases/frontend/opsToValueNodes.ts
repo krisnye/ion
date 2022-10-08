@@ -212,12 +212,12 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                     }
                 }
                 if (errors.length === 0) {
-                    return new AstClass({ location: node.location, id: node.id, extends: _extends, nodes: node.nodes as Variable[], meta: [] });
+                    return new AstClass({ location: node.location, id: node.id, extends: _extends, nodes: node.nodes as Variable[], meta: [], classToken: node.classToken, extendsToken: node.extendsToken });
                 }
             }
             else if (node instanceof PstCall) {
                 let args = node.args instanceof Sequence ? [...node.args.nodes] : node.args ? [node.args] : [];
-                return new AstCall({ location: node.location, callee: node.callee, nodes: args });
+                return new AstCall({ location: node.location, callee: node.callee, nodes: args, openToken: node.openToken, closeToken: node.closeToken });
             }
             else if (node instanceof Identifier) {
                 // probably should convert most to References, but which ones NOT to?
@@ -333,6 +333,7 @@ export function opsToValueNodes(moduleName, module): ReturnType<Phase> {
                                 value: new Function({
                                     ...left.value,
                                     body: right,
+                                    
                                 })
                             })
                         }

@@ -25,6 +25,8 @@ import { InterpreterContext } from "../../interpreter/InterpreterContext";
 import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
 import { Function } from "./Function";
 import { AnyType } from "./AnyType";
+import { Token } from "../Token";
+import { SemanticHighlight, SemanticTokenType } from "../SemanticHighlight";
 
 export interface ClassProps extends ContainerProps {
     id: Declarator;
@@ -33,6 +35,8 @@ export interface ClassProps extends ContainerProps {
     meta: MetaCall[];
     structure?: boolean;
     staticMembers?: Reference[];
+    classToken?: Token;
+    extendsToken?: Token;
 }
 
 export class Class extends Container implements Type, Declaration, Callable {
@@ -44,6 +48,8 @@ export class Class extends Container implements Type, Declaration, Callable {
     structure!: boolean;
     isDeclaration: true = true;
     staticMembers!: Reference[];
+    classToken?: Token;
+    extendsToken?: Token;
 
     constructor(props: ClassProps) {
         super({ structure: false, staticMembers: [],  ...props });
@@ -92,6 +98,8 @@ export class Class extends Container implements Type, Declaration, Callable {
             case coreTypes.Number:
             case coreTypes.Integer:
                 return BasicType.Number;
+            case coreTypes.RegExp:
+                return  BasicType.RegExp;
             default:
                 return this.structure ? BasicType.Structure : BasicType.Object;
         }
@@ -273,6 +281,15 @@ export class Class extends Container implements Type, Declaration, Callable {
                 ]
             }
         });
+    }
+
+    *getSemanticHighlights(source: string[]): IterableIterator<SemanticHighlight> {
+        if (this.classToken) {
+            yield this.classToken.location.createSemanticHighlight(source, SemanticTokenType.keyword);
+        }
+        if (this.extendsToken) {
+            yield this.extendsToken.location.createSemanticHighlight(source, SemanticTokenType.keyword);
+        }
     }
 
 }

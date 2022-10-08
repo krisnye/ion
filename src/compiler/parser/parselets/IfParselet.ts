@@ -14,7 +14,8 @@ export class IfParselet extends PrefixParselet {
         let consequent = p.parseBlock();
         let alternate: Node | null = null;
         p.eol();
-        if (p.maybeConsume(tokenTypes.Else.name)) {
+        let elseToken: Token | undefined = undefined;
+        if (elseToken = p.maybeConsume(tokenTypes.Else.name)) {
             p.whitespace();
             let elseIfToken = p.maybeConsume(tokenTypes.If.name)
             if (elseIfToken) {
@@ -27,8 +28,10 @@ export class IfParselet extends PrefixParselet {
         }
         return new Conditional({
             location: SourceLocation.merge(ifToken.location, test.location),
+            ifToken,
             test: test as Expression,
             consequent,
+            elseToken,
             alternate: alternate as Expression,
         })
     }

@@ -1,7 +1,10 @@
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
 import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
+import { isValidId } from "../common";
 import { EvaluationContext } from "../EvaluationContext";
+import { SemanticHighlight, SemanticModifier, SemanticTokenType } from "../SemanticHighlight";
+import { isMetaName, isTypeName } from "../utility";
 import { Expression, ExpressionProps } from "./Expression";
 import { Identifier } from "./Identifier";
 import { Type } from "./Type";
@@ -45,6 +48,34 @@ export class Reference extends Expression  {
             type: "Identifier",
             name: this.name,
         }        
+    }
+
+    private getSemanticTokenType() {
+        if (isMetaName(this.name)) {
+            return SemanticTokenType.type;
+        }
+        if (isTypeName(this.name)) {
+            return SemanticTokenType.class;
+        }
+        if (!isValidId(this.name)) {
+            return SemanticTokenType.operator;
+        }
+        return SemanticTokenType.variable;
+    }
+
+    private getSemanticModifiers(): SemanticModifier[] {
+        if (isMetaName(this.name)) {
+            return [SemanticModifier.modification];
+        }
+        return [];
+    }
+
+    *getSemanticHighlights(source: string[]): IterableIterator<SemanticHighlight> {
+        yield this.location.createSemanticHighlight(
+            source,
+            this.getSemanticTokenType(),
+            ...this.getSemanticModifiers(),
+        );
     }
 
 }

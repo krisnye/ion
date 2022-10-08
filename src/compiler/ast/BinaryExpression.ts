@@ -4,7 +4,9 @@ import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { LogicalOperators } from "../analysis/LogicalOperators";
 import { Expression, ExpressionProps } from "../ast/Expression";
 import { EvaluationContext } from "../EvaluationContext";
+import { SemanticHighlight, SemanticTokenType } from "../SemanticHighlight";
 import { SourceLocation } from "../SourceLocation";
+import { Token } from "../Token";
 import { NumberType } from "./NumberType";
 import { Reference } from "./Reference";
 import { Type } from "./Type";
@@ -13,6 +15,7 @@ export interface BinaryExpressionProps extends ExpressionProps {
     left: typeof BinaryExpression.prototype.left;
     operator: typeof BinaryExpression.prototype.operator;
     right: typeof BinaryExpression.prototype.right;
+    operatorLocation?: SourceLocation;
 }
 /**
  * This is only used for type inference.
@@ -22,6 +25,7 @@ export class BinaryExpression extends Expression {
     left!: Expression;
     operator!: string;
     right!: Expression | Type;
+    operatorLocation?: SourceLocation;
 
     constructor(props: BinaryExpressionProps) { super(props); }
     patch(props: Partial<BinaryExpressionProps>) { return super.patch(props); }
@@ -128,6 +132,12 @@ export class BinaryExpression extends Expression {
             operator: this.operator,
             right: this.right.toESNode(c)
         };
+    }
+
+    *getSemanticHighlights(source: string[]): IterableIterator<SemanticHighlight> {
+        if (this.operatorLocation) {
+            yield this.operatorLocation.createSemanticHighlight(source, SemanticTokenType.operator);
+        }
     }
 
 }

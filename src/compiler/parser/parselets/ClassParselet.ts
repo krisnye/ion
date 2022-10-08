@@ -17,7 +17,8 @@ export class ClassParselet extends PrefixParselet {
             throw new SemanticError(`Expected identifier`, id);
         }
         let _extends: Node | null = null;
-        if (p.maybeConsume(tokenTypes.Extends.name)) {
+        let extendsToken: Token | undefined;
+        if (extendsToken = p.maybeConsume(tokenTypes.Extends.name)) {
             p.whitespace();
             _extends = p.parseExpression();
         }
@@ -29,6 +30,8 @@ export class ClassParselet extends PrefixParselet {
             constant: true,
             extends: _extends,
             nodes: block?.nodes ?? [],
+            classToken,
+            extendsToken,
         });
     }
 

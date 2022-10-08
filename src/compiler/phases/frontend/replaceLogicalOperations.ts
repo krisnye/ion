@@ -4,6 +4,7 @@ import { traverseWithScope } from "./createScopeMaps";
 import { Call } from "../../ast/Call";
 import { LogicalOperators } from "../../analysis/LogicalOperators";
 import { BinaryExpression } from "../../ast/BinaryExpression";
+import { Token } from "../../Token";
 
 const replaceOperatorsWithExpressions: Set<String> = new Set(
     [LogicalOperators.and, LogicalOperators.or, LogicalOperators.is]
@@ -22,7 +23,8 @@ export function replaceLogicalOperations(moduleName, module: Container, external
                         location: node.location,
                         left: node.nodes[0],
                         operator: node.callee.name,
-                        right: node.nodes[1]
+                        right: node.nodes[1],
+                        operatorLocation: node.callee.location,
                     })
                 }
                 return node;

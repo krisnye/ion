@@ -24,6 +24,7 @@ import { Declarator } from "./Declarator";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
 import { isLogicalOperator, LogicalOperators } from "../analysis/LogicalOperators";
+import { SemanticHighlight } from "../SemanticHighlight";
 
 export interface CallProps extends ContainerProps {
     callee: Expression;
@@ -52,6 +53,10 @@ export class Call extends Container {
 
     toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
         let func = c.toInterpreterValue(this.callee) as Function;
+        if (func == null) {
+            debugger;
+            func = c.toInterpreterValue(this.callee) as Function;
+        }
         return c.call(func, this.nodes.map(node => c.toInterpreterValue(node)!));
     }
 
@@ -176,6 +181,13 @@ export class Call extends Container {
             callee: this.callee.toESNode(c),
             arguments: nodes
         }
+    }
+
+    *getSemanticHighlights(source: string[]): IterableIterator<SemanticHighlight> {
+        // if (this.callee instanceof Reference) {
+        //     yield this.callee.location.createSemanticHighlight(source, SemanticTokenType.keyword);
+        // }
+        yield* super.getSemanticHighlights(source);
     }
 
 }

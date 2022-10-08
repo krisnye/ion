@@ -7,29 +7,29 @@ import { SemanticHighlight, SemanticTokenType } from "../SemanticHighlight";
 import { Literal, LiteralProps } from "./Literal";
 import { TypeReference } from "./TypeReference";
 
-export interface StringLiteralProps extends LiteralProps {
-    value: string;
+export interface RegExpLiteralProps extends LiteralProps {
+    value: RegExp;
 }
 
-export class StringLiteral extends Literal {
+export class RegExpLiteral extends Literal {
 
-    constructor(props: StringLiteralProps) { super(props); }
-    patch(props: Partial<StringLiteralProps>) { return super.patch(props); }
+    constructor(props: RegExpLiteralProps) { super(props); }
+    patch(props: Partial<RegExpLiteralProps>) { return super.patch(props); }
 
     toInterpreterValue(c: InterpreterContext): InterpreterValue | void {
         return new InterpreterInstance(this.value);
     }
 
     resolveType(c: EvaluationContext) {
-        return new TypeReference({ location: this.location, name: coreTypes.String });
+        return new TypeReference({ location: this.location, name: coreTypes.RegExp });
     }
 
     toString() {
-        return `${JSON.stringify(this.value)}${this.toTypeString()}`;
+        return `${this.value}`;
     }
 
     *getSemanticHighlights(source: string[]): IterableIterator<SemanticHighlight> {
-        yield this.location.createSemanticHighlight(source, SemanticTokenType.string);
+        yield this.location.createSemanticHighlight(source, SemanticTokenType.regexp);
     }
 
 }

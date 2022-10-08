@@ -65,9 +65,6 @@ export default class ErrorContext extends Context
         locations = locations.filter(Boolean);
         for (let i = 0; i < locations.length; i++) {
             let location = locations[i]
-            if (location == null) {
-                debugger;
-            }
             let { filename } = location
             let combineLocations = [location]
             while (isCloseLine(location, locations[i + 1])) {

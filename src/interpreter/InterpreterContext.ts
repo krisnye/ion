@@ -60,6 +60,10 @@ export class InterpreterContext {
     }
 
     call(func: Function | Class, args: InterpreterValue[], checkArguments = false): InterpreterValue {
+        if (func == null) {
+            console.log("????", func);
+            debugger;
+        }
         let javascript = getNativeJavascript(func, this.context);
         if (javascript) {
             let nativeArgs = args.map(InterpreterInstance.unwrap);
@@ -69,6 +73,7 @@ export class InterpreterContext {
             }
             return result;
         }
+
 
         if (func.parameters.length !== args.length) {
             throw new Error(`Wrong arguments length, function: ${func.id}, expected: ${func.parameters.length}, actual: ${args.length}`);

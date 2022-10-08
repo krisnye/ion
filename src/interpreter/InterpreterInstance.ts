@@ -7,12 +7,13 @@ export class InterpreterInstance {
     public readonly type: string;
 
     public constructor(value: InterpreterValue[], type?: string)
+    public constructor(value: null, type?: string)
     public constructor(value: string, type?: string)
     public constructor(value: boolean, type?: string)
     public constructor(value: number, type?: string)
     public constructor(value: object, type: string)
     public constructor(
-        value: object | string | boolean | number | InterpreterInstance[],
+        value: object | string | boolean | number | null | InterpreterInstance[],
         type?: string,
     ) {
         value = InterpreterInstance.unwrap(value);
@@ -28,14 +29,23 @@ export class InterpreterInstance {
                     type = coreTypes.String;
                     break;
                 case "object":
-                    if (Array.isArray(value)) {
-                        type = coreTypes.Array;
-                        break;
+                    if (value == null) {
+                        type = coreTypes.Null;
                     }
+                    else if (Array.isArray(value)) {
+                        type = coreTypes.Array;
+                    }
+                    else if (value instanceof RegExp) {
+                        type = coreTypes.RegExp;
+                    }
+                    break;
             }
         }
         if (type == null) {
             throw new Error(`type is required: ${value}`);
+        }
+        if (Array.isArray(value)) {
+            value = value.map(InterpreterInstance.wrap);
         }
         this.type = type;
         this.value = value as any;
@@ -91,7 +101,7 @@ export class InterpreterInstance {
 
     toString() {
         if (primitives[this.type]) {
-            return this.value.toString();
+            return JSON.stringify(this.value);
         }
         if (this.isArray()) {
             return `[${Object.values(this.value).join(`, `)}]`;
@@ -108,7 +118,10 @@ export class InterpreterInstance {
 
     static unwrap(value) {
         if (value instanceof InterpreterInstance) {
-            return value.value;
+            value = value.value;
+        }
+        if (Array.isArray(value)) {
+            value = value.map(InterpreterInstance.unwrap);
         }
         return value;
     }
@@ -116,5 +129,5 @@ export class InterpreterInstance {
 }
 
 const primitives = {
-    String: true, Number: true, Boolean: true
+    String: true, Number: true, Boolean: true, Null: true,
 }

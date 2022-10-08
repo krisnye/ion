@@ -1,0 +1,7 @@
+
+class Range
+    start: >= 0
+    finish: >= 0
+
+@UnitTest([Range(10, 12)], 2)
+length(r: Range) => r.finish - r.start

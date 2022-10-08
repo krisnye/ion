@@ -71,8 +71,6 @@ else if z
 `,
 `if (x) {\n    y\n} else if (z) {\n    w\n}`);
 
-//  return
-testExpression(`return x`, {"":"Return","value":{"":"Identifier","name":"x"}});
 
 //  variables
 testExpression(

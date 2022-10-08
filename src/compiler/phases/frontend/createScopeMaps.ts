@@ -49,7 +49,13 @@ export default function createScopeMaps(root, externals?: Map<string,Container>)
                             // console.log("******** ATTEMPT TO ADD SAME DECLARATION: " + check);
                             continue;
                         }
-                        let declarations = globalScope[node.id.name] ??= [];
+                        let declarations = globalScope[node.id.name];
+                        if (!Array.isArray(declarations)) {
+                            //  some things may actually be in the Object global scope
+                            //  that aren't declarations such as functions on Object.prototype
+                            //  like `toString` etc.
+                            declarations = globalScope[node.id.name] = [];
+                        }
                         globalScope[node.id.name].push(node);
                         if (node.order != null) {
                             declarationsToSort.add(declarations);

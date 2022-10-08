@@ -12,6 +12,7 @@ export class ReturnParselet extends PrefixParselet {
         let value = p.parseExpression();
         return new Return({
             location: SourceLocation.merge(returnToken.location, value.location),
+            returnToken,
             value: value as Expression
         })
     }

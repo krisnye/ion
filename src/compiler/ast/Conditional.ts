@@ -1,18 +1,24 @@
 import { InterpreterContext } from "../../interpreter/InterpreterContext";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { EvaluationContext } from "../EvaluationContext";
+import { SemanticHighlight, SemanticTokenType } from "../SemanticHighlight";
+import { Token } from "../Token";
 import { Expression, ExpressionProps } from "./Expression";
 
 export interface ConditionalProps extends ExpressionProps {
     test: Expression;
     consequent: Expression;
     alternate: Expression | null;
+    ifToken?: Token;
+    elseToken?: Token;
 }
 
 export class Conditional extends Expression {
 
+    ifToken?: Token;
     test!: Expression;
     consequent!: Expression;
+    elseToken?: Token;
     alternate!: Expression | null;
 
     constructor(props: ConditionalProps) { super(props); }
@@ -55,6 +61,15 @@ export class Conditional extends Expression {
             test: this.test.toESNode(c),
             consequent: this.consequent.toESNode(c),
             alternate: alternate?.toESNode(c)
+        }
+    }
+
+    *getSemanticHighlights(source: string[]): IterableIterator<SemanticHighlight> {
+        if (this.ifToken) {
+            yield this.ifToken.location.createSemanticHighlight(source, SemanticTokenType.keyword);
+        }
+        if (this.elseToken) {
+            yield this.elseToken.location.createSemanticHighlight(source, SemanticTokenType.keyword);
         }
     }
 

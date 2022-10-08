@@ -24,6 +24,8 @@ export class CallParselet extends BinaryExpressionParselet {
             location: SourceLocation.merge(callee.location, group.location),
             callee,
             args: group.value,
+            openToken: open,
+            closeToken: group.close
         });
     }
 

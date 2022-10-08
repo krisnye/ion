@@ -21,7 +21,9 @@ export function flattenSequencesAddMeta(moduleName, module): ReturnType<Phase> {
                 if (node.open.type === tokenTypes.OpenBracket.name) {
                     node = new ArrayExpression({
                         location: node.location,
-                        nodes: Sequence.flatten(node.value)
+                        nodes: Sequence.flatten(node.value),
+                        openToken: node.open,
+                        closeToken: node.close,
                     })
                 }
             }

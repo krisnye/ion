@@ -15,12 +15,14 @@ import { BlockParselet } from "./parselets/BlockParselet";
 import { OutlineStringParselet } from "./parselets/OutlineStringParselet";
 import { FloatLiteral, IntegerLiteral } from "../ast/NumberLiteral";
 import { NullLiteral } from "../ast/NullLiteral";
+import { RegExpLiteral } from "../ast/RegExpLiteral";
 
 export function createParser() {
     return new Parser({
         Number: new TerminalParselet(FloatLiteral, "value"),
         Integer: new TerminalParselet(IntegerLiteral, "value"),
         String: new TerminalParselet(StringLiteral, "value"),
+        RegExp: new TerminalParselet(RegExpLiteral, "value"),
         Null: new TerminalParselet(NullLiteral, "value"),
         Operator: new PrefixOperatorParselet(),
         Id: new TerminalParselet(Identifier, "name"),

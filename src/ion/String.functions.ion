@@ -1,0 +1,81 @@
+
+@UnitTest(["alpha", "al"], true)
+@UnitTest(["alpha", ""], true)
+@UnitTest(["alpha", "b"], false)
+@Native(javascript="(a, b) => a.startsWith(b)")
+startsWith(a: String, b: String): Boolean => false
+
+@UnitTest(["alpha", "ha"], true)
+@UnitTest(["alpha", ""], true)
+@UnitTest(["alpha", "b"], false)
+@Native(javascript="(a, b) => a.endsWith(b)")
+endsWith(a: String, b: String): Boolean => false
+
+@UnitTest([" alpha "], "alpha")
+@UnitTest(["alpha "], "alpha")
+@UnitTest([" alpha"], "alpha")
+@UnitTest(["alpha"], "alpha")
+@Native(javascript="(a) => a.trim()")
+trim(a: String): String => ""
+
+@UnitTest([" alpha "], "alpha ")
+@Native(javascript="(a) => a.trimStart()")
+trimStart(a: String): String => ""
+
+@UnitTest([" alpha "], " alpha")
+@Native(javascript="(a) => a.trimEnd()")
+trimEnd(a: String): String => ""
+
+@UnitTest(["alpha", "a"], true)
+@UnitTest(["alpha", "lph"], true)
+@UnitTest(["alpha", ""], true)
+@UnitTest(["alpha", "b"], false)
+@Native(javascript="(a, b) => a.includes(b)")
+contains(a: String, b: String): Boolean => false
+
+@UnitTest(["alpha", /lph/], true)
+@UnitTest(["alpha", /b/], false)
+@Native(javascript="(a, b) => b.test(a)")
+contains(a: String, b: RegExp): Boolean => false
+
+@UnitTest(["alpha", "a"], 0)
+@UnitTest(["alpha", "lph"], 1)
+@UnitTest(["alpha", ""], 0)
+@UnitTest(["alpha", "b"], -1)
+@Native(javascript="(a, b) => a.indexOf(b)")
+indexOf(a: String, b: String) => 2
+
+@UnitTest(["alpha", "a"], 4)
+@UnitTest(["alpha", "lph"], 1)
+@UnitTest(["alpha", ""], 5)
+@UnitTest(["alpha", "b"], -1)
+@Native(javascript="(a, b) => a.lastIndexOf(b)")
+lastIndexOf(a: String, b: String) => 2
+
+@UnitTest(["the apple is big", "apple", "banana"], "the banana is big")
+@Native(javascript="(a, b, c) => a.replace(b, c)")
+replace(source: String, find: String, replacement: String): String => ""
+
+@UnitTest(["one two one three", "one", "four"], "four two four three")
+@Native(javascript="(a, b, c) => a.replaceAll(b, c)")
+replaceAll(source: String, find: String, replacement: String): String => ""
+
+@UnitTest(["alpha", 1, -1], "lph")
+@Native(javascript="(a, b, c) => a.slice(b, c)")
+slice(source: String, indexStart: Integer, indexEnd: Integer): String => ""
+
+@UnitTest(["alpha", 2], "pha")
+@Native(javascript="(a, b, c) => a.slice(b)")
+slice(source: String, indexStart: Integer): String => ""
+
+@UnitTest(["alpha"], "ALPHA")
+@Native(javascript="(a) => a.toUpperCase()")
+toUpperCase(source: String): String => ""
+
+@UnitTest(["AlphA"], "alpha")
+@Native(javascript="(a) => a.toLowerCase()")
+toLowerCase(source: String): String => ""
+
+@UnitTest(["alpha"], "alpha")
+@Native(javascript="(a) => a")
+toString(source: String): String => ""

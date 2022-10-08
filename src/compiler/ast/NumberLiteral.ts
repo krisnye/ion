@@ -3,6 +3,7 @@ import { InterpreterInstance } from "../../interpreter/InterpreterInstance";
 import { InterpreterValue } from "../../interpreter/InterpreterValue";
 import { coreTypes } from "../coreTypes";
 import { EvaluationContext } from "../EvaluationContext";
+import { SemanticHighlight, SemanticTokenType } from "../SemanticHighlight";
 import { Serializable } from "../Serializable";
 import { SourceLocation } from "../SourceLocation";
 import { Literal, LiteralProps } from "./Literal";
@@ -59,6 +60,10 @@ export class NumberLiteral extends Literal {
             text = text.indexOf('.') < 0 ? this.value.toFixed(1) : text;
         }
         return text;
+    }
+
+    *getSemanticHighlights(source: string[]): IterableIterator<SemanticHighlight> {
+        yield this.location.createSemanticHighlight(source, SemanticTokenType.number);
     }
 
 }

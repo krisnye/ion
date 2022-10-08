@@ -1,8 +1,6 @@
 import { Assembly } from "./ast/Assembly";
 import { getInputFilesRecursive } from "./common";
 import ErrorContext from "./errors/ErrorContext";
-import { Node } from "./Node";
-import { javascriptPhases } from "./phases/backend/javascript";
 import { assemblyPhases, intermediatePhases, parsingPhases } from "./phases/frontend";
 import { Phase } from "./phases/Phase";
 import { Module } from "./ast/Module";
@@ -12,6 +10,10 @@ import { SourcePosition } from "./SourcePosition";
 import toposort from "./toposort";
 import { middlePhasesAssembly } from "./phases/middle";
 import { Expression } from "./ast/Expression";
+import { moveMetaToFunctions } from "./phases/frontend/moveMetaToFunctions";
+import { SemanticHighlight, SemanticTokenType } from "./SemanticHighlight";
+import { traverse } from "@glas/traverse";
+import { Node } from "./Node";
 
 export type PhaseLogger = (names?: string | string[] | null, ast?: any, file?: string) => void
 
@@ -186,6 +188,37 @@ export class Compiler {
         return this.createAssembly(result);
     }
 
+    parseSingleFile(name: string, source: string): Module {
+        let result = this.compile(new Map([[name, source]]), {
+            finalPhase: moveMetaToFunctions    //  mode right before resolving external references.
+        });
+        if (Array.isArray(result)) {
+            throw result[0];
+        }
+        return result.get(name) as Module;
+    }
+
+    getSemanticHighlights(filename: string, source: string): SemanticHighlight[] {
+        const module = this.parseSingleFile(filename, source);
+        const lines = source.split("\n");
+        const highlights: SemanticHighlight[] = [];
+        traverse(module, {
+            enter(node) {
+                if (node instanceof Node) {
+                    highlights.push(...node.getSemanticHighlights(lines));
+                }
+            }
+        });
+        // also add comments, manually here.
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            if (line.trim().startsWith("//")) {
+                highlights.push(new SemanticHighlight(i, 0, line.length, SemanticTokenType.comment));
+            }
+        }
+        return highlights;
+    }
+
     compile(
         input: Map<string,string>,
         debugOptions?: DebugOptions,
@@ -224,6 +257,7 @@ export class Compiler {
 
             [modules, errors] = this.runPhases(sources, modules, externals, intermediatePhases, false, silentOptions);
             externals = modules;
+
             if (errors) { return errors; }
             [modules, errors] = this.runPhases(sources, modules, externals, assemblyPhases, true, silentOptions);
             if (errors) { return errors; }
@@ -279,7 +313,7 @@ export class Compiler {
         }
     }
 
-    logFilter = new Set([ "test.sample", "test.chained_conditionals" ]);
+    logFilter = new Set([ "test.sample", "Range" ]);
     logModule(name: string) {
         return this.logFilter && this.logFilter.has(name);
     }

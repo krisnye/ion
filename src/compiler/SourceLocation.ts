@@ -1,3 +1,4 @@
+import { SemanticHighlight, SemanticModifier, SemanticTokenType } from "./SemanticHighlight";
 import { Serializable } from "./Serializable";
 import { SourcePosition } from "./SourcePosition";
 
@@ -25,6 +26,18 @@ export class SourceLocation extends Serializable {
             SourcePosition.min(left.start, right.start),
             SourcePosition.max(left.finish, right.finish),
         )
+    }
+
+    createSemanticHighlight(
+        source: string[],
+        tokenType: SemanticTokenType,
+        ...modifiers: SemanticModifier[]
+    ) {
+        let line = this.start.line - 1;
+        let column = this.start.column - 2;
+        //  TODO: Calculate actual length correctly as this won't work for multiple lines.
+        let length = this.finish.column - this.start.column;
+        return new SemanticHighlight(line, column, length, tokenType, ...modifiers);
     }
 
 }

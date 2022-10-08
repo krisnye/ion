@@ -5,10 +5,10 @@ import { Class } from "../../ast/Class";
 import { join, split } from "../../pathFunctions";
 import { Variable } from "../../ast/Variable";
 import { replace } from "../../traverse";
-import { Call } from "../../ast/Call";
 import { LogicalOperators } from "../../analysis/LogicalOperators";
 import { Reference } from "../../ast/Reference";
-import { BinaryExpression } from "../../ast/BinaryExpression";
+import { coreTypes } from "../../coreTypes";
+import { TypeReference } from "../../ast/TypeReference";
 
 const replaceOperatorsWithExpressions: Set<String> = new Set(
     [LogicalOperators.and, LogicalOperators.or, LogicalOperators.is]
@@ -33,6 +33,14 @@ export function fixClassNames(moduleName, module: Container, externals: Map<stri
                 }
                 if (node instanceof Variable && ancestors[ancestors.length - 2] === module && renamed.has(node.id.name)) {
                     return replace();
+                }
+                //  bit of a hack here.
+                if (node instanceof TypeReference) {
+                    let path = split(node.name);
+                    if (path[path.length - 2] === path[path.length - 1]) {
+                        let newname = join(...path.slice(0, -1));
+                        node = node.patch({ name: newname });
+                    }
                 }
                 return node;
             }
